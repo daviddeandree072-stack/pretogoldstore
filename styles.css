@@ -259,6 +259,9 @@ a.nav-contact:hover { color: var(--gold); }
 .nav.menu-open .nav-burger span:nth-child(2) { opacity: 0; }
 .nav.menu-open .nav-burger span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
 
+/* Botón de menú flotante (solo móvil) */
+.nav-fab { display: none; }
+
 /* Drawer wrapper is invisible on desktop; becomes a bottom sheet on mobile */
 .nav-drawer { display: contents; }
 .nav-mobile-head { display: none; }
@@ -2198,7 +2201,14 @@ footer {
   .nav-left, .nav-right { display: none; }
   .nav { grid-template-columns: 1fr auto 1fr; }
   .hero-meta { display: none; }
-  .hero-piece { width: min(58vw, 420px); left: auto; right: var(--pad-x); top: 34%; transform: translateY(-50%); opacity: 1; }
+  .hero { min-height: 640px; }
+  .hero-bg { background-position: 70% 42%; background-size: cover; }
+  .hero-bg::after {
+    background:
+      linear-gradient(0deg, rgba(7,6,4,0.9) 0%, rgba(7,6,4,0.5) 32%, transparent 60%),
+      linear-gradient(90deg, rgba(7,6,4,0.72) 0%, rgba(7,6,4,0.2) 45%, transparent 65%);
+  }
+  .hero-piece { display: none; }
   .section-head { grid-template-columns: 1fr; gap: 32px; padding: 96px var(--pad-x) 40px; }
   .split { grid-template-columns: 1fr; }
   .split-pane { min-height: 600px; }
@@ -2243,8 +2253,23 @@ footer {
   .nav-top-right { gap: 16px; }
   .nav-icon { width: 24px; height: 24px; }
   .nav-icon svg { width: 20px; height: 20px; }
-  /* Show hamburger, hide Boutique label */
-  .nav-burger { display: inline-flex; }
+  /* Menú: botón flotante abajo-izquierda (cómodo para el pulgar) */
+  .nav-burger { display: none; }
+  .nav-fab {
+    display: flex;
+    position: fixed;
+    left: 16px;
+    bottom: max(18px, env(safe-area-inset-bottom));
+    z-index: 1100;
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: #F5F5F0;
+    box-shadow: 0 10px 26px rgba(17,12,5,0.28);
+    border: 1px solid rgba(17,17,17,0.08);
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px;
+  }
+  .nav-fab span { display: block; height: 1.6px; width: 22px; background: rgba(17,17,17,0.9); border-radius: 1px; }
   .nav-top-left .nav-contact { display: none; }
   /* nav-bottom + megas become a BOTTOM SHEET that slides up from the floor */
   .nav-drawer {
@@ -2265,6 +2290,8 @@ footer {
     padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
   .nav.menu-open .nav-drawer { transform: translateY(0); visibility: visible; }
+  /* Evita que la barra (con su transform) "atrape" al panel y lo mande arriba */
+  .nav.menu-open { transform: none !important; }
 
   /* Grab handle + title + close, pinned to the top of the sheet */
   .nav-mobile-head {
@@ -2351,12 +2378,18 @@ footer {
   .mega-title { font-size: 30px; }
   .mega-item { font-size: 18px; }
 
-  /* Hero — stop ticker overlapping the headline */
-  .hero { display: block; height: auto; min-height: 0; padding: 128px 24px 64px; }
+  /* Hero — collar a todo el ancho, encuadrado en el busto, con título legible abajo */
+  .hero { display: flex; align-items: flex-end; height: auto; min-height: 86vh; padding: 116px 24px 52px; }
+  .hero-bg { background: #0a0807 url('assets/hero-banner.jpg') 66% 40% / cover no-repeat; }
+  .hero-bg::after {
+    background:
+      linear-gradient(0deg, rgba(7,6,4,0.93) 0%, rgba(7,6,4,0.58) 32%, rgba(7,6,4,0.10) 60%, rgba(7,6,4,0.40) 100%);
+  }
   .hero-base { display: none; }
   .hero-piece { display: none; }
   .hero-content { max-width: 100%; }
-  .hero-sub { margin-top: 22px; }
+  .hero-content .eyebrow { margin-bottom: 22px; }
+  .hero-sub { margin-top: 22px; max-width: 100%; }
 
   .coll-grid { grid-template-columns: 1fr; }
   .line-grid { grid-template-columns: 1fr; }
@@ -2870,7 +2903,7 @@ footer {
   .drawer { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 
   /* 4 ─ Hint the compositor for the elements that actually move. */
-  .nav, .nav-drawer, .wa { will-change: transform; }
+  .nav-drawer, .wa { will-change: transform; }
 
   /* 5 ─ Announcement bar: show the FULL message (no "…" cut-off)
      as a slow, elegant marquee so mobile keeps the same copy as desktop. */

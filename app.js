@@ -1152,6 +1152,9 @@ if (navBurger && navEl) {
     navBurger.setAttribute('aria-expanded', open ? 'true' : 'false');
     if (!open) MEGAS.forEach(m => m.close());
   });
+  // Botón flotante de menú (abajo-izquierda en móvil) — reusa la lógica del burger
+  const navFab = document.getElementById('navFab');
+  navFab && navFab.addEventListener('click', e => { e.stopPropagation(); navBurger.click(); });
   // Sheet handle close button + dimmed scrim both dismiss the menu
   const navMobileCloseBtn = document.getElementById('navMobileClose');
   navMobileCloseBtn && navMobileCloseBtn.addEventListener('click', closeMobileMenu);
