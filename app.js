@@ -53,6 +53,72 @@ const DALA_RING_VARIANTS = [
     blurb: 'Iconografía íntima. Una oración pequeña en oro 18k.' },
 ];
 
+const ROSARY_SIZES = ['50 cm', '55 cm', '60 cm', '65 cm'];
+
+const PRETO_ROSARY_VARIANTS = [
+  { sub: 'Clásico Preto',    id: 'PRT-RO-CLA', label: 'ROSARY · CLASSIC', sizes: ROSARY_SIZES, image: 'assets/preto-hero.jpg',
+    blurb: 'Cinco decenas en ónix negro y oro de Chocó, rematadas en crucifijo tallado a mano. La pieza devocional por excelencia de la casa.' },
+  { sub: 'Decenario Preto',  id: 'PRT-RO-DEC', label: 'ROSARY · DECADE',  sizes: ROSARY_SIZES,
+    blurb: 'Una sola decena en ónix y oro. Oración discreta para llevar en el bolsillo o enrollada en la muñeca.' },
+  { sub: 'Cuello Preto',     id: 'PRT-RO-CUE', label: 'ROSARY · COLLAR',  sizes: ROSARY_SIZES,
+    blurb: 'Rosario de caída corta, pensado para lucirse al cuello. Presencia nocturna y silencio espiritual.' },
+  { sub: 'Cruz Mayor Preto', id: 'PRT-RO-CRU', label: 'ROSARY · CROSS',   sizes: ROSARY_SIZES,
+    blurb: 'Crucifijo de mayor tamaño tallado en oro, sostenido por cuentas de ónix. Devoción que se impone con sobriedad.' },
+];
+
+const DALA_ROSARY_VARIANTS = [
+  { sub: 'Clásico Dala&Co',    id: 'DAL-RO-CLA', label: 'ROSARY · CLASSIC', sizes: ROSARY_SIZES,
+    blurb: 'Cinco decenas en oro de 18k pulido, con crucifijo de la casa. Una oración hecha herencia.' },
+  { sub: 'Decenario Dala&Co',  id: 'DAL-RO-DEC', label: 'ROSARY · DECADE',  sizes: ROSARY_SIZES,
+    blurb: 'Decena única en oro de 18k. Íntimo, ligero, para llevar siempre cerca.' },
+  { sub: 'Cuello Dala&Co',     id: 'DAL-RO-CUE', label: 'ROSARY · COLLAR',  sizes: ROSARY_SIZES,
+    blurb: 'Rosario corto en oro de 18k, de caída delicada sobre la piel.' },
+  { sub: 'Cruz Mayor Dala&Co', id: 'DAL-RO-CRU', label: 'ROSARY · CROSS',   sizes: ROSARY_SIZES,
+    blurb: 'Crucifijo destacado en oro de 18k sobre cuentas torneadas. Sobriedad y luz cálida.' },
+];
+
+const PEN_ENGRAVE_NOTE = 'Grabado de iniciales o fecha a solicitud.';
+
+const DALA_PEN_VARIANTS = [
+  { sub: 'Clásico Dala&Co', id: 'DAL-PN-CLA', label: 'PEN · SIGNATURE',
+    blurb: 'Cuerpo en oro de 18k pulido a espejo, con clip firmado por la casa. El gesto de escribir hecho joya.' },
+  { sub: 'Lacado Dala&Co',  id: 'DAL-PN-LAC', label: 'PEN · LACQUER',
+    blurb: 'Laca negra profunda con remates en oro de 18k. Contraste sobrio para el escritorio o el bolsillo.' },
+  { sub: 'Grabado Dala&Co', id: 'DAL-PN-GRA', label: 'PEN · ENGRAVED', note: PEN_ENGRAVE_NOTE,
+    blurb: 'Personalice el cuerpo con sus iniciales o una fecha, grabadas a mano sobre el oro de 18k.' },
+  { sub: 'Madera Dala&Co',  id: 'DAL-PN-MAD', label: 'PEN · WOOD',
+    blurb: 'Cuerpo en madera noble del Atrato con remates en oro de 18k. Pieza artesanal, cálida al tacto.' },
+];
+
+const NOIR_ENGRAVE_NOTE = 'Grabado de iniciales o monograma a solicitud.';
+
+const NOIR_BARRA_VARIANTS = [
+  { sub: 'Lisa Noir',    id: 'ACC-BA-LIS', label: 'TIE BAR · SMOOTH',
+    blurb: 'Barra de corbata de línea limpia en acabado negro mate. Sujeción discreta, presencia precisa.' },
+  { sub: 'Ónix Noir',    id: 'ACC-BA-ONX', label: 'TIE BAR · ONYX',
+    blurb: 'Barra con incrustación de ónix negro y filo en oro. Un detalle nocturno sobre la corbata.' },
+  { sub: 'Grabada Noir', id: 'ACC-BA-GRA', label: 'TIE BAR · ENGRAVED', note: NOIR_ENGRAVE_NOTE,
+    blurb: 'Barra grabada a mano sobre acabado noir. Personalícela con sus iniciales o una fecha.' },
+];
+
+const NOIR_GEMELOS_VARIANTS = [
+  { sub: 'Clásicos Noir',  id: 'ACC-GE-CLA', label: 'CUFFLINKS · CLASSIC',
+    blurb: 'Gemelos de superficie pulida en acabado negro. El cierre perfecto para el puño.' },
+  { sub: 'Ónix Noir',      id: 'ACC-GE-ONX', label: 'CUFFLINKS · ONYX',
+    blurb: 'Gemelos con cabujón de ónix engastado en oro. Profundidad y elegancia sobria.' },
+  { sub: 'Grabados Noir',  id: 'ACC-GE-GRA', label: 'CUFFLINKS · ENGRAVED', note: NOIR_ENGRAVE_NOTE,
+    blurb: 'Gemelos personalizables con monograma grabado a mano sobre el acabado noir.' },
+];
+
+const NOIR_INSIGNIA_VARIANTS = [
+  { sub: 'Clásica Noir', id: 'ACC-IN-CLA', label: 'LAPEL PIN · CLASSIC',
+    blurb: 'Insignia de solapa de líneas mínimas en acabado noir. Un acento silencioso en la chaqueta.' },
+  { sub: 'Sello Noir',   id: 'ACC-IN-SEL', label: 'LAPEL PIN · SEAL',
+    blurb: 'Insignia tipo sello con relieve de la casa. Identidad llevada con discreción.' },
+  { sub: 'Cruz Noir',    id: 'ACC-IN-CRU', label: 'LAPEL PIN · CROSS',
+    blurb: 'Insignia con cruz tallada en oro sobre fondo noir. Devoción y sastrería en un mismo gesto.' },
+];
+
 const LINES = [
   {
     key: 'preto',
@@ -60,8 +126,10 @@ const LINES = [
     num: '— Línea I',
     tagline: 'Lo urbano hecho oro. Presencia, fuerza, identidad nocturna.',
     products: [
-      { id: 'PRT-CH-001', name: 'Cadenas Preto', label: 'CHAIN · ONYX', size: 'c-1', variants: PRETO_CHAIN_VARIANTS, variantPrefix: 'Cadena', image: 'assets/preto-hero.jpg',
+      { id: 'PRT-CH-001', name: 'Cadenas Preto', label: 'CHAIN · ONYX', size: 'c-1', variants: PRETO_CHAIN_VARIANTS, variantPrefix: 'Cadena',
         desc: 'Cadena de cuentas en ónix negro y oro de Chocó, montada eslabón a eslabón. Una pieza de presencia nocturna, pensada para llevarse cerca de la piel.' },
+      { id: 'PRT-RO-005', name: 'Rosarios Preto',       label: 'ROSARY · ONYX',        size: 'c-5', variants: PRETO_ROSARY_VARIANTS, variantPrefix: 'Rosario', image: 'assets/preto-hero.jpg',
+        desc: 'Rosario en ónix negro y oro de Chocó, rematado con un crucifijo tallado a mano. Devoción y presencia en una sola pieza, pensada para llevarse cerca del pecho.' },
       { id: 'PRT-RG-003', name: 'Anillos Preto',        label: 'RING · BLACK ZIRCON',  size: 'c-2', variants: PRETO_RING_VARIANTS, variantPrefix: 'Anillo Preto',
         desc: 'Anillos en oro con circón negro. Cuatro carácteres —liso, cubano, rústico y sacro— para una misma identidad urbana.' },
       { id: 'PRT-BR-007', name: 'Pulseras Hilo Preto',  label: 'BRACELET · CORD',      size: 'c-3',
@@ -78,28 +146,56 @@ const LINES = [
     products: [
       { id: 'DAL-CH-002', name: 'Cadenas Dala&Co',       label: 'CHAIN · 18k GOLD',    size: 'd-1', variants: DALA_CHAIN_VARIANTS, variantPrefix: 'Cadena',
         desc: 'Cadena en oro de 18k pulido a espejo. Eslabón clásico de la casa, equilibrio perfecto entre peso, brillo y permanencia.' },
+      { id: 'DAL-RO-025', name: 'Rosarios Dala&Co',      label: 'ROSARY · 18k GOLD',   size: 'd-6', variants: DALA_ROSARY_VARIANTS, variantPrefix: 'Rosario',
+        desc: 'Rosario en oro de 18k pulido, con cuentas torneadas y crucifijo de la casa. Una oración hecha joya, para conservar como herencia.' },
       { id: 'DAL-RG-014', name: 'Anillos Dala&Co',       label: 'RING · 18k',          size: 'd-2', variants: DALA_RING_VARIANTS, variantPrefix: 'Anillo Dala&Co',
         desc: 'Anillos en oro de 18k. La sencillez como lujo absoluto, disponible en cuatro acabados irrepetibles.' },
       { id: 'DAL-BR-018', name: 'Pulseras Hilo Dala&Co', label: 'BRACELET · CORD',     size: 'd-3',
         desc: 'Pulsera de hilo con cierre en oro de 18k. Ligereza íntima que se adapta a la muñeca como una segunda piel.' },
       { id: 'DAL-EA-021', name: 'Pendientes Dala&Co',    label: 'EARRINGS · GOLD',     size: 'd-4',
         desc: 'Pendientes en oro de 18k. Una caricia de luz cálida, hecha para acompañar tanto el día como la noche.' },
-      { id: 'DAL-PN-030', name: 'Bolígrafo Dala&Co',     label: 'PEN · SIGNATURE',     size: 'd-5',
-        desc: 'Bolígrafo de firma con detalles en oro de 18k. El gesto de escribir convertido en objeto de joyería.' },
+    ],
+  },
+];
+
+// Accesorios — objetos de la casa (fuera de joyería, su propio menú).
+const ACCESORIOS = [
+  {
+    key: 'accesorios',
+    name: 'Dala&Co',
+    num: '— Accesorios',
+    tagline: 'Accesorios de alta gama para completar el look.',
+    products: [
+      { id: 'DAL-PN-030', name: 'Bolígrafo Dala&Co', label: 'PEN · SIGNATURE', variants: DALA_PEN_VARIANTS, variantPrefix: 'Bolígrafo',
+        desc: 'Bolígrafo de firma con detalles en oro de 18k. El gesto de escribir convertido en objeto de joyería, en cuatro acabados de autor.' },
+    ],
+  },
+  {
+    key: 'noir',
+    name: 'Noir',
+    num: '— Accesorios',
+    tagline: 'La diferencia está en los detalles. Sastrería en acabado noir.',
+    products: [
+      { id: 'ACC-BA-001', name: 'Barra Noir',    label: 'TIE BAR · NOIR',    variants: NOIR_BARRA_VARIANTS,    variantPrefix: 'Barra',
+        desc: 'Barra de corbata en acabado noir, con filo en oro. El detalle que ordena la silueta formal, en tres caracteres.' },
+      { id: 'ACC-GE-001', name: 'Gemelos Noir',  label: 'CUFFLINKS · NOIR',  variants: NOIR_GEMELOS_VARIANTS,  variantPrefix: 'Gemelos',
+        desc: 'Gemelos en acabado noir y oro. El cierre del puño convertido en firma personal, en tres acabados.' },
+      { id: 'ACC-IN-001', name: 'Insignia Noir', label: 'LAPEL PIN · NOIR',  variants: NOIR_INSIGNIA_VARIANTS, variantPrefix: 'Insignia',
+        desc: 'Insignia de solapa en acabado noir y oro. Un acento discreto que distingue la chaqueta, en tres motivos.' },
     ],
   },
 ];
 
 // Flat lookup so the quote drawer still works by id.
 // Includes top-level products and any variants drilled into.
-const COLLECTIONS = LINES.flatMap(line => {
+const COLLECTIONS = [...LINES, ...ACCESORIOS].flatMap(line => {
   const out = [];
   line.products.forEach(p => {
     const colLabel = `${line.name} · ${line.num.replace('— ', '')}`;
     out.push({ ...p, col: colLabel, line: line.key });
     if (p.variants) {
       const prefix = p.variantPrefix || p.name;
-      p.variants.forEach(v => {
+      p.variants.forEach((v, vi) => {
         out.push({
           id: v.id,
           name: `${prefix} ${v.sub}`,
@@ -109,6 +205,8 @@ const COLLECTIONS = LINES.flatMap(line => {
           parent: p.id,
           sizes: v.sizes,
           note: v.note,
+          desc: v.blurb,
+          image: (vi === 0 ? p.image : null) || null,
         });
       });
     }
@@ -116,22 +214,69 @@ const COLLECTIONS = LINES.flatMap(line => {
   return out;
 });
 
-/* ── Build product carousel (one track, all pieces) ────────── */
+/* ── Build product catalog (flat variety of individual pieces) ──
+   Like a general mini-catalog: each card is one named product
+   (a single ring, a single chain…), not a category family.        */
 const host = document.getElementById('collGrid');
-const ALL_PRODUCTS = LINES.flatMap(line =>
-  line.products.map(p => ({ ...p, lineName: line.name, lineKey: line.key }))
-);
 
-ALL_PRODUCTS.forEach((p) => {
+// Expand one line into individual products. Variant families are
+// broken out into one card per variant; round-robin across families
+// so categories interleave (chain, ring, bracelet…) instead of
+// clustering four near-identical rings together.
+function expandLine(line) {
+  const cols = line.products.map(p => {
+    if (!p.variants) {
+      return [{
+        id: p.id, name: p.name, label: p.label, image: p.image || null,
+        desc: p.desc, sizes: null, note: null,
+        lineName: line.name, lineKey: line.key,
+      }];
+    }
+    const prefix = p.variantPrefix || p.name;
+    return p.variants.map((v, i) => ({
+      id: v.id,
+      name: `${prefix} ${v.sub}`,
+      label: v.label,
+      image: (i === 0 ? p.image : null) || null,
+      desc: v.blurb,
+      sizes: v.sizes || null,
+      note: v.note || null,
+      lineName: line.name,
+      lineKey: line.key,
+    }));
+  });
+  const out = [];
+  const max = Math.max(...cols.map(c => c.length));
+  for (let r = 0; r < max; r++) cols.forEach(c => { if (c[r]) out.push(c[r]); });
+  return out;
+}
+
+// Alternate Preto / Dala&Co pieces so the row reads as a varied catalog.
+function zipLines(a, b) {
+  const out = []; const n = Math.max(a.length, b.length);
+  for (let i = 0; i < n; i++) { if (a[i]) out.push(a[i]); if (b[i]) out.push(b[i]); }
+  return out;
+}
+
+const CATALOG = zipLines(expandLine(LINES[0]), expandLine(LINES[1]));
+const NEW_IDS = new Set(['PRT-CH-LAZ', 'DAL-CH-LAZ']);
+
+/* Destacados: 7 piezas al azar, reordenadas en cada visita. */
+function shuffleArr(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; }
+  return a;
+}
+const FEATURED = shuffleArr(CATALOG).slice(0, 7);
+
+function makePcard(p, clone) {
   const el = document.createElement('article');
-  el.className = 'pcard' + (p.variants ? ' has-variants' : '');
-  el.id = 'card-' + p.id;
-  el.setAttribute('data-screen-label', `${p.lineName} · ${p.name}`);
-  if (p.variants) el.dataset.openCategory = p.id;
+  el.className = 'pcard';
+  el.dataset.pid = p.id;
+  if (clone) { el.setAttribute('aria-hidden', 'true'); el.tabIndex = -1; }
+  else { el.id = 'card-' + p.id; el.setAttribute('data-screen-label', `${p.lineName} · ${p.name}`); }
 
-  const tag = p.variants
-    ? `<span class="pcard-tag">${String(p.variants.length).padStart(2,'0')} variantes</span>`
-    : '';
+  const tag = NEW_IDS.has(p.id) ? `<span class="pcard-tag">Nuevo</span>` : '';
   const art = p.image
     ? `<div class="pcard-art has-image" style="background-image:url('${p.image}')"></div>`
     : `<div class="pcard-art" data-label="${p.label}"></div>`;
@@ -149,79 +294,63 @@ ALL_PRODUCTS.forEach((p) => {
     <div class="pcard-info">
       <h3 class="pcard-name">${p.name}</h3>
       <p class="pcard-spec">${p.label}</p>
-      <p class="pcard-cta">${p.variants ? 'Ver familia →' : 'Bajo cotización'}</p>
+      <p class="pcard-cta">Bajo cotización</p>
     </div>
   `;
   host.appendChild(el);
-});
+}
+// Dos juegos idénticos de las 7 piezas → cinta infinita sin costuras.
+FEATURED.forEach((p) => makePcard(p, false));
+FEATURED.forEach((p) => makePcard(p, true));
 
 /* ── Carousel: navigation, drag, progress ──────────────────── */
 (function initCarousel(){
   const track = host;
   const prev  = document.getElementById('carPrev');
   const next  = document.getElementById('carNext');
-  const bar   = document.getElementById('carBar');
   if (!track) return;
 
-  function page() {
-    const card = track.querySelector('.pcard');
-    if (!card) return track.clientWidth * 0.8;
-    const gap = parseFloat(getComputedStyle(track).columnGap || '0') || 24;
-    return card.offsetWidth + gap;
+  // Controls that don't apply to an always-gliding marquee.
+  if (prev) prev.style.display = 'none';
+  if (next) next.style.display = 'none';
+  const prog = document.querySelector('.carousel-progress');
+  if (prog) prog.style.display = 'none';
+
+  // ── Continuous marquee: constant, perfectly smooth glide ───────
+  // Two identical card sets sit in the DOM, so wrapping by exactly one
+  // set width loops seamlessly. We drive a float transform (subpixel,
+  // GPU-composited) instead of scrollLeft — scrollLeft snaps to whole
+  // pixels and that integer rounding is what made it look paused.
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cards = Array.prototype.slice.call(track.querySelectorAll('.pcard'));
+  const half  = Math.floor(cards.length / 2);
+  let loopW = 0;
+  function measureLoop(){
+    loopW = (cards[half] && cards[0]) ? (cards[half].offsetLeft - cards[0].offsetLeft) : 0;
   }
-  function updateBar() {
-    const max = track.scrollWidth - track.clientWidth;
-    const ratio = max > 0 ? track.scrollLeft / max : 0;
-    const visible = track.clientWidth / track.scrollWidth;
-    if (bar) {
-      bar.style.width = Math.max(12, visible * 100) + '%';
-      bar.style.left = ratio * (100 - Math.max(12, visible * 100)) + '%';
+  measureLoop();
+  window.addEventListener('resize', measureLoop);
+  window.addEventListener('load', measureLoop);
+  setTimeout(measureLoop, 500);
+
+  const SPEED = 0.42;            // px/frame — constant, premium glide, never pauses
+  let offset = 0;
+  function marquee(){
+    if (!reduceMotion && loopW > 0 && !document.hidden) {
+      offset -= SPEED;
+      if (offset <= -loopW) offset += loopW;     // seamless wrap
+      track.style.transform = 'translate3d(' + offset + 'px,0,0)';
     }
-    if (prev) prev.disabled = track.scrollLeft <= 2;
-    if (next) next.disabled = track.scrollLeft >= max - 2;
+    requestAnimationFrame(marquee);
   }
-  prev && prev.addEventListener('click', () => track.scrollBy({ left: -page()*1.5, behavior: 'smooth' }));
-  next && next.addEventListener('click', () => track.scrollBy({ left:  page()*1.5, behavior: 'smooth' }));
-  let barTick = false;
-  const onTrackScroll = () => {
-    if (barTick) return;
-    barTick = true;
-    requestAnimationFrame(() => { updateBar(); barTick = false; });
-  };
-  track.addEventListener('scroll', onTrackScroll, { passive: true });
-  window.addEventListener('resize', updateBar);
-
-  // Drag to scroll (mouse only — touch uses native scroll)
-  let down = false, startX = 0, startLeft = 0, moved = 0, dragging = false;
-  track.addEventListener('pointerdown', e => {
-    moved = 0; dragging = false;                 // always reset state
-    if (e.pointerType !== 'mouse') { down = false; return; }
-    down = true;
-    startX = e.clientX; startLeft = track.scrollLeft;
-  });
-  window.addEventListener('pointermove', e => {
-    if (!down) return;
-    const dx = e.clientX - startX;
-    moved = Math.abs(dx);
-    if (moved > 6 && !dragging) { dragging = true; track.classList.add('dragging'); }
-    if (dragging) track.scrollLeft = startLeft - dx;
-  });
-  window.addEventListener('pointerup', () => {
-    if (down) { down = false; if (dragging) track.classList.remove('dragging'); }
-  });
-  // Suppress click only when an actual drag happened
-  track.addEventListener('click', e => { if (dragging || moved > 6) { e.stopPropagation(); e.preventDefault(); } }, true);
-
-  updateBar();
+  requestAnimationFrame(marquee);
 })();
 
 /* ── Carousel card interactions ────────────────────────────── */
 document.querySelectorAll('.pcard').forEach(card => {
   card.addEventListener('click', e => {
     if (e.target.closest('.pcard-fav')) return;
-    const id = card.id.replace('card-', '');
-    if (card.classList.contains('has-variants')) openCategory(id);
-    else openProduct(id);
+    openProduct(card.dataset.pid || card.id.replace('card-', ''));
   });
 });
 document.querySelectorAll('.pcard-fav').forEach(btn => {
@@ -253,12 +382,33 @@ function openProduct(id) {
   document.getElementById('pdpSpec').textContent = p.label;
   document.getElementById('pdpDesc').textContent = p.desc || '';
 
-  // Variants
+  // Variants / size / note
   const vWrap = document.getElementById('pdpVariants');
+  let selectedSize = null;
   if (p.variants) {
     vWrap.innerHTML = `
       <span class="pdp-vlabel">${String(p.variants.length).padStart(2,'0')} variantes</span>
       <div class="pdp-vchips">${p.variants.map(v => `<span class="pdp-vchip">${v.sub}</span>`).join('')}</div>`;
+    vWrap.style.display = '';
+  } else if (p.sizes && p.sizes.length) {
+    const def = Math.min(1, p.sizes.length - 1);
+    selectedSize = p.sizes[def];
+    vWrap.innerHTML = `
+      <span class="pdp-vlabel">Medida</span>
+      <div class="pdp-size-row">${p.sizes.map((s, i) =>
+        `<button class="pdp-size-chip${i === def ? ' active' : ''}" data-size="${s}">${s}</button>`).join('')}</div>`;
+    vWrap.style.display = '';
+    vWrap.querySelectorAll('.pdp-size-chip').forEach(b => {
+      b.addEventListener('click', () => {
+        vWrap.querySelectorAll('.pdp-size-chip').forEach(c => c.classList.remove('active'));
+        b.classList.add('active');
+        selectedSize = b.dataset.size;
+      });
+    });
+  } else if (p.note) {
+    vWrap.innerHTML = `
+      <span class="pdp-vlabel">Medida</span>
+      <p class="pdp-note"><span class="note-glyph">✦</span> ${p.note}</p>`;
     vWrap.style.display = '';
   } else {
     vWrap.innerHTML = '';
@@ -271,12 +421,12 @@ function openProduct(id) {
   primary.onclick = () => {
     closeProduct();
     if (p.variants) openCategory(p.id);
-    else addToQuote(p.id, null);
+    else addToQuote(p.id, selectedSize);
   };
 
   // WhatsApp action
   document.getElementById('pdpWa').onclick = () => {
-    openWhatsApp([{ id: p.id, name: p.name, col: p.col, size: null, note: p.note || null, qty: 1 }]);
+    openWhatsApp([{ id: p.id, name: p.name, col: p.col, size: selectedSize, note: p.note || null, qty: 1 }]);
   };
 
   pdp.classList.add('open');
@@ -316,8 +466,7 @@ chips().forEach(c => {
 document.querySelectorAll('.pane-cta[data-line]').forEach(a => {
   a.addEventListener('click', (e) => {
     e.preventDefault();
-    applyFilter(a.dataset.line);
-    scrollToCollections();
+    openLine(a.dataset.line);
   });
 });
 // Default state
@@ -444,7 +593,70 @@ document.querySelectorAll('.coll.has-variants').forEach(card => {
 const catOverlay = document.getElementById('catOverlay');
 const catShell   = document.getElementById('catShell');
 
-function openCategory(productId) {
+/* ── Line overview: "Descubrir Preto / Dala&Co" → what the line offers ── */
+function openLine(lineKey) {
+  const line = LINES.find(l => l.key === lineKey);
+  if (!line) return;
+
+  catShell.innerHTML = `
+    <header class="cat-head">
+      <button class="cat-back" id="catBack" aria-label="Volver">
+        <span class="arr">←</span> Volver
+      </button>
+      <div class="cat-meta">
+        <span class="eyebrow">${line.num.replace('— ', '')}</span>
+        <span class="dot-divider"></span>
+        <span class="eyebrow eyebrow-bone">${line.products.length} familias</span>
+      </div>
+      <h2 class="cat-title">Descubrir <span class="script">${line.name}</span></h2>
+      <p class="cat-sub">${line.tagline}</p>
+    </header>
+    <div class="cat-grid">
+      ${line.products.map(p => {
+        const hasVar = !!p.variants;
+        return `
+          <article class="var-card line-card" data-id="${p.id}">
+            <div class="var-art${p.image ? ' has-image' : ''}" data-label="${p.label}"${p.image ? ` style="background-image:url('${p.image}')"` : ''}></div>
+            <div class="var-body">
+              <div class="var-name">
+                <h3>${p.name}</h3>
+                <span class="var-ref">Ref. ${p.id}</span>
+              </div>
+              <p class="var-blurb">${p.desc}</p>
+              <button class="var-add line-go" data-id="${p.id}">
+                <span>${hasVar ? 'Ver variantes' : 'Ver pieza'}</span>
+                <span class="arrow"></span>
+              </button>
+            </div>
+          </article>`;
+      }).join('')}
+    </div>
+  `;
+
+  const goTo = (id) => {
+    const prod = COLLECTIONS.find(x => x.id === id);
+    if (prod && prod.variants) openCategory(id, lineKey);
+    else openProduct(id);
+  };
+  catShell.querySelectorAll('.line-card').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.closest('.line-go')) return;
+      goTo(card.dataset.id);
+    });
+  });
+  catShell.querySelectorAll('.line-go').forEach(b => {
+    b.addEventListener('click', e => { e.stopPropagation(); goTo(b.dataset.id); });
+  });
+  document.getElementById('catBack').addEventListener('click', closeCategory);
+
+  catShell.scrollTop = 0;
+  catOverlay.scrollTop = 0;
+  catOverlay.classList.add('open');
+  catOverlay.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function openCategory(productId, backToLine) {
   const parent = COLLECTIONS.find(x => x.id === productId);
   if (!parent || !parent.variants) return;
 
@@ -456,7 +668,7 @@ function openCategory(productId) {
   catShell.innerHTML = `
     <header class="cat-head">
       <button class="cat-back" id="catBack" aria-label="Volver">
-        <span class="arr">←</span> Volver a colecciones
+        <span class="arr">←</span> ${backToLine ? 'Volver a ' + (LINES.find(l => l.key === backToLine) || {}).name : 'Volver a colecciones'}
       </button>
       <div class="cat-meta">
         <span class="eyebrow">${parent.col}</span>
@@ -518,7 +730,7 @@ function openCategory(productId) {
       addToQuote(b.dataset.id, activeSize ? activeSize.dataset.size : null);
     });
   });
-  document.getElementById('catBack').addEventListener('click', closeCategory);
+  document.getElementById('catBack').addEventListener('click', backToLine ? () => openLine(backToLine) : closeCategory);
 
   catOverlay.classList.add('open');
   catOverlay.setAttribute('aria-hidden', 'false');
@@ -534,6 +746,204 @@ catOverlay && catOverlay.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && catOverlay && catOverlay.classList.contains('open')) closeCategory();
+});
+
+/* ── Regalos · El arte de regalar (full-screen overlay) ────── */
+const regalosOverlay = document.getElementById('regalosOverlay');
+function openRegalos() {
+  if (!regalosOverlay) return;
+  regalosOverlay.classList.add('open');
+  regalosOverlay.setAttribute('aria-hidden', 'false');
+  regalosOverlay.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  document.body.style.overflow = 'hidden';
+  regalosOverlay.scrollTop = 0;
+}
+function closeRegalos() {
+  if (!regalosOverlay) return;
+  regalosOverlay.classList.remove('open');
+  regalosOverlay.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+const regalosCloseBtn = document.getElementById('regalosClose');
+regalosCloseBtn && regalosCloseBtn.addEventListener('click', closeRegalos);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && regalosOverlay && regalosOverlay.classList.contains('open')) closeRegalos();
+});
+
+/* ── Preto Maison (full-screen overlay) ────────────────────── */
+const maisonOverlay = document.getElementById('maisonOverlay');
+function openMaison(targetId) {
+  if (!maisonOverlay) return;
+  maisonOverlay.classList.add('open');
+  maisonOverlay.setAttribute('aria-hidden', 'false');
+  maisonOverlay.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  document.body.style.overflow = 'hidden';
+  const sub = targetId && maisonOverlay.querySelector(targetId);
+  if (sub) {
+    requestAnimationFrame(() => {
+      maisonOverlay.scrollTop = sub.offsetTop - 40;
+    });
+  } else {
+    maisonOverlay.scrollTop = 0;
+  }
+}
+function closeMaison() {
+  if (!maisonOverlay) return;
+  maisonOverlay.classList.remove('open');
+  maisonOverlay.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+const maisonCloseBtn = document.getElementById('maisonClose');
+maisonCloseBtn && maisonCloseBtn.addEventListener('click', closeMaison);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && maisonOverlay && maisonOverlay.classList.contains('open')) closeMaison();
+});
+
+/* ── Nuestra historia (full-screen overlay) ────────────────── */
+const historiaOverlay = document.getElementById('historiaOverlay');
+function openHistoria() {
+  if (!historiaOverlay) return;
+  historiaOverlay.classList.add('open');
+  historiaOverlay.setAttribute('aria-hidden', 'false');
+  historiaOverlay.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  document.body.style.overflow = 'hidden';
+  historiaOverlay.scrollTop = 0;
+}
+function closeHistoria() {
+  if (!historiaOverlay) return;
+  historiaOverlay.classList.remove('open');
+  historiaOverlay.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+const historiaCloseBtn = document.getElementById('historiaClose');
+historiaCloseBtn && historiaCloseBtn.addEventListener('click', closeHistoria);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && historiaOverlay && historiaOverlay.classList.contains('open')) closeHistoria();
+});
+
+/* ── Page transition loader (handwritten Preto) ────────────── */
+const pageTransition = document.getElementById('pageTransition');
+let ptTimers = [];
+function playTransition(action) {
+  if (!pageTransition) { if (action) action(); return; }
+  ptTimers.forEach(clearTimeout); ptTimers = [];
+  // restart animations
+  pageTransition.classList.remove('out');
+  void pageTransition.offsetWidth;
+  pageTransition.classList.add('active');
+  pageTransition.setAttribute('aria-hidden', 'false');
+  // run the actual navigation while the screen is fully opaque
+  ptTimers.push(setTimeout(() => { if (action) action(); }, 1150));
+  // lift the screen to reveal the destination
+  ptTimers.push(setTimeout(() => { pageTransition.classList.add('out'); }, 1620));
+  ptTimers.push(setTimeout(() => {
+    pageTransition.classList.remove('active', 'out');
+    pageTransition.setAttribute('aria-hidden', 'true');
+  }, 2200));
+}
+
+/* ── Gift selections (Regalos para él / ella) ──────────────────
+   Curated edits drawn from the existing catalog. Reuses the
+   category overlay shell + var-card markup so it matches.        */
+const GIFT_EDITS = {
+  el: {
+    eyebrow: 'Regalos · Para él',
+    title: ['Regalos para', 'él'],
+    sub: 'Una selección de la casa para los hombres que llevan su identidad como herencia: oro, sastrería y devoción.',
+    ids: ['PRT-CH-RUS', 'DAL-RG-CUB', 'ACC-GE-ONX', 'DAL-PN-CLA', 'PRT-RO-CUE', 'ACC-BA-ONX'],
+  },
+  ella: {
+    eyebrow: 'Regalos · Para ella',
+    title: ['Regalos para', 'ella'],
+    sub: 'Piezas pensadas para acompañar un nombre, una fecha, una historia. Luz cálida del oro chocoano sobre la piel.',
+    ids: ['DAL-CH-LAZ', 'PRT-RG-REL', 'PRT-EA-011', 'DAL-RO-CLA', 'PRT-CH-SIN', 'DAL-BR-018'],
+  },
+};
+
+function openGiftEdit(which) {
+  const edit = GIFT_EDITS[which];
+  if (!edit) return;
+  const items = edit.ids.map(id => COLLECTIONS.find(x => x.id === id)).filter(Boolean);
+
+  catShell.innerHTML = `
+    <header class="cat-head">
+      <button class="cat-back" id="catBack" aria-label="Volver">
+        <span class="arr">←</span> Volver
+      </button>
+      <div class="cat-meta">
+        <span class="eyebrow">${edit.eyebrow}</span>
+        <span class="dot-divider"></span>
+        <span class="eyebrow eyebrow-bone">${String(items.length).padStart(2,'0')} piezas</span>
+      </div>
+      <h2 class="cat-title">${edit.title[0]} <span class="script">${edit.title[1]}</span></h2>
+      <p class="cat-sub">${edit.sub}</p>
+    </header>
+    <div class="cat-grid">
+      ${items.map(p => {
+        const optionsMarkup = (p.sizes && p.sizes.length) ? `
+          <div class="size-row" data-product="${p.id}">
+            <span class="size-label">Medida</span>
+            ${p.sizes.map((s, idx) => `
+              <button class="size-chip ${idx === 1 ? 'active' : ''}" data-size="${s}">${s}</button>
+            `).join('')}
+          </div>` : (p.note ? `
+          <div class="var-note">
+            <span class="note-glyph">✦</span>
+            <span>${p.note}</span>
+          </div>` : '');
+        return `
+          <article class="var-card" data-id="${p.id}">
+            <div class="var-art${p.image ? ' has-image' : ''}" data-label="${p.label}"${p.image ? ` style="background-image:url('${p.image}')"` : ''}></div>
+            <div class="var-body">
+              <div class="var-name">
+                <h3>${p.name}</h3>
+                <span class="var-ref">Ref. ${p.id}</span>
+              </div>
+              <p class="var-blurb">${p.desc || ''}</p>
+              ${optionsMarkup}
+              <button class="var-add" data-id="${p.id}">
+                <span>Añadir a cotización</span>
+                <span class="arrow"></span>
+              </button>
+            </div>
+          </article>`;
+      }).join('')}
+    </div>
+  `;
+
+  catShell.querySelectorAll('.size-row').forEach(row => {
+    row.addEventListener('click', e => {
+      const chip = e.target.closest('.size-chip');
+      if (!chip) return;
+      row.querySelectorAll('.size-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+  catShell.querySelectorAll('.var-add').forEach(b => {
+    b.addEventListener('click', () => {
+      const card = b.closest('.var-card');
+      const activeSize = card.querySelector('.size-chip.active');
+      addToQuote(b.dataset.id, activeSize ? activeSize.dataset.size : null);
+    });
+  });
+  document.getElementById('catBack').addEventListener('click', closeCategory);
+
+  catOverlay.classList.add('open');
+  catOverlay.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+// CTA buttons inside the "El arte de regalar" section
+document.querySelectorAll('[data-gift]').forEach(a => {
+  a.addEventListener('click', e => { e.preventDefault(); openGiftEdit(a.dataset.gift); });
+});
+
+// "Conocer la Maison" CTA inside the historia section → smooth scroll
+document.querySelectorAll('[data-maison-scroll]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    playTransition(() => openMaison());
+  });
 });
 
 /* ── Size chip selection (per card) ────────────────────────── */
@@ -570,21 +980,31 @@ function openWhatsApp(items) {
   const msg = encodeURIComponent(buildWaMessage(items));
   window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank', 'noopener');
 }
-document.getElementById('sendWa').addEventListener('click', () => openWhatsApp(quote));
+// The cotización is sent through the facturación form (datos + privacidad), which
+// then opens WhatsApp with the summary. The quote already lives in localStorage.
+document.getElementById('sendWa').addEventListener('click', () => {
+  window.location.href = 'facturacion.html';
+});
 document.getElementById('waBtn').addEventListener('click', () => {
   if (quote.length) openDrawer();
   else openWhatsApp([]);
 });
 
-/* ── Nav: solid on scroll ──────────────────────────────────── */
+/* ── Nav: solid on scroll + hide on scroll down ────────────── */
 const nav = document.getElementById('nav');
-let navTick = false, navSolid = false;
+let navTick = false, navSolid = false, lastY = window.scrollY, navHidden = false;
 const onScroll = () => {
   if (navTick) return;
   navTick = true;
   requestAnimationFrame(() => {
-    const solid = window.scrollY > 80;
+    const y = window.scrollY;
+    const solid = y > 80;
     if (solid !== navSolid) { navSolid = solid; nav.classList.toggle('solid', solid); }
+    // Hide when scrolling down past the header, reveal when scrolling up
+    const goingDown = y > lastY;
+    const shouldHide = goingDown && y > 160;
+    if (shouldHide !== navHidden) { navHidden = shouldHide; nav.classList.toggle('hidden', shouldHide); }
+    lastY = y;
     navTick = false;
   });
 };
@@ -620,45 +1040,280 @@ if (announceX) {
 renderCount();
 renderDrawer();
 
-/* ── Joyería mega menu ─────────────────────────────────────── */
-const megaTrigger = document.getElementById('joyeriaTrigger');
-const mega        = document.getElementById('joyeriaMega');
-function openMega() {
-  mega.classList.add('open');
-  mega.setAttribute('aria-hidden', 'false');
-  megaTrigger.setAttribute('aria-expanded', 'true');
-}
-function closeMega() {
-  mega.classList.remove('open');
-  mega.setAttribute('aria-hidden', 'true');
-  megaTrigger.setAttribute('aria-expanded', 'false');
-}
-if (megaTrigger && mega) {
-  megaTrigger.addEventListener('click', e => {
+/* ── Mega menus (Joyería · Accesorios) ─────────────────────── */
+const MEGAS = [];
+function setupMega(triggerId, megaId) {
+  const trigger = document.getElementById(triggerId);
+  const mega    = document.getElementById(megaId);
+  if (!trigger || !mega) return null;
+
+  const close = () => {
+    mega.classList.remove('open');
+    mega.setAttribute('aria-hidden', 'true');
+    trigger.setAttribute('aria-expanded', 'false');
+  };
+  const open = () => {
+    MEGAS.forEach(m => { if (m && m.mega !== mega) m.close(); });  // only one open
+    mega.classList.add('open');
+    mega.setAttribute('aria-hidden', 'false');
+    trigger.setAttribute('aria-expanded', 'true');
+    // On mobile the menu is a bottom sheet — scroll the opened panel into view.
+    if (window.innerWidth <= 600) {
+      const sheet = document.querySelector('.nav-drawer');
+      if (sheet) {
+        setTimeout(() => {
+          const sr = sheet.getBoundingClientRect();
+          const mr = mega.getBoundingClientRect();
+          const headH = (sheet.querySelector('.nav-mobile-head') || {}).offsetHeight || 64;
+          const delta = (mr.top - sr.top) - headH - 8;
+          sheet.scrollTo({ top: sheet.scrollTop + delta, behavior: 'smooth' });
+        }, 80);
+      }
+    }
+  };
+
+  trigger.addEventListener('click', e => {
     e.stopPropagation();
-    mega.classList.contains('open') ? closeMega() : openMega();
+    mega.classList.contains('open') ? close() : open();
   });
-  // Smooth-scroll to the chosen collection, then close
+
   mega.querySelectorAll('.mega-item').forEach(item => {
     item.addEventListener('click', e => {
       e.preventDefault();
-      const id = item.getAttribute('href').slice(1);   // e.g. card-PRT-CH-001
-      const card = document.getElementById(id);
-      const productId = id.replace('card-', '');
-      closeMega();
-      if (card && card.classList.contains('has-variants')) {
-        openCategory(productId);     // chains, rings → full catalog
-      } else if (card) {
-        openProduct(productId);      // single pieces → detail view
+      const href = item.getAttribute('href') || '';
+      close();
+      let action;
+      // Gift selections → curated edit overlay
+      if (href === '#gift-el' || href === '#gift-ella') {
+        action = () => openGiftEdit(href === '#gift-el' ? 'el' : 'ella');
+      } else if (href === '#regalos') {
+        // El arte de regalar → full-screen overlay
+        action = openRegalos;
+      } else if (href === '#maison' || href === '#sostenibilidad') {
+        // Preto Maison (La Maison / Sostenibilidad) → full-screen overlay
+        action = () => openMaison(href === '#sostenibilidad' ? '#sostenibilidad' : null);
+      } else if (href === '#historia') {
+        // Nuestra historia → full-screen overlay
+        action = openHistoria;
+      } else if (!href.startsWith('#card-')) {
+        // Section anchors → jump (behind the loader, then reveal)
+        action = () => {
+          const target = document.querySelector(href);
+          if (target) {
+            const top = target.getBoundingClientRect().top + window.scrollY - 80;
+            window.scrollTo({ top, behavior: 'auto' });
+          }
+        };
+      } else {
+        const productId = href.slice(1).replace('card-', '');
+        const prod = COLLECTIONS.find(x => x.id === productId);
+        action = () => {
+          if (prod && prod.variants) openCategory(productId);   // familias → catálogo
+          else if (prod) openProduct(productId);                // pieza única → ficha
+        };
       }
+      playTransition(action);
     });
   });
-  // Close on outside click / Escape
-  document.addEventListener('click', e => {
-    if (mega.classList.contains('open') &&
-        !mega.contains(e.target) && e.target !== megaTrigger) closeMega();
+
+  const api = { open, close, trigger, mega };
+  MEGAS.push(api);
+  return api;
+}
+
+setupMega('joyeriaTrigger', 'joyeriaMega');
+setupMega('accesoriosTrigger', 'accesoriosMega');
+setupMega('maisonTrigger', 'maisonMega');
+setupMega('regalosTrigger', 'regalosMega');
+document.addEventListener('click', e => {
+  MEGAS.forEach(m => {
+    if (m.mega.classList.contains('open') && !m.mega.contains(e.target) && e.target !== m.trigger) m.close();
   });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && mega.classList.contains('open')) closeMega();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') MEGAS.forEach(m => m.close());
+});
+
+/* ── Mobile hamburger menu ─────────────────────────────────── */
+const navEl = document.querySelector('.nav');
+const navBurger = document.getElementById('navBurger');
+function closeMobileMenu() {
+  if (!navEl) return;
+  navEl.classList.remove('menu-open');
+  document.body.classList.remove('nav-locked');
+  navBurger && navBurger.setAttribute('aria-expanded', 'false');
+  MEGAS.forEach(m => m.close());
+}
+if (navBurger && navEl) {
+  navBurger.addEventListener('click', e => {
+    e.stopPropagation();
+    const open = navEl.classList.toggle('menu-open');
+    document.body.classList.toggle('nav-locked', open);
+    navBurger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (!open) MEGAS.forEach(m => m.close());
+  });
+  // Sheet handle close button + dimmed scrim both dismiss the menu
+  const navMobileCloseBtn = document.getElementById('navMobileClose');
+  navMobileCloseBtn && navMobileCloseBtn.addEventListener('click', closeMobileMenu);
+  const navScrim = document.getElementById('navScrim');
+  navScrim && navScrim.addEventListener('click', closeMobileMenu);
+  // Close the drawer when a final navigation happens
+  document.querySelectorAll('.nav-mega .mega-item').forEach(it => {
+    it.addEventListener('click', closeMobileMenu);
+  });
+  const destacados = document.querySelector('.nav-bottom a[href="#collections"]');
+  destacados && destacados.addEventListener('click', closeMobileMenu);
+  const searchBtn = document.getElementById('openSearch');
+  searchBtn && searchBtn.addEventListener('click', closeMobileMenu);
+  // Tap outside the nav closes the drawer
+  document.addEventListener('click', e => {
+    if (navEl.classList.contains('menu-open') && !navEl.contains(e.target)) closeMobileMenu();
   });
 }
+
+/* ── Search (lupa) ─────────────────────────────────────────────
+   Index every individual piece (leaf products + variants), so a
+   query like "lazo religioso preto" surfaces exactly the matching
+   chains/rings rather than a whole category.                      */
+const SYNONYMS = {
+  CHAIN:    'cadena collar necklace',
+  ROSARY:   'rosario rosary devocional crucifijo cruz religioso',
+  RING:     'anillo ring sortija',
+  SACRA:    'religioso religioso devocional cruz dije',
+  BRACELET: 'pulsera brazalete bracelet hilo',
+  EARRINGS: 'pendientes aretes zarcillos earrings',
+  PEN:      'boligrafo bolígrafo pluma lapicero pen',
+  TIE:      'barra corbata tie',
+  CUFFLINKS:'gemelos mancuernas cufflinks',
+  LAPEL:    'insignia pin solapa broche',
+};
+const norm = s => (s || '')
+  .toLowerCase()
+  .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // strip accents
+  .replace(/&/g, ' ');
+
+// Build the index from the flat catalog, dropping the category
+// "parent" entries (those that fan out into variants) so results
+// are concrete pieces, not duplicated families.
+const SEARCH_INDEX = COLLECTIONS
+  .filter(p => !p.variants)
+  .map(p => {
+    let extra = '';
+    (p.label || '').split(/[^A-Za-z]+/).forEach(tok => {
+      const key = tok.toUpperCase();
+      if (SYNONYMS[key]) extra += ' ' + SYNONYMS[key];
+    });
+    const hay = norm([p.name, p.label, p.col, p.line, p.desc, extra].join(' '));
+    return { p, hay, name: norm(p.name) };
+  });
+
+function runSearch(raw) {
+  const q = norm(raw).trim();
+  const tokens = q.split(/\s+/).filter(Boolean);
+  if (!tokens.length) return [];
+  // Prefer pieces matching ALL tokens; fall back to ANY-token ranking.
+  const scored = SEARCH_INDEX.map(item => {
+    let hits = 0;
+    tokens.forEach(t => { if (item.hay.includes(t)) hits++; });
+    let score = hits;
+    if (item.name.includes(q)) score += 5;        // strong: full phrase in name
+    if (item.name.startsWith(tokens[0])) score += 1;
+    return { item, hits, score };
+  });
+  const all = scored.filter(s => s.hits === tokens.length);
+  const pool = all.length ? all : scored.filter(s => s.hits > 0);
+  return pool
+    .sort((a, b) => b.score - a.score || a.item.p.name.localeCompare(b.item.p.name))
+    .map(s => s.item.p);
+}
+
+const searchOverlay = document.getElementById('searchOverlay');
+const searchInput   = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+const searchMeta    = document.getElementById('searchMeta');
+const searchSuggest = document.getElementById('searchSuggest');
+
+function renderSearch(list, q) {
+  if (!q.trim()) {
+    searchResults.innerHTML = '';
+    searchMeta.textContent = '';
+    searchSuggest.style.display = '';
+    return;
+  }
+  searchSuggest.style.display = 'none';
+  if (!list.length) {
+    searchMeta.textContent = '';
+    searchResults.innerHTML = `
+      <div class="search-empty">
+        <div class="glyph">Preto</div>
+        <p>No encontramos piezas para «${q}».</p>
+        <p class="sub">Pruebe con «cadena», «rosario», «anillo religioso» o el nombre de una línea.</p>
+      </div>`;
+    return;
+  }
+  searchMeta.innerHTML = `<span class="gold">${String(list.length).padStart(2,'0')}</span> &nbsp;pieza${list.length === 1 ? '' : 's'} encontrada${list.length === 1 ? '' : 's'}`;
+  searchResults.innerHTML = list.map(p => {
+    const art = p.image
+      ? `<div class="sr-art has-image" style="background-image:url('${p.image}')"></div>`
+      : `<div class="sr-art" data-label="${p.label}"></div>`;
+    return `
+      <article class="sr-card" data-id="${p.id}">
+        ${art}
+        <div class="sr-info">
+          <h3 class="sr-name">${p.name}</h3>
+          <p class="sr-spec">${p.label}</p>
+          <p class="sr-cta">Bajo cotización</p>
+        </div>
+      </article>`;
+  }).join('');
+  searchResults.querySelectorAll('.sr-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const id = card.dataset.id;
+      closeSearch();
+      const prod = COLLECTIONS.find(x => x.id === id);
+      if (prod && prod.variants) openCategory(id);
+      else openProduct(id);
+    });
+  });
+}
+
+let searchDebounce;
+function doSearch() {
+  const q = searchInput.value;
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(() => renderSearch(runSearch(q), q), 90);
+}
+
+function openSearch() {
+  searchOverlay.classList.add('open');
+  searchOverlay.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => searchInput.focus(), 80);
+}
+function closeSearch() {
+  searchOverlay.classList.remove('open');
+  searchOverlay.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('openSearch').addEventListener('click', openSearch);
+document.getElementById('searchClose').addEventListener('click', closeSearch);
+searchOverlay.querySelectorAll('[data-search-close]').forEach(el => el.addEventListener('click', closeSearch));
+searchInput.addEventListener('input', doSearch);
+searchInput.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSearch();
+  if (e.key === 'Enter') {
+    const first = searchResults.querySelector('.sr-card');
+    if (first) first.click();
+  }
+});
+searchSuggest.querySelectorAll('.sg-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    searchInput.value = chip.dataset.q;
+    searchInput.focus();
+    doSearch();
+  });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && searchOverlay.classList.contains('open')) closeSearch();
+});

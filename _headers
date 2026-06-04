@@ -1,0 +1,19 @@
+# Imágenes y fuentes: caché de 1 año
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# CSS y JS: revalidar siempre (cambios al instante)
+/styles.css
+  Cache-Control: public, max-age=0, must-revalidate
+/app.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+# HTML: siempre revalidar
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Cabeceras de seguridad para todo el sitio
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
