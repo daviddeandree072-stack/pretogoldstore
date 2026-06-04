@@ -1156,6 +1156,15 @@ setupMega('joyeriaTrigger', 'joyeriaMega');
 setupMega('accesoriosTrigger', 'accesoriosMega');
 setupMega('maisonTrigger', 'maisonMega');
 setupMega('regalosTrigger', 'regalosMega');
+
+// Logo → volver SIEMPRE al inicio de todo (y cerrar el menú móvil si está abierto)
+document.querySelectorAll('.nav-mark').forEach(logo => {
+  logo.addEventListener('click', e => {
+    e.preventDefault();
+    try { if (typeof closeMobileMenu === 'function') closeMobileMenu(); } catch (_) {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
 document.addEventListener('click', e => {
   MEGAS.forEach(m => {
     if (m.mega.classList.contains('open') && !m.mega.contains(e.target) && e.target !== m.trigger) m.close();
