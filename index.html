@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Preto by Dala&Co — Joyería de Autor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Pinyon+Script&family=Inter:wght@200;300;400;500&display=swap" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ── ANNOUNCEMENT BAR ─────────────────────────────────────── -->
+<div class="announce" id="announce" data-comment-anchor="announce-bar">
+  <span class="announce-msg">
+    No uses accesorios. Usa presencia.
+  </span>
+  <button class="announce-x" id="announceX" aria-label="Cerrar aviso">×</button>
+</div>
+
+<!-- ── NAV ──────────────────────────────────────────────────── -->
+<nav class="nav" id="nav">
+  <div class="nav-top">
+    <div class="nav-top-left">
+      <span class="nav-contact">+57 322 695 5451</span>
+      <span class="nav-sep">·</span>
+      <a class="nav-contact" href="#contact">Boutique</a>
+    </div>
+    <a class="nav-mark" href="#top">
+      <img src="assets/preto-logo-black.png" alt="Preto" />
+      <span class="by">by Dala&amp;Co</span>
+    </a>
+    <div class="nav-top-right">
+      <button class="nav-icon" id="openAccount" aria-label="Cuenta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="3.4"></circle>
+          <path d="M5.5 19.5c0-3.4 2.9-5.4 6.5-5.4s6.5 2 6.5 5.4"></path>
+        </svg>
+      </button>
+      <button class="nav-icon" id="openWishlist" aria-label="Favoritos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20.2 4.6 12.8a4.3 4.3 0 0 1 6.1-6.1l1.3 1.3 1.3-1.3a4.3 4.3 0 0 1 6.1 6.1Z"></path>
+        </svg>
+      </button>
+      <button class="nav-icon" id="openCart" data-comment-anchor="cart-btn" aria-label="Cotización">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6.5 8h11l-1 11.5a1 1 0 0 1-1 .9H8.5a1 1 0 0 1-1-.9Z"></path>
+          <path d="M9 8V6.6a3 3 0 0 1 6 0V8"></path>
+        </svg>
+        <span class="dot" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-bottom">
+    <button class="nav-link nav-trigger" id="joyeriaTrigger" aria-expanded="false" aria-controls="joyeriaMega">Joyería</button>
+    <a class="nav-link" href="#collections">Accesorios</a>
+    <a class="nav-link" href="#world">Preto Maison</a>
+    <a class="nav-link" href="#collections">Destacados</a>
+    <a class="nav-link" href="#contact">Regalos</a>
+  </div>
+  <div class="nav-mega" id="joyeriaMega" aria-hidden="true">
+    <div class="mega-inner">
+      <div class="mega-head">
+        <span class="mega-eyebrow">Joyería</span>
+        <h4 class="mega-title">Colecciones</h4>
+      </div>
+      <div class="mega-cols">
+        <div class="mega-col">
+          <span class="mega-line">Preto</span>
+          <a class="mega-item" href="#card-PRT-CH-001">Cadenas Preto</a>
+          <a class="mega-item" href="#card-PRT-RG-003">Anillos Preto</a>
+          <a class="mega-item" href="#card-PRT-BR-007">Pulseras Hilo Preto</a>
+          <a class="mega-item" href="#card-PRT-EA-011">Pendientes Preto</a>
+        </div>
+        <div class="mega-col">
+          <span class="mega-line">Dala&amp;Co</span>
+          <a class="mega-item" href="#card-DAL-CH-002">Cadenas Dala&amp;Co</a>
+          <a class="mega-item" href="#card-DAL-RG-014">Anillos Dala&amp;Co</a>
+          <a class="mega-item" href="#card-DAL-BR-018">Pulseras Hilo Dala&amp;Co</a>
+          <a class="mega-item" href="#card-DAL-EA-021">Pendientes Dala&amp;Co</a>
+          <a class="mega-item" href="#card-DAL-PN-030">Bolígrafo Dala&amp;Co</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<header class="hero grain" id="top" data-screen-label="01 Hero">
+  <div class="hero-bg"></div>
+  <div class="hero-piece"></div>
+
+  <div class="hero-meta">
+    Edición&nbsp;&nbsp;·&nbsp;&nbsp;<span>VOL. 01</span>&nbsp;&nbsp;·&nbsp;&nbsp;Chocó / Bogotá
+  </div>
+
+  <div class="hero-content">
+    <div class="eyebrow">Casa de Alta Joyería · Desde Chocó</div>
+    <h1 class="hero-title">
+      <span class="line">Joyería premium</span>
+      <span class="line">con esencia urbana</span>
+      <span class="line">y lujo <em class="script">exclusivo.</em></span>
+    </h1>
+    <p class="hero-sub">
+      El oro chocoano convertido en arte. Joyería de autor pensada para
+      quienes llevan su identidad como una herencia.
+    </p>
+  </div>
+
+  <div class="hero-base">
+    <div class="ticker">
+      <span>Otoño / Invierno · MMXXVI</span>
+      <span class="dot-sm"></span>
+      <span>Colección Raíz</span>
+      <span class="dot-sm"></span>
+      <span>Hecho en Colombia</span>
+    </div>
+    <div class="scroll-cue">
+      <span>SCROLL</span>
+      <div class="bar"></div>
+    </div>
+  </div>
+</header>
+
+<!-- ── BRAND STORY: split universe ──────────────────────────── -->
+<section id="world" class="split" data-screen-label="02 Universe">
+  <div class="split-pane preto grain">
+    <div>
+      <div class="pane-mark">— I · La Línea Oscura</div>
+      <h2 class="pane-title">
+        Preto<span class="script">.</span>
+      </h2>
+      <p class="pane-body">
+        Inspirada en lo urbano, esta línea destaca la autenticidad.
+        Preto representa la fuerza del oro chocoano transformado en
+        elegancia nocturna: piedras negras, contornos limpios, una
+        presencia inconfundible.
+      </p>
+    </div>
+    <div class="pane-img" data-label="PRETO · NOCTURNE 02"></div>
+    <a class="pane-cta" href="#collections" data-line="preto">
+      Descubrir Preto <span class="arrow"></span>
+    </a>
+  </div>
+
+  <div class="split-pane dala">
+    <div>
+      <div class="pane-mark">— II · La Línea Íntima</div>
+      <h2 class="pane-title">
+        Dala<span class="script">&amp;Co</span>
+      </h2>
+      <p class="pane-body">
+        Un concepto de sofisticación pura, enfocado en la
+        personalización y la exclusividad. Aquí, cada pieza es una obra
+        única, diseñada para reflejar tu esencia con elegancia.
+      </p>
+    </div>
+    <div class="pane-img" data-label="DALA · PIECE NO. 14"></div>
+    <a class="pane-cta" href="#collections" data-line="dala">
+      Descubrir Dala&amp;Co <span class="arrow"></span>
+    </a>
+  </div>
+</section>
+
+<!-- ── COLLECTIONS ──────────────────────────────────────────── -->
+<section id="collections" class="grain" data-screen-label="03 Collections">
+  <div class="carousel-top">
+    <button class="discover-btn" type="button">Descubrir la colección 2026</button>
+  </div>
+
+  <div class="carousel-panel">
+    <div class="carousel-track" id="collGrid">
+      <!-- product cards injected by JS -->
+    </div>
+    <button class="car-nav prev" id="carPrev" type="button" aria-label="Anterior">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"></path></svg>
+    </button>
+    <button class="car-nav next" id="carNext" type="button" aria-label="Siguiente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+    </button>
+    <div class="carousel-progress"><span class="bar" id="carBar"></span></div>
+  </div>
+</section>
+
+<!-- ── EDITORIAL PULL QUOTE ─────────────────────────────────── -->
+<section class="pull">
+  <blockquote>
+    “Llevamos el oro de nuestros ríos<br/>
+    como se lleva un <span class="script">apellido.</span>”
+  </blockquote>
+  <cite>— Manifiesto Preto · Edición VOL. 01</cite>
+</section>
+
+<!-- ── HERITAGE / CHOCÓ ─────────────────────────────────────── -->
+<section id="heritage" class="heritage grain" data-screen-label="04 Heritage">
+  <div class="heritage-grid">
+    <div class="heritage-left">
+      <div class="eyebrow">— 04 · Herencia</div>
+      <h2>
+        Hijos del oro
+        <span class="script">chocoano.</span>
+      </h2>
+      <p>
+        En las orillas del río Atrato, generaciones de mineras
+        artesanales sostienen un saber que precede la palabra
+        <em>lujo</em>. Cada pieza Preto nace de ese gesto: lavar el
+        oro, escucharlo, dejarlo hablar.
+      </p>
+      <p>
+        No es una colección. Es una conversación entre la selva, la
+        ciudad y la mano que talla.
+      </p>
+
+      <div class="heritage-stats">
+        <div class="stat">
+          <div class="n">18k</div>
+          <div class="l">Oro de Chocó</div>
+        </div>
+        <div class="stat">
+          <div class="n">07</div>
+          <div class="l">Maestras orfebres</div>
+        </div>
+        <div class="stat">
+          <div class="n">1·1</div>
+          <div class="l">Pieza única</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="heritage-right">
+      <div class="heritage-tag">
+        <span>RÍO ATRATO · 5.6921° N</span>
+        <span>SERIE / RAÍZ</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ATELIER / CUSTOM ─────────────────────────────────────── -->
+<section id="atelier" class="atelier grain" data-screen-label="05 Atelier">
+  <div class="atelier-head">
+    <h2>
+      Atelier
+      <span class="script">privado.</span>
+    </h2>
+    <div>
+      <p>
+        Para piezas únicas, recibimos a cada cliente en una experiencia
+        privada. Del primer boceto al engaste final, una sola
+        conversación: la suya con su joya.
+      </p>
+      <a class="pane-cta" href="#contact" style="color: #f3efe7; margin-top: 8px;">
+        Reservar cita privada <span class="arrow"></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="atelier-steps">
+    <div class="step">
+      <div class="num">— 01 ·</div>
+      <h4>Conversación</h4>
+      <p>Una llamada con un asesor para escuchar la historia detrás de la pieza que imagina.</p>
+    </div>
+    <div class="step">
+      <div class="num">— 02 ·</div>
+      <h4>Boceto a mano</h4>
+      <p>Nuestra directora artística traduce su esencia en un dibujo único, firmado.</p>
+    </div>
+    <div class="step">
+      <div class="num">— 03 ·</div>
+      <h4>Orfebrería</h4>
+      <p>Manos de Chocó funden el oro y engastan piedra a piedra durante semanas.</p>
+    </div>
+    <div class="step">
+      <div class="num">— 04 ·</div>
+      <h4>Entrega</h4>
+      <p>Recibe su pieza en estuche numerado, acompañada de su certificado de origen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── CAMPAIGN STRIP ───────────────────────────────────────── -->
+<section class="campaign grain" id="story" data-screen-label="06 Campaign">
+  <div class="campaign-img"></div>
+  <div class="campaign-copy">
+    <div class="eyebrow">— 06 · Campaña SS·MMXXVI</div>
+    <h3>
+      Lujo nacido de la
+      <span class="script">identidad.</span>
+    </h3>
+    <p>
+      Una serie editorial filmada entre las orillas del Atrato y los
+      tejados de Bogotá. Cuerpos, ríos, oro. Un solo gesto.
+    </p>
+    <a class="pane-cta" href="#" style="color: #111111;">
+      Ver la campaña completa <span class="arrow"></span>
+    </a>
+  </div>
+</section>
+
+<!-- ── NEWSLETTER ───────────────────────────────────────────── -->
+<section class="newsletter" id="contact">
+  <h3>
+    Reciba primero<br/>la próxima <span class="script">edición.</span>
+  </h3>
+  <p>
+    Acceso anticipado a piezas únicas, invitaciones privadas a
+    nuestro atelier y conversaciones con la casa.
+  </p>
+  <form class="news-form" onsubmit="event.preventDefault(); this.querySelector('input').value=''; alert('Gracias. Pronto recibirá noticias de la casa.');">
+    <input type="email" placeholder="su correo electrónico" required />
+    <button type="submit">Suscribirse <span class="arr"></span></button>
+  </form>
+</section>
+
+<!-- ── FOOTER ───────────────────────────────────────────────── -->
+<footer>
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <img src="assets/preto-logo-white.png" alt="Preto" />
+      <p>
+        Casa de alta joyería fundada entre Chocó y Bogotá. Oro
+        ancestral, talla contemporánea.
+      </p>
+    </div>
+    <div class="foot-col">
+      <h5>Casa</h5>
+      <ul>
+        <li>El Universo</li>
+        <li>Manifiesto</li>
+        <li>Atelier privado</li>
+        <li>Herencia Chocó</li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>Colecciones</h5>
+      <ul>
+        <li>Preto · Nocturne</li>
+        <li>Dala&amp;Co · Íntima</li>
+        <li>Raíz · Ancestral</li>
+        <li>Pieza única</li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>Concierge</h5>
+      <ul>
+        <li>Instagram</li>
+        <li>WhatsApp</li>
+        <li>+57 (1) 000 0000</li>
+        <li>concierge@preto.co</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-base">
+    <span>© MMXXVI · Preto by Dala&amp;Co · <span class="gold">Hecho en Colombia</span></span>
+    <span>Política · Términos · Envíos</span>
+  </div>
+</footer>
+
+<!-- ── WHATSAPP FLOATING BUTTON ─────────────────────────────── -->
+<button class="wa" id="waBtn" data-comment-anchor="wa-btn" aria-label="Hablar por WhatsApp">
+  <span class="icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.815 9.815 0 0 0 12.04 2zm0 18.15c-1.53 0-3.03-.41-4.34-1.19l-.31-.18-3.22.84.86-3.13-.2-.32a8.21 8.21 0 0 1-1.26-4.36c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.83c.02 4.55-3.68 8.24-8.21 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42-.14 0-.31-.02-.48-.02-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.41 1.01 2.57.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.05-.1-.21-.16-.46-.28z"/>
+    </svg>
+  </span>
+  <span class="labels">
+    <span class="lbl-1">Concierge</span>
+    <span class="lbl-2">Hablar con la casa</span>
+  </span>
+</button>
+
+<!-- ── QUOTE DRAWER ─────────────────────────────────────────── -->
+<div class="drawer-veil" id="veil"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <div class="ttl">Su <span class="script">cotización.</span></div>
+    <button class="close" id="closeDrawer">Cerrar</button>
+  </div>
+  <p class="drawer-sub">
+    No es un carrito: es el inicio de una conversación privada con
+    nuestra casa.
+  </p>
+  <div class="drawer-items" id="drawerItems"></div>
+  <div class="drawer-foot">
+    <p>
+      Al solicitar la cotización, recibirá atención personalizada de
+      un asesor por WhatsApp. Ningún cargo automático.
+    </p>
+    <button class="btn-gold" id="sendWa">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.815 9.815 0 0 0 12.04 2zM16.56 14c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42-.14 0-.31-.02-.48-.02-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.41 1.01 2.57.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.05-.1-.21-.16-.46-.28z"/></svg>
+      Enviar a WhatsApp
+    </button>
+    <button class="btn-ghost" id="clearQuote">Vaciar cotización</button>
+  </div>
+</aside>
+
+<!-- ── CATEGORY OVERLAY (variants drill-down) ───────────────── -->
+<div class="cat-overlay" id="catOverlay" aria-hidden="true">
+  <div class="cat-shell grain" id="catShell"></div>
+</div>
+
+<!-- ── PRODUCT DETAIL (enlarge + describe) ──────────────────── -->
+<div class="pdp-overlay" id="pdpOverlay" aria-hidden="true">
+  <div class="pdp-veil" data-pdp-close></div>
+  <div class="pdp-shell" role="dialog" aria-modal="true" aria-labelledby="pdpName">
+    <button class="pdp-close" id="pdpClose" aria-label="Cerrar">Cerrar ×</button>
+    <div class="pdp-media">
+      <div class="pdp-art" id="pdpArt"></div>
+    </div>
+    <div class="pdp-info">
+      <span class="pdp-eyebrow" id="pdpRef">Ref.</span>
+      <h3 class="pdp-name" id="pdpName">Pieza</h3>
+      <span class="pdp-spec" id="pdpSpec">SPEC</span>
+      <p class="pdp-desc" id="pdpDesc"></p>
+      <div class="pdp-variants" id="pdpVariants"></div>
+      <div class="pdp-actions">
+        <button class="pdp-primary" id="pdpPrimary">Añadir a cotización</button>
+        <button class="pdp-ghost" id="pdpWa">Consultar por WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
