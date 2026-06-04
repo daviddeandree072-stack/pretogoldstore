@@ -2292,6 +2292,8 @@ footer {
   .nav.menu-open .nav-drawer { transform: translateY(0); visibility: visible; }
   /* Evita que la barra (con su transform) "atrape" al panel y lo mande arriba */
   .nav.menu-open { transform: none !important; }
+  /* Con el menú abierto, ocultar el botón flotante (no debe tapar las opciones) */
+  .nav.menu-open ~ .nav-fab { display: none; }
 
   /* Grab handle + title + close, pinned to the top of the sheet */
   .nav-mobile-head {
@@ -2363,15 +2365,10 @@ footer {
   .nav-divider { display: none; }
   .nav-link { font-size: 10px; letter-spacing: 0.16em; padding: 2px 0; }
 
-  /* Keep the three main shopping categories at the BOTTOM of the sheet,
-     in easy thumb reach; secondary links sit above. */
-  .nav-bottom a[href="#collections"] { order: 1; }
-  #regalosTrigger { order: 2; }
-  #openSearch     { order: 3; }
-  #joyeriaTrigger    { order: 4; }
-  #accesoriosTrigger { order: 5; }
-  #maisonTrigger     { order: 6; }
+  /* Acordeón móvil: el submenú se mueve (vía JS) justo bajo su categoría */
   .nav-mega.open { max-height: 800px; }
+  .nav-bottom .nav-mega { width: 100%; flex: 0 0 100%; border-top: 0; }
+  .nav-bottom .nav-mega.open { border-top: 1px solid rgba(17,17,17,0.07); }
 
   .mega-inner, .nav-mega.open .mega-inner { padding-left: 16px; padding-right: 16px; }
   .mega-cols { gap: 28px; }

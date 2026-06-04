@@ -1047,13 +1047,22 @@ function setupMega(triggerId, megaId) {
   const mega    = document.getElementById(megaId);
   if (!trigger || !mega) return null;
 
+  // Posición original del submenú (para devolverlo en desktop / al cerrar)
+  const megaHomeParent = mega.parentNode;
+  const megaHomeNext = mega.nextSibling;
+  const restoreMega = () => { if (mega.parentNode !== megaHomeParent) megaHomeParent.insertBefore(mega, megaHomeNext); };
+
   const close = () => {
     mega.classList.remove('open');
     mega.setAttribute('aria-hidden', 'true');
     trigger.setAttribute('aria-expanded', 'false');
+    restoreMega();
   };
   const open = () => {
     MEGAS.forEach(m => { if (m && m.mega !== mega) m.close(); });  // only one open
+    // En celular, abrir el submenú JUSTO debajo de su categoría (acordeón)
+    if (window.innerWidth <= 600) trigger.insertAdjacentElement('afterend', mega);
+    else restoreMega();
     mega.classList.add('open');
     mega.setAttribute('aria-hidden', 'false');
     trigger.setAttribute('aria-expanded', 'true');
@@ -1073,8 +1082,30 @@ function setupMega(triggerId, megaId) {
   };
 
   trigger.addEventListener('click', e => {
-    e.stopPropagation();
-    mega.classList.contains('open') ? close() : open();
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    const wasOpen = mega.classList.contains('open');
+    // cerrar todos
+    MEGAS.forEach(m => {
+      m.mega.classList.remove('open');
+      m.mega.setAttribute('aria-hidden', 'true');
+      m.trigger.setAttribute('aria-expanded', 'false');
+      if (m.restoreMega) m.restoreMega();
+    });
+    if (!wasOpen) {
+      if (window.innerWidth <= 600) trigger.insertAdjacentElement('afterend', mega);
+      mega.classList.add('open');
+      mega.setAttribute('aria-hidden', 'false');
+      trigger.setAttribute('aria-expanded', 'true');
+      if (window.innerWidth <= 600) {
+        const sheet = document.querySelector('.nav-drawer');
+        if (sheet) setTimeout(() => {
+          const sr = sheet.getBoundingClientRect();
+          const mr = trigger.getBoundingClientRect();
+          sheet.scrollTo({ top: sheet.scrollTop + (mr.top - sr.top) - 70, behavior: 'smooth' });
+        }, 90);
+      }
+    }
   });
 
   mega.querySelectorAll('.mega-item').forEach(item => {
@@ -1116,7 +1147,7 @@ function setupMega(triggerId, megaId) {
     });
   });
 
-  const api = { open, close, trigger, mega };
+  const api = { open, close, trigger, mega, restoreMega };
   MEGAS.push(api);
   return api;
 }
