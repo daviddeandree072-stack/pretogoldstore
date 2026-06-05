@@ -95,6 +95,20 @@
   .cot-piece .ref { display: block; font-family: var(--sans); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(17,17,17,0.45); margin-top: 5px; }
   .cot-qty { font-family: var(--sans); font-size: 12px; letter-spacing: 0.08em; color: rgba(17,17,17,0.55); white-space: nowrap; padding-top: 3px; }
 
+  .cot-price { display:block; text-align:right; font-family: var(--serif); font-size: 15px; color: var(--bone); margin-top: 4px; }
+  .cot-tot { margin-top: 6px; padding-top: 14px; border-top: 1px solid rgba(17,17,17,0.12); }
+  .cot-tot-row { display:flex; justify-content:space-between; padding: 5px 0; font-family: var(--sans); font-size: 13px; color: rgba(17,17,17,0.7); }
+  .cot-tot-row.grand { margin-top: 6px; padding-top: 12px; border-top: 1px solid rgba(17,17,17,0.2); font-family: var(--serif); font-size: 20px; color: var(--bone); }
+  .cot-tot-note { font-family: var(--sans); font-size: 11px; color: rgba(17,17,17,0.5); margin-top: 8px; }
+  .done-pay { margin: 6px auto 24px; max-width: 470px; text-align: left; background: #F5F5F0; border: 1px solid rgba(17,17,17,0.08); padding: 20px 22px; }
+  .done-pay-title { font-family: var(--sans); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-deep); }
+  .done-pay-grid { display: grid; gap: 14px; margin-top: 14px; }
+  .done-pay-grid > div { display:flex; flex-direction:column; }
+  .done-pay-grid b { font-family: var(--sans); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(17,17,17,0.55); font-weight: 500; }
+  .done-pay-grid span { font-family: var(--serif); font-size: 19px; color: var(--bone); margin-top: 2px; }
+  .done-pay-grid small { font-family: var(--sans); font-size: 11px; color: rgba(17,17,17,0.5); margin-top: 2px; }
+  .done-pay-note { font-family: var(--sans); font-size: 11px; color: rgba(17,17,17,0.5); margin-top: 14px; }
+
   @media (max-width: 600px) {
     .fact-form { grid-template-columns: 1fr; gap: 22px; }
   }
@@ -198,6 +212,15 @@
     <div class="glyph">Preto</div>
     <h2>Cotización enviada.</h2>
     <p>Gracias. Hemos recibido sus datos y su cotización. Abrimos WhatsApp para finalizar la conversación con un asesor; si no se abrió, escríbanos al +57 322 695 5451.</p>
+    <div class="done-pay">
+      <span class="done-pay-title">Datos para tu pago</span>
+      <div class="done-pay-grid">
+        <div><b>Bancolombia · Ahorros</b><span>912-395939-71</span><small>David Andrés Lozano Mena</small></div>
+        <div><b>Nequi</b><span>322 695 5451</span><small>David Andrés Lozano Mena</small></div>
+        <div><b>Nu · Llave</b><span>@DLM777</span><small>Transferencia con llave</small></div>
+      </div>
+      <p class="done-pay-note">Envío nacional sin costo · Solo se cobra el seguro del producto.</p>
+    </div>
     <a href="#" id="pdfRedownload" class="fact-pdf-link" hidden>↓ Descargar mi cotización en PDF</a>
     <a href="index.html">← Volver a la tienda</a>
   </div>
@@ -215,12 +238,28 @@
     var quote = [];
     try { quote = JSON.parse(localStorage.getItem(QKEY) || '[]'); } catch (e) { quote = []; }
 
+    /* ── Precios, seguro y datos bancarios ───────────────── */
+    var INSURANCE_RATE = 0.02; // ← mismo % que en app.js. 0.02 = 2 %
+    var BANK = [
+      { name:'Bancolombia · Ahorros', num:'912-395939-71', sub:'David Andrés Lozano Mena' },
+      { name:'Nequi',                 num:'322 695 5451',  sub:'David Andrés Lozano Mena' },
+      { name:'Nu · Llave',            num:'@DLM777',       sub:'Transferencia con llave' }
+    ];
+    function fmtCOP(n){ try { return '$' + Math.round(n).toLocaleString('es-CO'); } catch(e){ return '$' + Math.round(n); } }
+    function computeTotals(){
+      var subtotal = 0, allPriced = true, anyPriced = false;
+      quote.forEach(function(it){ if (it.price != null){ subtotal += it.price*(it.qty||1); anyPriced = true; } else { allPriced = false; } });
+      var seguro = Math.round(subtotal * INSURANCE_RATE);
+      return { subtotal:subtotal, seguro:seguro, total:subtotal+seguro, allPriced:allPriced, anyPriced:anyPriced };
+    }
+
     function pad2(n){ return String(n).padStart(2,'0'); }
     function val(id){ var el=document.getElementById(id); return el ? el.value.trim() : ''; }
     function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
     function pieceLine(it,i){
       var size = it.size ? ' · ' + it.size : '';
-      var l = pad2(i+1)+'. '+it.name+size+' (Ref. '+it.id+') — '+it.col+' · ×'+(it.qty||1);
+      var price = (it.price != null) ? ' — ' + fmtCOP(it.price*(it.qty||1)) : ' — Bajo cotización';
+      var l = pad2(i+1)+'. '+it.name+size+' (Ref. '+it.id+') · ×'+(it.qty||1)+price;
       if (it.note) l += '\n    ↳ ' + it.note;
       return l;
     }
@@ -234,12 +273,25 @@
       var html = '';
       quote.forEach(function (it) {
         var size = it.size ? ' · ' + it.size : '';
+        var priceHtml = (it.price != null) ? fmtCOP(it.price*(it.qty||1)) : 'Bajo cotización';
         html += '<li><span class="cot-piece">' + escapeHtml(it.name) + size +
-                '<span class="ref">Ref. ' + escapeHtml(it.id) + ' · ' + escapeHtml(it.col) + '</span></span>' +
-                '<span class="cot-qty">×' + (it.qty||1) + '</span></li>';
+                '<span class="ref">Ref. ' + escapeHtml(it.id) + ' · ' + escapeHtml(it.col||'') + '</span></span>' +
+                '<span class="cot-qty">×' + (it.qty||1) + '<span class="cot-price">' + priceHtml + '</span></span></li>';
       });
       listEl.innerHTML = html;
       resumen.hidden = false;
+      (function(){
+        var T = computeTotals();
+        if (!T.anyPriced) return;
+        var box = document.createElement('div');
+        box.className = 'cot-tot';
+        box.innerHTML =
+          '<div class="cot-tot-row"><span>Subtotal</span><span>'+fmtCOP(T.subtotal)+'</span></div>' +
+          '<div class="cot-tot-row"><span>Seguro ('+Math.round(INSURANCE_RATE*100)+'%)</span><span>'+fmtCOP(T.seguro)+'</span></div>' +
+          '<div class="cot-tot-row grand"><span>Total</span><span>'+fmtCOP(T.total)+'</span></div>' +
+          '<div class="cot-tot-note">Envío nacional sin costo · Solo se cobra el seguro.'+(T.allPriced?'':' Algunas piezas bajo cotización.')+'</div>';
+        resumen.appendChild(box);
+      })();
       var detalleText = quote.map(pieceLine).join('\n');
       if (detalle) detalle.value = detalleText;
       if (pedido && !pedido.value.trim()) pedido.value = detalleText;
@@ -248,7 +300,17 @@
     /* ── WhatsApp summary text ─────────────────────────── */
     function buildWa(){
       var L = ['Hola, quiero enviar mi cotización de Preto by Dala&Co.', ''];
-      if (quote.length) { L.push('PIEZAS:'); quote.forEach(function(it,i){ L.push(pieceLine(it,i)); }); L.push(''); }
+      if (quote.length) {
+        L.push('PIEZAS:'); quote.forEach(function(it,i){ L.push(pieceLine(it,i)); }); L.push('');
+        var T = computeTotals();
+        if (T.anyPriced) {
+          L.push('Subtotal: ' + fmtCOP(T.subtotal));
+          L.push('Seguro (' + Math.round(INSURANCE_RATE*100) + '%): ' + fmtCOP(T.seguro));
+          L.push('TOTAL: ' + fmtCOP(T.total) + (T.allPriced ? '' : ' (algunas piezas bajo cotización)'));
+          L.push('Envío nacional sin costo.');
+          L.push('');
+        }
+      }
       L.push('MIS DATOS:');
       L.push('• Nombre: ' + val('nombre'));
       L.push('• Documento: ' + val('tipodoc') + ' ' + val('numdoc'));
@@ -301,20 +363,41 @@
       y += 10; rule(y); y += 22;
       if (quote.length) {
         quote.forEach(function(it,i){
-          need(46);
+          need(58);
+          var lineTotal = (it.price != null) ? it.price*(it.qty||1) : null;
           doc.setFont('times','normal'); doc.setFontSize(13); doc.setTextColor(ink[0],ink[1],ink[2]);
           doc.text(pad2(i+1)+'.  '+it.name + (it.size?'   ·   '+it.size:''), x, y);
-          doc.setFontSize(11); doc.setTextColor(mut[0],mut[1],mut[2]);
-          doc.text('×'+(it.qty||1), W-M, y, {align:'right'});
+          doc.text(lineTotal!=null ? fmtCOP(lineTotal) : 'Bajo cotización', W-M, y, {align:'right'});
           y += 14;
           doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(mut[0],mut[1],mut[2]);
-          doc.text('Ref. '+it.id+'    ·    '+it.col+'    ·    Bajo cotización', x+16, y);
-          if (it.note){ y += 12; doc.setFont('times','italic'); doc.setFontSize(9.5); doc.text('— '+it.note, x+16, y); }
+          doc.text('Ref. '+it.id+'    ·    '+(it.col||'')+'    ·    ×'+(it.qty||1), x, y);
+          var dsc = it.desc || it.note;
+          if (dsc){ y += 13; doc.setFont('times','italic'); doc.setFontSize(10); doc.setTextColor(mut[0],mut[1],mut[2]); var dl = doc.splitTextToSize('— '+dsc, W-2*M-70); doc.text(dl, x, y); y += (dl.length-1)*12; }
           y += 15; doc.setDrawColor(238,236,231); doc.setLineWidth(0.6); doc.line(x,y,W-M,y); y += 17;
         });
       } else {
         doc.setFont('times','italic'); doc.setFontSize(12); doc.setTextColor(mut[0],mut[1],mut[2]);
         doc.text('Solicitud de asesoría — sin piezas seleccionadas todavía.', x, y); y += 20;
+      }
+
+      var T = computeTotals();
+      if (T.anyPriced) {
+        need(96); y += 4;
+        doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(mut[0],mut[1],mut[2]);
+        doc.text('SUBTOTAL', W-M-180, y);
+        doc.setFont('times','normal'); doc.setFontSize(12); doc.setTextColor(ink[0],ink[1],ink[2]);
+        doc.text(fmtCOP(T.subtotal), W-M, y, {align:'right'}); y += 18;
+        doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(mut[0],mut[1],mut[2]);
+        doc.text('SEGURO ('+Math.round(INSURANCE_RATE*100)+'%)', W-M-180, y);
+        doc.setFont('times','normal'); doc.setFontSize(12); doc.setTextColor(ink[0],ink[1],ink[2]);
+        doc.text(fmtCOP(T.seguro), W-M, y, {align:'right'}); y += 10;
+        doc.setDrawColor(ink[0],ink[1],ink[2]); doc.setLineWidth(1); doc.line(W-M-180, y, W-M, y); y += 20;
+        doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(ink[0],ink[1],ink[2]);
+        doc.text('TOTAL', W-M-180, y);
+        doc.setFont('times','bold'); doc.setFontSize(17); doc.setTextColor(ink[0],ink[1],ink[2]);
+        doc.text(fmtCOP(T.total), W-M, y, {align:'right'}); y += 15;
+        doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(mut[0],mut[1],mut[2]);
+        doc.text('Envío nacional sin costo · Solo se cobra el seguro.'+(T.allPriced?'':' Algunas piezas bajo cotización.'), W-M, y, {align:'right'}); y += 22;
       }
 
       y += 8; need(160);
@@ -345,6 +428,22 @@
         var wrapped = doc.splitTextToSize(val('notas'), W-2*M);
         doc.text(wrapped, x, y); y += wrapped.length*15;
       }
+
+      need(150); y += 14;
+      doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(gold[0],gold[1],gold[2]);
+      doc.text('DATOS PARA TU PAGO', x, y); y += 10; rule(y); y += 20;
+      doc.setFont('times','italic'); doc.setFontSize(10.5); doc.setTextColor(ink[0],ink[1],ink[2]);
+      doc.text('Realiza tu pago a una de estas cuentas y envíanos el comprobante por WhatsApp.', x, y); y += 24;
+      BANK.forEach(function(b){
+        need(40);
+        doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(gold[0],gold[1],gold[2]);
+        doc.text(b.name.toUpperCase(), x, y);
+        doc.setFont('times','normal'); doc.setFontSize(13); doc.setTextColor(ink[0],ink[1],ink[2]);
+        doc.text(b.num, x+160, y);
+        doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(mut[0],mut[1],mut[2]);
+        doc.text(b.sub, W-M, y, {align:'right'});
+        y += 22;
+      });
 
       var fy = H-58;
       doc.setDrawColor(hair[0],hair[1],hair[2]); doc.setLineWidth(0.8); doc.line(M,fy-16,W-M,fy-16);
@@ -407,9 +506,7 @@
         document.body.classList.add('sent');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       };
-      var data = new URLSearchParams(new FormData(form)).toString();
-      fetch('/', { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body:data })
-        .then(finish).catch(finish);
+      finish();
     });
   })();
 </script>

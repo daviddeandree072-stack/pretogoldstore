@@ -4,6 +4,23 @@
 
 const WA_NUMBER = '573226955451'; // Preto by Dala&Co · concierge
 
+/* ════════ PRECIOS Y SEGURO ════════════════════════════════════
+   Pon aquí el precio de cada pieza (solo números, sin puntos ni $).
+   Las piezas que NO estén en esta lista salen como "Bajo cotización".
+   El seguro se calcula como un % del subtotal (cámbialo abajo).      */
+const INSURANCE_RATE = 0.02; // ← 2 %. Cambia por tu % real (ej. 0.03 = 3 %).
+const PRICES = {
+  // Regalos para bebé  (descomenta y pon el valor)
+  // 'PRT-BB-AMU': 480000,   // Amuleto de Protección Preto
+  // 'PRT-BB-RUS': 0,        // Pulsera Rústica Preto
+  // 'PRT-BB-CUB': 620000,   // Cubana Preto
+  // 'DAL-BB-AMU': 0,        // Amuleto de Protección Dala&Co
+  // 'DAL-BB-RUS': 0,        // Pulsera Rústica Dala&Co
+  // 'DAL-BB-CUB': 0,        // Cubana Dala&Co
+};
+function priceFor(id){ return (PRICES && PRICES[id] != null) ? PRICES[id] : null; }
+function fmtCOP(n){ try { return '$' + Math.round(n).toLocaleString('es-CO'); } catch(e){ return '$' + Math.round(n); } }
+
 const CHAIN_SIZES = ['45 cm', '50 cm', '55 cm', '60 cm'];
 
 const PRETO_CHAIN_VARIANTS = [
@@ -491,12 +508,19 @@ function renderCount() {
   el.style.color = n ? 'var(--onyx)' : 'rgba(243,239,231,0.7)';
 }
 function addToQuote(id, size) {
-  const p = COLLECTIONS.find(x => x.id === id);
+  let p = COLLECTIONS.find(x => x.id === id);
+  if (!p && typeof GIFT_EDITS !== 'undefined') {
+    for (const k in GIFT_EDITS) {
+      const its = GIFT_EDITS[k].items;
+      if (its) { const f = its.find(x => x.id === id); if (f) { p = f; break; } }
+    }
+  }
   if (!p) return;
+  const col = p.col || (id.indexOf('PRT') === 0 ? 'Preto' : id.indexOf('DAL') === 0 ? 'Dala&Co' : '');
   const key = size ? `${id}|${size}` : id;
   const existing = quote.find(x => x.key === key);
   if (existing) existing.qty += 1;
-  else quote.push({ key, id, name: p.name, col: p.col, size: size || null, note: p.note || null, qty: 1 });
+  else quote.push({ key, id, name: p.name, col, size: size || null, note: p.note || null, desc: p.desc || null, price: priceFor(id), qty: 1 });
   saveQuote();
   openDrawer();
 }
@@ -989,12 +1013,24 @@ function buildWaMessage(items) {
   if (!items.length) {
     lines.push('— Quisiera recibir una conversación con un asesor para descubrir la colección.');
   } else {
+    let subtotal = 0; let allPriced = true;
     items.forEach((it, i) => {
       const sizePart = it.size ? ` · ${it.size}` : '';
-      lines.push(`${String(i+1).padStart(2,'0')}. ${it.name}${sizePart} (Ref. ${it.id}) — ${it.col} · ×${it.qty}`);
+      const lineTotal = (it.price != null) ? it.price * it.qty : null;
+      if (it.price != null) subtotal += lineTotal; else allPriced = false;
+      const pricePart = (it.price != null) ? ` — ${fmtCOP(lineTotal)}` : ' — Bajo cotización';
+      lines.push(`${String(i+1).padStart(2,'0')}. ${it.name}${sizePart} (Ref. ${it.id}) · ×${it.qty}${pricePart}`);
       if (it.note) lines.push(`    ↳ ${it.note}`);
     });
     lines.push('');
+    if (subtotal > 0) {
+      const seguro = Math.round(subtotal * INSURANCE_RATE);
+      lines.push(`Subtotal: ${fmtCOP(subtotal)}`);
+      lines.push(`Seguro (${Math.round(INSURANCE_RATE*100)}%): ${fmtCOP(seguro)}`);
+      lines.push(`TOTAL: ${fmtCOP(subtotal + seguro)}${allPriced ? '' : ' (algunas piezas bajo cotización)'}`);
+      lines.push('Envío nacional sin costo.');
+      lines.push('');
+    }
     lines.push('Quedo a la espera de una atención personalizada. Gracias.');
   }
   return lines.join('\n');
