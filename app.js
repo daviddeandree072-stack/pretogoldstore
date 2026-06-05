@@ -858,12 +858,35 @@ const GIFT_EDITS = {
     sub: 'Piezas pensadas para acompañar un nombre, una fecha, una historia. Luz cálida del oro chocoano sobre la piel.',
     ids: ['DAL-CH-LAZ', 'PRT-RG-REL', 'PRT-EA-011', 'DAL-RO-CLA', 'PRT-CH-SIN', 'DAL-BR-018'],
   },
+  bebe: {
+    eyebrow: 'Regalos · Para bebé',
+    title: ['Regalos para', 'bebé'],
+    sub: 'El primer oro de una vida. Amuletos y esclavas en talla mínima, pensados para proteger y acompañar al recién llegado a la casa.',
+    items: [
+      // — Preto (ónix y oro de Chocó, carácter nocturno) —
+      { id: 'PRT-BB-AMU', name: 'Amuleto de Protección Preto', label: 'BABY · AMULET', sizes: ['10 cm', '11 cm', '12 cm'],
+        desc: 'Azabache y oro de Chocó montados sobre cordón tejido a mano. El amuleto tradicional que cuida al recién nacido, en la versión nocturna de la casa.' },
+      { id: 'PRT-BB-RUS', name: 'Pulsera Rústica Preto', label: 'BABY · RUSTIC', sizes: ['10 cm', '11 cm', '12 cm'],
+        desc: 'Esclava de eslabones forjados a mano en talla de bebé. Oro de textura cruda, sólida y ligera para la primera muñeca.' },
+      { id: 'PRT-BB-CUB', name: 'Cubana Preto', label: 'BABY · CUBAN', sizes: ['10 cm', '11 cm', '12 cm'],
+        desc: 'Esclava de eslabón cubano reducida a escala infantil. La pieza urbana de la casa, pensada para las muñecas más pequeñas.' },
+      // — Dala&Co (oro 18k, luz cálida y delicada) —
+      { id: 'DAL-BB-AMU', name: 'Amuleto de Protección Dala&Co', label: 'BABY · AMULET', sizes: ['10 cm', '11 cm', '12 cm'],
+        desc: 'Azabache y oro de 18k sobre cordón trenzado. Protección y luz cálida para acompañar los primeros días de vida.' },
+      { id: 'DAL-BB-RUS', name: 'Pulsera Rústica Dala&Co', label: 'BABY · RUSTIC', sizes: ['10 cm', '11 cm', '12 cm'],
+        desc: 'Esclava forjada a mano en oro de 18k, en talla de bebé. Textura artesanal, calidez heredada.' },
+      { id: 'DAL-BB-CUB', name: 'Cubana Dala&Co', label: 'BABY · CUBAN', sizes: ['10 cm', '11 cm', '12 cm'],
+        desc: 'Esclava de eslabón cubano en oro de 18k, escala infantil. Clásico pulido a espejo para una piel recién llegada.' },
+    ],
+  },
 };
 
 function openGiftEdit(which) {
   const edit = GIFT_EDITS[which];
   if (!edit) return;
-  const items = edit.ids.map(id => COLLECTIONS.find(x => x.id === id)).filter(Boolean);
+  const items = edit.items
+    ? edit.items
+    : edit.ids.map(id => COLLECTIONS.find(x => x.id === id)).filter(Boolean);
 
   catShell.innerHTML = `
     <header class="cat-head">
@@ -1115,8 +1138,9 @@ function setupMega(triggerId, megaId) {
       close();
       let action;
       // Gift selections → curated edit overlay
-      if (href === '#gift-el' || href === '#gift-ella') {
-        action = () => openGiftEdit(href === '#gift-el' ? 'el' : 'ella');
+      if (href === '#gift-el' || href === '#gift-ella' || href === '#gift-bebe') {
+        const w = href === '#gift-el' ? 'el' : (href === '#gift-ella' ? 'ella' : 'bebe');
+        action = () => openGiftEdit(w);
       } else if (href === '#regalos') {
         // El arte de regalar → full-screen overlay
         action = openRegalos;
