@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Factura piloto · Preto by Dala&Co</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Pinyon+Script&family=Inter:wght@300;400;500&display=swap" />
+<style>
+  :root{
+    --paper:#F5F5F0; --ink:#161513; --mut:#78746e; --gold:#B68D40; --gold-deep:#8A6B2E;
+    --hair:#dcd8d0; --serif:'Cormorant Garamond',Georgia,serif; --script:'Pinyon Script',cursive; --sans:'Inter',sans-serif;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:#3a3936; display:flex; justify-content:center; padding:40px 20px; font-family:var(--serif); }
+
+  .sheet{
+    width:794px; min-height:1123px; background:var(--paper); color:var(--ink);
+    padding:64px 60px 52px; position:relative;
+    box-shadow:0 24px 70px rgba(0,0,0,0.4);
+    display:flex; flex-direction:column;
+  }
+
+  /* ── Encabezado ── */
+  .head{ display:flex; align-items:flex-start; justify-content:space-between; }
+  .brand{ display:flex; align-items:baseline; gap:11px; }
+  .brand .preto{ font-family:var(--serif); font-weight:500; font-size:40px; letter-spacing:0.02em; line-height:1; }
+  .brand .by{ font-family:var(--script); color:var(--gold); font-size:25px; line-height:1; }
+  .doc-meta{ text-align:right; padding-top:6px; }
+  .doc-meta .kind{ font-family:var(--sans); font-size:10px; letter-spacing:0.32em; text-transform:uppercase; color:var(--gold); }
+  .doc-meta .folio{ font-family:var(--sans); font-size:11px; letter-spacing:0.06em; color:var(--mut); margin-top:7px; }
+  .doc-meta .fecha{ font-family:var(--serif); font-size:15px; color:var(--ink); margin-top:3px; }
+
+  .rule{ height:1px; background:var(--hair); margin:22px 0 0; }
+
+  .lede{ font-family:var(--serif); font-style:italic; font-size:21px; line-height:1.5; color:rgba(22,21,19,0.8); margin:34px 0 6px; max-width:560px; }
+
+  /* ── Secciones ── */
+  .sec-label{ font-family:var(--sans); font-size:10px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); margin-top:42px; }
+  .sec-rule{ height:1px; background:var(--hair); margin-top:9px; }
+
+  /* ── Piezas ── */
+  .item{ display:flex; justify-content:space-between; gap:26px; padding:20px 0 18px; border-bottom:1px solid #ececE6; }
+  .item-left{ flex:1; }
+  .item-name{ font-family:var(--serif); font-size:21px; font-weight:500; line-height:1.2; }
+  .item-name .size{ color:var(--mut); font-weight:400; font-size:18px; }
+  .item-ref{ font-family:var(--sans); font-size:9.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--mut); margin-top:6px; }
+  .item-desc{ font-family:var(--serif); font-style:italic; font-size:15.5px; line-height:1.5; color:rgba(22,21,19,0.72); margin-top:10px; max-width:430px; }
+  .item-right{ text-align:right; white-space:nowrap; padding-top:2px; }
+  .item-price{ font-family:var(--serif); font-size:21px; font-weight:500; }
+  .item-qty{ font-family:var(--sans); font-size:10.5px; letter-spacing:0.08em; color:var(--mut); margin-top:6px; }
+
+  /* ── Total ── */
+  .totals{ margin-top:22px; display:flex; flex-direction:column; align-items:flex-end; gap:9px; }
+  .trow{ display:flex; justify-content:space-between; gap:54px; min-width:320px; }
+  .trow .lbl{ font-family:var(--sans); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--mut); white-space:nowrap; }
+  .trow .val{ font-family:var(--serif); font-size:17px; white-space:nowrap; }
+  .trow.grand{ border-top:1.5px solid var(--ink); padding-top:12px; margin-top:4px; align-items:baseline; }
+  .trow.grand .lbl{ color:var(--ink); font-weight:500; letter-spacing:0.18em; }
+  .trow.grand .val{ font-size:27px; font-weight:600; }
+  .ship-note{ font-family:var(--sans); font-size:10.5px; letter-spacing:0.04em; color:var(--mut); text-align:right; margin-top:12px; font-style:normal; }
+
+  /* ── Cliente ── */
+  .client-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px 40px; margin-top:20px; }
+  .cfield .ck{ font-family:var(--sans); font-size:9.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--mut); }
+  .cfield .cv{ font-family:var(--serif); font-size:18px; margin-top:3px; }
+
+  /* ── Datos de pago ── */
+  .pay{ margin-top:18px; background:#efece4; border:1px solid #e2ded5; padding:24px 26px; }
+  .pay-intro{ font-family:var(--serif); font-style:italic; font-size:16px; line-height:1.5; color:rgba(22,21,19,0.8); margin-bottom:24px; padding-bottom:18px; border-bottom:1px solid #e2ded5; }
+  .pay-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:22px; }
+  .bank .bname{ font-family:var(--sans); font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold-deep); }
+  .bank .bnum{ font-family:var(--serif); font-size:19px; font-weight:500; margin-top:6px; letter-spacing:0.01em; }
+  .bank .bsub{ font-family:var(--sans); font-size:11px; color:var(--mut); margin-top:5px; line-height:1.45; }
+
+  .spacer{ flex:1; }
+
+  /* ── Pie ── */
+  .foot{ margin-top:34px; padding-top:16px; border-top:1px solid var(--hair); display:flex; justify-content:space-between; align-items:flex-end; }
+  .foot .fl{ font-family:var(--sans); font-size:10px; letter-spacing:0.05em; color:var(--mut); line-height:1.7; }
+  .foot .fr{ text-align:right; }
+  .foot .site{ font-family:var(--sans); font-size:11px; letter-spacing:0.12em; color:var(--gold-deep); }
+  .foot .law{ font-family:var(--sans); font-size:8.5px; letter-spacing:0.04em; color:var(--mut); margin-top:5px; }
+</style>
+</head>
+<body>
+  <div class="sheet">
+
+    <div class="head">
+      <div class="brand">
+        <span class="preto">PRETO</span>
+        <span class="by">by Dala&amp;Co</span>
+      </div>
+      <div class="doc-meta">
+        <div class="kind">Cotización</div>
+        <div class="folio">N.º 2026-000128</div>
+        <div class="fecha">4 de junio de 2026</div>
+      </div>
+    </div>
+    <div class="rule"></div>
+
+    <p class="lede">Gracias por su interés en nuestra casa. A continuación, el detalle de las piezas seleccionadas.</p>
+
+    <div class="sec-label">Piezas seleccionadas</div>
+    <div class="sec-rule"></div>
+
+    <div class="item">
+      <div class="item-left">
+        <div class="item-name">Amuleto de Protección Preto <span class="size">· 11 cm</span></div>
+        <div class="item-ref">Ref. PRT-BB-AMU · Preto</div>
+        <div class="item-desc">Azabache y oro de Chocó montados sobre cordón tejido a mano. El amuleto tradicional que cuida al recién nacido.</div>
+      </div>
+      <div class="item-right">
+        <div class="item-price">$480.000</div>
+        <div class="item-qty">×1</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="item-left">
+        <div class="item-name">Cubana Preto <span class="size">· 12 cm</span></div>
+        <div class="item-ref">Ref. PRT-BB-CUB · Preto</div>
+        <div class="item-desc">Esclava de eslabón cubano reducida a escala infantil. La pieza urbana de la casa, para las muñecas más pequeñas.</div>
+      </div>
+      <div class="item-right">
+        <div class="item-price">$620.000</div>
+        <div class="item-qty">×1</div>
+      </div>
+    </div>
+
+    <div class="totals">
+      <div class="trow"><span class="lbl">Subtotal</span><span class="val">$1.100.000</span></div>
+      <div class="trow"><span class="lbl">Seguro (2%)</span><span class="val">$22.000</span></div>
+      <div class="trow grand"><span class="lbl">Total</span><span class="val">$1.122.000</span></div>
+    </div>
+    <p class="ship-note">Envío nacional sin costo · Solo se cobra el seguro del producto (% del valor).</p>
+
+    <div class="sec-label">Datos del cliente</div>
+    <div class="sec-rule"></div>
+    <div class="client-grid">
+      <div class="cfield"><div class="ck">Nombre</div><div class="cv">María Fernanda Restrepo</div></div>
+      <div class="cfield"><div class="ck">Documento</div><div class="cv">C.C. 1.020.345.678</div></div>
+      <div class="cfield"><div class="ck">Teléfono / WhatsApp</div><div class="cv">+57 311 555 1234</div></div>
+      <div class="cfield"><div class="ck">Correo</div><div class="cv">maria.restrepo@correo.com</div></div>
+      <div class="cfield"><div class="ck">Ciudad</div><div class="cv">Medellín</div></div>
+      <div class="cfield"><div class="ck">Dirección</div><div class="cv">Cra. 35 #8A-12, El Poblado</div></div>
+    </div>
+
+    <div class="sec-label">Datos para tu pago</div>
+    <div class="sec-rule"></div>
+    <div class="pay">
+      <p class="pay-intro">Realiza tu pago a una de estas cuentas y envíanos el comprobante por WhatsApp para confirmar tu pedido.</p>
+      <div class="pay-grid">
+        <div class="bank">
+          <div class="bname">Bancolombia · Ahorros</div>
+          <div class="bnum">912-395939-71</div>
+          <div class="bsub">David Andrés Lozano Mena</div>
+        </div>
+        <div class="bank">
+          <div class="bname">Nequi</div>
+          <div class="bnum">322 695 5451</div>
+          <div class="bsub">David Andrés Lozano Mena</div>
+        </div>
+        <div class="bank">
+          <div class="bname">Nu · Llave</div>
+          <div class="bnum">@DLM777</div>
+          <div class="bsub">Transferencia con llave</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="foot">
+      <div class="fl">
+        Atención personalizada por WhatsApp · +57 322 695 5451<br/>
+        Preto by Dala&amp;Co · Hecho en Colombia
+      </div>
+      <div class="fr">
+        <div class="site">pretogold.store</div>
+        <div class="law">Conforme a la Ley 1581 de 2012 · Tratamiento de Datos.</div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

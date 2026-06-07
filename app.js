@@ -437,8 +437,9 @@ function openProduct(id) {
   primary.textContent = p.variants ? 'Ver la familia completa' : 'Añadir a cotización';
   primary.onclick = () => {
     closeProduct();
+    const btn = primary;
     if (p.variants) openCategory(p.id);
-    else addToQuote(p.id, selectedSize);
+    else setTimeout(() => addToQuote(p.id, selectedSize, btn), 40);
   };
 
   // WhatsApp action
@@ -507,7 +508,7 @@ function renderCount() {
   el.style.background = n ? 'var(--gold)' : 'rgba(243,239,231,0.18)';
   el.style.color = n ? 'var(--onyx)' : 'rgba(243,239,231,0.7)';
 }
-function addToQuote(id, size) {
+function addToQuote(id, size, sourceEl) {
   let p = COLLECTIONS.find(x => x.id === id);
   if (!p && typeof GIFT_EDITS !== 'undefined') {
     for (const k in GIFT_EDITS) {
@@ -519,10 +520,114 @@ function addToQuote(id, size) {
   const col = p.col || (id.indexOf('PRT') === 0 ? 'Preto' : id.indexOf('DAL') === 0 ? 'Dala&Co' : '');
   const key = size ? `${id}|${size}` : id;
   const existing = quote.find(x => x.key === key);
+  const wasExisting = !!existing;
   if (existing) existing.qty += 1;
   else quote.push({ key, id, name: p.name, col, size: size || null, note: p.note || null, desc: p.desc || null, price: priceFor(id), qty: 1 });
+  const qtyNow = (existing ? existing.qty : 1);
   saveQuote();
-  openDrawer();
+  triggerAddFeedback(p, size, qtyNow, wasExisting, sourceEl);
+  // Drawer opens after the fly-to-cart animation reads (≈600ms)
+  setTimeout(openDrawer, sourceEl ? 620 : 0);
+}
+
+/* ── Add-to-bag visual feedback ────────────────────────────── */
+let _bagToastTimer = null;
+function triggerAddFeedback(p, size, qtyNow, wasExisting, sourceEl) {
+  const cartBtn = document.getElementById('openCart');
+  if (!cartBtn) return;
+
+  // 1) Briefly disable the source button to block double-clicks
+  if (sourceEl) {
+    const prevOpacity = sourceEl.style.opacity;
+    const prevPe = sourceEl.style.pointerEvents;
+    sourceEl.style.pointerEvents = 'none';
+    sourceEl.style.opacity = '0.55';
+    sourceEl.style.transition = 'opacity .25s ease';
+    setTimeout(() => {
+      sourceEl.style.pointerEvents = prevPe;
+      sourceEl.style.opacity = prevOpacity;
+    }, 950);
+
+    // 2) Fly-to-cart gold dot
+    const src = sourceEl.getBoundingClientRect();
+    const dst = cartBtn.getBoundingClientRect();
+    const sx = src.left + src.width / 2;
+    const sy = src.top + src.height / 2;
+    const dx = dst.left + dst.width / 2;
+    const dy = dst.top + dst.height / 2;
+    const dot = document.createElement('div');
+    dot.className = 'fly-dot';
+    dot.style.left = sx + 'px';
+    dot.style.top = sy + 'px';
+    document.body.appendChild(dot);
+    // force layout, then animate
+    void dot.offsetWidth;
+    dot.style.transition = 'left .58s cubic-bezier(.42,.08,.55,1), top .58s cubic-bezier(.55,-.18,.5,1), opacity .25s ease .42s, transform .3s ease .4s';
+    dot.style.left = dx + 'px';
+    dot.style.top = dy + 'px';
+    setTimeout(() => {
+      dot.style.opacity = '0';
+      dot.style.transform = 'translate(-50%, -50%) scale(0.35)';
+    }, 470);
+    setTimeout(() => dot.remove(), 820);
+  }
+
+  // 3) Cart bounce + gold ring pulse — slight delay so the dot "lands"
+  const cartHit = () => {
+    cartBtn.classList.remove('bag-bounce');
+    void cartBtn.offsetWidth;
+    cartBtn.classList.add('bag-bounce');
+    const ring = document.createElement('span');
+    ring.className = 'bag-ring go';
+    cartBtn.appendChild(ring);
+    setTimeout(() => ring.remove(), 720);
+  };
+  if (sourceEl) setTimeout(cartHit, 500); else cartHit();
+
+  // 4) Toast — explicit messaging, extra clarity for repeats
+  showBagToast(p, size, qtyNow, wasExisting, !!sourceEl);
+}
+
+function showBagToast(p, size, qtyNow, wasExisting, hasSource) {
+  let t = document.getElementById('bagToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'bagToast';
+    t.className = 'bag-toast';
+    t.setAttribute('role', 'status');
+    t.setAttribute('aria-live', 'polite');
+    document.body.appendChild(t);
+    t.addEventListener('click', e => {
+      if (e.target.closest('.bag-toast-close')) {
+        t.classList.remove('show');
+        return;
+      }
+      if (e.target.closest('.bag-toast-cta')) {
+        openDrawer();
+        t.classList.remove('show');
+      }
+    });
+  }
+  const totalInBag = quote.reduce((s, q) => s + q.qty, 0);
+  const eyebrow = wasExisting ? 'Ya estaba en su bolsa' : 'Añadido a su bolsa';
+  const name = (p.name || 'Pieza') + (size ? ` · ${size}` : '');
+  const meta = wasExisting
+    ? `Ahora tiene <b>${qtyNow}</b> unidades de esta pieza · ${totalInBag} en total`
+    : `Tiene <b>${totalInBag}</b> ${totalInBag === 1 ? 'pieza' : 'piezas'} en su bolsa`;
+  t.dataset.kind = wasExisting ? 'repeat' : 'new';
+  t.innerHTML = `
+    <div class="bag-toast-check">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.2l3.4 3.4L13 5"></path></svg>
+    </div>
+    <div class="bag-toast-text">
+      <strong>${eyebrow}</strong>
+      <span class="name">${name}</span>
+      <span class="meta">${meta}</span>
+    </div>
+    <button class="bag-toast-close" aria-label="Cerrar">×</button>`;
+  setTimeout(() => t.classList.add('show'), hasSource ? 450 : 40);
+  if (_bagToastTimer) clearTimeout(_bagToastTimer);
+  _bagToastTimer = setTimeout(() => t.classList.remove('show'), wasExisting ? 4200 : 3000);
 }
 function setQty(key, delta) {
   const item = quote.find(x => x.key === key);
@@ -601,7 +706,7 @@ document.querySelectorAll('.coll .add').forEach(b => {
       return;
     }
     const activeSize = card.querySelector('.size-chip.active');
-    addToQuote(b.dataset.id, activeSize ? activeSize.dataset.size : null);
+    addToQuote(b.dataset.id, activeSize ? activeSize.dataset.size : null, b);
   });
 });
 
@@ -751,7 +856,7 @@ function openCategory(productId, backToLine) {
     b.addEventListener('click', () => {
       const card = b.closest('.var-card');
       const activeSize = card.querySelector('.size-chip.active');
-      addToQuote(b.dataset.id, activeSize ? activeSize.dataset.size : null);
+      addToQuote(b.dataset.id, activeSize ? activeSize.dataset.size : null, b);
     });
   });
   document.getElementById('catBack').addEventListener('click', backToLine ? () => openLine(backToLine) : closeCategory);
@@ -970,7 +1075,7 @@ function openGiftEdit(which) {
     b.addEventListener('click', () => {
       const card = b.closest('.var-card');
       const activeSize = card.querySelector('.size-chip.active');
-      addToQuote(b.dataset.id, activeSize ? activeSize.dataset.size : null);
+      addToQuote(b.dataset.id, activeSize ? activeSize.dataset.size : null, b);
     });
   });
   document.getElementById('catBack').addEventListener('click', closeCategory);

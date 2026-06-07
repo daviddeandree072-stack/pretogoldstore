@@ -398,23 +398,36 @@ body.nav-locked { overflow: hidden; }
 /* ── Hero ────────────────────────────────────────────────────── */
 .hero {
   position: relative;
-  height: 100vh;
-  min-height: 720px;
+  min-height: 100vh;
   overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-  padding: 0 var(--pad-x) 80px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) min(44vw, 580px);
+  align-items: center;
+  gap: clamp(32px, 5vw, 80px);
+  padding: 140px var(--pad-x) 120px;
+  background: #0a0807;
 }
 .hero-bg {
-  position: absolute; inset: 0;
-  background: #0a0807 url('assets/hero-banner.jpg') center 72% / contain no-repeat;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #0a0807 url('assets/hero-banner.jpg') 72% 50% / cover no-repeat;
+  box-shadow: 0 40px 80px -30px rgba(0,0,0,0.8);
+}
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(212,170,108,0.18);
+  pointer-events: none;
+  z-index: 2;
 }
 .hero-bg::after {
   content: '';
   position: absolute; inset: 0;
   background:
-    linear-gradient(90deg, rgba(7,6,4,0.78) 0%, rgba(7,6,4,0.42) 36%, rgba(7,6,4,0.05) 60%, transparent 75%),
-    linear-gradient(0deg, rgba(7,6,4,0.6) 0%, transparent 42%);
+    linear-gradient(270deg, transparent 60%, rgba(7,6,4,0.40) 100%),
+    linear-gradient(0deg, rgba(7,6,4,0.30) 0%, transparent 30%);
 }
 .hero-piece {
   position: absolute;
@@ -441,7 +454,7 @@ body.nav-locked { overflow: hidden; }
 
 .hero-content {
   position: relative; z-index: 3;
-  max-width: 700px;
+  max-width: 100%;
   color: #f3efe7;
 }
 .hero-content .eyebrow { margin-bottom: 32px; display: flex; align-items: center; gap: 14px; }
@@ -2201,12 +2214,18 @@ footer {
   .nav-left, .nav-right { display: none; }
   .nav { grid-template-columns: 1fr auto 1fr; }
   .hero-meta { display: none; }
-  .hero { min-height: 640px; }
-  .hero-bg { background-position: 70% 42%; background-size: cover; }
+  .hero { min-height: 640px; grid-template-columns: 1fr; gap: 36px; padding: 116px var(--pad-x) 96px; }
+  .hero-bg {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    aspect-ratio: 1 / 1;
+    background-position: 72% 50%;
+    background-size: cover;
+  }
   .hero-bg::after {
     background:
-      linear-gradient(0deg, rgba(7,6,4,0.9) 0%, rgba(7,6,4,0.5) 32%, transparent 60%),
-      linear-gradient(90deg, rgba(7,6,4,0.72) 0%, rgba(7,6,4,0.2) 45%, transparent 65%);
+      linear-gradient(0deg, rgba(7,6,4,0.40) 0%, transparent 35%);
   }
   .hero-piece { display: none; }
   .section-head { grid-template-columns: 1fr; gap: 32px; padding: 96px var(--pad-x) 40px; }
@@ -2284,12 +2303,14 @@ footer {
     max-height: 82vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    transform: translateY(106%);
-    visibility: hidden;
-    transition: transform 0.5s cubic-bezier(.22,1,.36,1), visibility 0.5s;
+    opacity: 0;
+    pointer-events: none;
     padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
-  .nav.menu-open .nav-drawer { transform: translateY(0); visibility: visible; }
+  .nav.menu-open .nav-drawer {
+    opacity: 1;
+    pointer-events: auto;
+  }
   /* Evita que la barra (con su transform) "atrape" al panel y lo mande arriba */
   .nav.menu-open { transform: none !important; }
   /* Con el menú abierto, ocultar el botón flotante (no debe tapar las opciones) */
@@ -2324,16 +2345,33 @@ footer {
     font-size: 17px; line-height: 1; color: rgba(17,17,17,0.5);
   }
 
-  /* Dimmed scrim behind the sheet */
+  /* Dimmed scrim behind the sheet — dark enough to truly hide page content,
+     captures all taps to close the menu */
   .nav-scrim {
     display: block;
     position: fixed; inset: 0;
-    background: rgba(17,17,17,0.45);
-    opacity: 0; visibility: hidden;
-    transition: opacity 0.45s ease, visibility 0.45s ease;
+    background: rgba(10,8,7,0.72);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
     z-index: 1150;
+    cursor: pointer;
   }
-  .nav.menu-open ~ .nav-scrim { opacity: 1; visibility: visible; }
+  .nav.menu-open ~ .nav-scrim { opacity: 1; pointer-events: auto; }
+
+  /* When the menu is open, freeze decorative animations underneath so
+     nothing distracts (or appears to compete for taps) through the scrim. */
+  body.nav-locked .discover-btn,
+  body.nav-locked .hero-title .line,
+  body.nav-locked .hero-sub,
+  body.nav-locked .pcard,
+  body.nav-locked .carousel-panel,
+  body.nav-locked .grain::after {
+    animation-play-state: paused !important;
+  }
+  body.nav-locked .hero-bg::after,
+  body.nav-locked .pane-cta { pointer-events: none; }
 
   /* Links stack vertically inside the sheet */
   .nav-bottom {
@@ -2375,12 +2413,18 @@ footer {
   .mega-title { font-size: 30px; }
   .mega-item { font-size: 18px; }
 
-  /* Hero — collar a todo el ancho, encuadrado en el busto, con título legible abajo */
-  .hero { display: flex; align-items: flex-end; height: auto; min-height: 86vh; padding: 116px 24px 52px; }
-  .hero-bg { background: #0a0807 url('assets/hero-banner.jpg') 66% 40% / cover no-repeat; }
+  /* Hero — imagen cuadrada arriba, título debajo */
+  .hero { grid-template-columns: 1fr; height: auto; min-height: 86vh; padding: 116px 24px 52px; gap: 32px; }
+  .hero-bg {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    aspect-ratio: 1 / 1;
+    background: #0a0807 url('assets/hero-banner.jpg') 70% 50% / cover no-repeat;
+  }
   .hero-bg::after {
     background:
-      linear-gradient(0deg, rgba(7,6,4,0.93) 0%, rgba(7,6,4,0.58) 32%, rgba(7,6,4,0.10) 60%, rgba(7,6,4,0.40) 100%);
+      linear-gradient(0deg, rgba(7,6,4,0.55) 0%, transparent 35%);
   }
   .hero-base { display: none; }
   .hero-piece { display: none; }
@@ -2899,8 +2943,11 @@ footer {
   .regalos-overlay,
   .drawer { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 
-  /* 4 ─ Hint the compositor for the elements that actually move. */
-  .nav-drawer, .wa { will-change: transform; }
+  /* 4 ─ Hint the compositor for the elements that actually move.
+     NOTE: do NOT put will-change on .nav-drawer — promoting it to its
+     own compositor layer freezes its open/close transition in this
+     stack. The drawer fades via plain opacity instead. */
+  .wa { will-change: transform; }
 
   /* 5 ─ Announcement bar: show the FULL message (no "…" cut-off)
      as a slow, elegant marquee so mobile keeps the same copy as desktop. */
@@ -2922,4 +2969,521 @@ footer {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+
+
+/* ════════════════════════════════════════════════════════════════
+   Add-to-bag feedback (fly-dot, bag bounce, toast)
+   ════════════════════════════════════════════════════════════════ */
+.fly-dot {
+  position: fixed;
+  width: 14px; height: 14px;
+  background: var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  box-shadow: 0 0 22px rgba(212,170,108,0.7), 0 0 6px rgba(212,170,108,0.9);
+  transform: translate(-50%, -50%);
+  will-change: transform, left, top, opacity;
+}
+
+@keyframes bagBounce {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.45); }
+  55%  { transform: scale(0.88); }
+  80%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.nav-icon.bag-bounce { animation: bagBounce .58s cubic-bezier(.4,1.6,.5,1) both; }
+.nav-icon.bag-bounce { color: var(--gold); }
+
+.nav-icon .bag-ring {
+  position: absolute;
+  inset: -6px;
+  border: 1.5px solid var(--gold);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+@keyframes bagRingOut {
+  0%   { transform: scale(0.55); opacity: 0.95; }
+  100% { transform: scale(2.4);  opacity: 0; }
+}
+.nav-icon .bag-ring.go { animation: bagRingOut .72s ease-out forwards; }
+
+/* Cart count bumps up subtly when bouncing */
+.nav-icon.bag-bounce .dot { box-shadow: 0 0 0 3px rgba(212,170,108,0.35); }
+
+/* ── Bag toast (top-center) ────────────────────────────────── */
+.bag-toast {
+  position: fixed;
+  top: calc(var(--announce-h, 38px) + 16px);
+  left: 50%;
+  transform: translate(-50%, -14px);
+  background: #0f0d0b;
+  color: #f3efe7;
+  padding: 14px 18px 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid rgba(212,170,108,0.4);
+  box-shadow: 0 22px 48px rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity .35s ease, transform .35s cubic-bezier(.2,.7,.2,1);
+  max-width: min(560px, calc(100vw - 32px));
+}
+.bag-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+.bag-toast[data-kind="repeat"] {
+  border-color: rgba(201,123,53,0.55);
+  background: linear-gradient(180deg, #1a1310 0%, #0f0d0b 100%);
+}
+.bag-toast-check {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: grid; place-items: center;
+  color: #111;
+  flex-shrink: 0;
+}
+.bag-toast[data-kind="repeat"] .bag-toast-check {
+  background: #c97b35;
+}
+.bag-toast-text {
+  display: flex; flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+.bag-toast-text strong {
+  color: var(--gold);
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 9.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+.bag-toast[data-kind="repeat"] .bag-toast-text strong {
+  color: #e0a87a;
+}
+.bag-toast-text .name {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.25;
+  color: #f3efe7;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.bag-toast-text .meta {
+  font-family: var(--sans);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(243,239,231,0.6);
+  margin-top: 2px;
+}
+.bag-toast-text .meta b {
+  color: var(--gold);
+  font-weight: 500;
+}
+.bag-toast-close {
+  width: 26px; height: 26px;
+  display: grid; place-items: center;
+  color: rgba(243,239,231,0.5);
+  font-size: 18px;
+  font-family: var(--sans);
+  flex-shrink: 0;
+  transition: color .2s ease;
+  align-self: flex-start;
+}
+.bag-toast-close:hover { color: var(--gold); }
+
+@media (max-width: 600px) {
+  .bag-toast {
+    top: calc(var(--announce-h, 38px) + 10px);
+    padding: 12px 14px 12px 12px;
+    gap: 10px;
+  }
+  .bag-toast-text .name { font-size: 15px; }
+  .bag-toast-text .meta { font-size: 9.5px; letter-spacing: 0.14em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fly-dot { display: none; }
+  .nav-icon.bag-bounce { animation: none; }
+  .nav-icon .bag-ring.go { animation: none; }
+  .bag-toast { transition: opacity .2s ease; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE ORGANIZATION · luxury-jewelry boutique layout
+   Single sticky top bar, full-bleed editorial hero, tidy 2-col
+   tile grids, refined typography hierarchy. Original — does not
+   imitate any specific brand's UI.
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+
+  /* ── 1 · NAV · collapse to a single, clean sticky bar ─────── */
+  .nav { position: sticky; top: 0; }
+  .nav-top {
+    display: grid !important;
+    grid-template-columns: 44px 1fr 44px;
+    align-items: center;
+    padding: 10px 14px !important;
+    gap: 0;
+    background: #F5F5F0;
+    border-bottom: 1px solid rgba(17,17,17,0.06);
+  }
+  /* Promote hamburger to first column; hide top-left "Boutique" link */
+  .nav-top-left { gap: 0 !important; justify-self: start; }
+  .nav-top-left .nav-contact,
+  .nav-top-left .nav-sep { display: none !important; }
+  .nav-burger {
+    display: flex !important;
+    width: 36px; height: 36px;
+    align-items: center; justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: 0;
+  }
+  .nav-burger span {
+    display: block;
+    width: 20px; height: 1.4px;
+    background: rgba(17,17,17,0.85);
+    border-radius: 1px;
+  }
+  /* Kill the floating FAB — one menu trigger only */
+  .nav-fab { display: none !important; }
+
+  /* Centered logo column */
+  .nav-mark { justify-self: center; gap: 0 !important; }
+  .nav-mark img { height: 28px !important; }
+  .nav.solid .nav-mark img { height: 26px !important; }
+  .nav-mark .by { display: none !important; }
+
+  /* Right-side icons — keep only cart + search for clarity */
+  .nav-top-right {
+    gap: 14px !important;
+    justify-self: end;
+  }
+  .nav-top-right #openAccount,
+  .nav-top-right #openWishlist { display: none !important; }
+  .nav-top-right .nav-icon { width: 28px !important; height: 28px !important; }
+  .nav-top-right .nav-icon svg { width: 20px !important; height: 20px !important; }
+
+  /* ── 2 · ANNOUNCE bar · slimmer, calmer ──────────────────── */
+  .announce {
+    height: 32px;
+    font-size: 9px !important;
+    letter-spacing: 0.22em !important;
+    padding: 0 36px !important;
+  }
+  .announce-msg .script { font-size: 14px !important; }
+
+  /* ── 3 · HERO · full-bleed editorial ─────────────────────── */
+  .hero {
+    padding: 0 !important;
+    min-height: 92vh !important;
+    gap: 0 !important;
+    display: block !important;
+    position: relative;
+  }
+  .hero-bg {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    aspect-ratio: auto !important;
+    background-size: cover !important;
+    background-position: 62% 50% !important;
+  }
+  .hero-bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg,
+      rgba(7,6,4,0.10) 0%,
+      rgba(7,6,4,0.40) 55%,
+      rgba(7,6,4,0.78) 100%) !important;
+  }
+  .hero-piece, .hero-base { display: none !important; }
+  .hero-content {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 0 24px 56px;
+    z-index: 2;
+    max-width: none !important;
+    color: #F5F5F0;
+  }
+  .hero-content .eyebrow {
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 0.36em;
+    margin-bottom: 18px;
+  }
+  .hero-title {
+    font-size: 38px !important;
+    line-height: 1.08 !important;
+    color: #F5F5F0 !important;
+    font-weight: 300;
+  }
+  .hero-title .line { display: block; }
+  .hero-title .script {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-sub {
+    margin-top: 18px !important;
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(245,245,240,0.78);
+    max-width: 32ch;
+  }
+
+  /* ── 4 · UNIVERSAL SECTION RHYTHM ────────────────────────── */
+  .section-head { padding: 64px 22px 28px !important; gap: 14px !important; }
+  .section-head .eyebrow,
+  .eyebrow {
+    font-size: 10px !important;
+    letter-spacing: 0.32em !important;
+  }
+  .section-head h2 { font-size: 30px !important; line-height: 1.1 !important; }
+
+  /* ── 5 · COLLECTIONS · refined band & cards ──────────────── */
+  #collections { padding: 60px 0 72px !important; }
+  .discover-btn {
+    font-size: 10px !important;
+    letter-spacing: 0.24em !important;
+    padding: 13px 26px !important;
+  }
+  .carousel-track { gap: 14px !important; padding: 0 20px !important; }
+  .pcard { flex: 0 0 72vw !important; }
+  .pcard-info { padding: 16px 16px 20px !important; gap: 6px !important; }
+  .pcard-name { font-size: 19px !important; }
+  .pcard-spec { font-size: 9px !important; letter-spacing: 0.22em !important; }
+  .pcard-cta { font-size: 9px !important; letter-spacing: 0.22em !important; }
+  .carousel-progress { margin: 22px 24px 0 !important; }
+
+  /* ── 6 · SPLIT UNIVERSE · clearer two-pane stack ─────────── */
+  .split-pane { min-height: 460px !important; padding: 72px 24px !important; }
+  .split-pane.preto { border-bottom: 1px solid var(--hairline-bone); }
+  .split-pane h2 { font-size: 30px !important; line-height: 1.12 !important; }
+  .pane-cta {
+    font-size: 10px !important;
+    letter-spacing: 0.26em !important;
+    padding: 13px 22px !important;
+  }
+
+  /* ── 7 · HERITAGE / MAISON · organized ───────────────────── */
+  .heritage, .maison { padding: 80px 22px 80px !important; }
+  .maison-intro { padding-bottom: 36px !important; }
+  .heritage-grid { gap: 36px !important; }
+  .heritage-left h2 { font-size: 28px !important; line-height: 1.14 !important; }
+  .heritage-stats { gap: 22px 18px !important; margin-top: 26px !important; }
+  .heritage-stats .stat { padding: 18px 0 !important; }
+  .heritage-stats .n { font-size: 30px !important; }
+  .heritage-stats .lbl {
+    font-size: 9.5px !important;
+    letter-spacing: 0.28em !important;
+  }
+  .heritage-right img { aspect-ratio: 4/5; object-fit: cover; width: 100%; }
+
+  /* ── 8 · ATELIER · 2-column tidy steps ───────────────────── */
+  .atelier { padding: 80px 0 80px !important; }
+  .atelier-head { padding: 0 22px 36px !important; }
+  .atelier-head h2 { font-size: 30px !important; line-height: 1.12 !important; }
+  .atelier-steps {
+    grid-template-columns: 1fr 1fr !important;
+    border-top: 1px solid var(--hairline);
+  }
+  .atelier-steps .step {
+    padding: 26px 18px !important;
+    border-right: 1px solid var(--hairline) !important;
+    border-bottom: 1px solid var(--hairline) !important;
+  }
+  .atelier-steps .step:nth-child(2n) { border-right: 0 !important; }
+  .atelier-steps .step:nth-last-child(-n+2) { border-bottom: 0 !important; }
+  .atelier-steps .step .num {
+    font-size: 9.5px !important;
+    letter-spacing: 0.28em !important;
+  }
+  .atelier-steps .step h4 { font-size: 16px !important; }
+  .atelier-steps .step p { font-size: 12.5px !important; line-height: 1.55 !important; }
+
+  /* ── 9 · PULL QUOTE · refined editorial ──────────────────── */
+  .pull { padding: 70px 24px !important; }
+  .pull blockquote {
+    font-size: 22px !important;
+    line-height: 1.32 !important;
+  }
+
+  /* ── 10 · CAMPAIGN · clean image-over-copy ───────────────── */
+  .campaign-img { aspect-ratio: 4/5 !important; }
+  .campaign-copy { padding: 60px 24px 70px !important; }
+  .campaign-copy h2 { font-size: 28px !important; line-height: 1.14 !important; }
+
+  /* ── 11 · NEWSLETTER · tight & elegant ───────────────────── */
+  .newsletter { padding: 72px 24px !important; }
+  .newsletter h3 { font-size: 28px !important; line-height: 1.15 !important; }
+  .newsletter .script { font-size: 32px !important; }
+
+  /* ── 12 · FOOTER · two-column grid feels organized ───────── */
+  .foot-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 32px 20px !important;
+    padding-top: 56px !important;
+  }
+  .foot-col h5 {
+    font-size: 9.5px !important;
+    letter-spacing: 0.28em !important;
+  }
+  .foot-col a, .foot-col li { font-size: 12px !important; }
+
+  /* ── 13 · CONCIERGE · discreet icon (no label clutter) ───── */
+  .wa {
+    bottom: max(18px, env(safe-area-inset-bottom)) !important;
+    right: 16px !important;
+    padding: 8px !important;
+    border-radius: 50% !important;
+  }
+  .wa .labels { display: none !important; }
+  .wa .icon { width: 44px !important; height: 44px !important; }
+  .wa .icon svg { width: 22px !important; height: 22px !important; }
+
+  /* ── 14 · MOBILE DRAWER MENU · keep refined ──────────────── */
+  .nav-drawer { max-height: 88vh !important; }
+  .nav-bottom .nav-link,
+  .nav-bottom .nav-search {
+    font-size: 13px !important;
+    letter-spacing: 0.24em !important;
+    padding: 18px 24px !important;
+    font-weight: 400 !important;
+  }
+  .nav-mobile-title {
+    font-family: var(--serif);
+    font-style: italic;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-size: 18px !important;
+    color: rgba(17,17,17,0.7) !important;
+  }
+}
+
+/* Tablet refinement — keep the 2-up tile rhythm a bit wider */
+@media (max-width: 980px) and (min-width: 601px) {
+  .atelier-steps { grid-template-columns: repeat(4, 1fr) !important; }
+  .atelier-steps .step { border-right: 1px solid var(--hairline) !important; }
+  .atelier-steps .step:last-child { border-right: 0 !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   LUXURY POLISH · hero CTA + menu accordion affordance
+   Additive only — does not change section order or structure.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Hero call-to-action — quiet gold underline that fills on press */
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 30px;
+  padding: 15px 30px;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  background: transparent;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.4s ease, color 0.4s ease, gap 0.35s ease;
+}
+.hero-cta svg { width: 17px; height: 17px; transition: transform 0.35s ease; }
+.hero-cta:hover { background: var(--gold); color: #0a0807; gap: 16px; }
+.hero-cta:hover svg { transform: translateX(3px); }
+
+/* Menu category triggers — a quiet "+" that turns 45° when open, so it
+   reads unmistakably as an expandable accordion on mobile. */
+.nav-bottom .nav-trigger { position: relative; }
+
+@media (max-width: 600px) {
+  .hero-cta {
+    margin-top: 26px;
+    padding: 15px 28px;
+    font-size: 10.5px;
+    letter-spacing: 0.26em;
+    color: var(--gold);
+    border-color: rgba(201,162,93,0.7);
+    background: rgba(10,8,7,0.18);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+  }
+
+  /* Accordion affordance on the drawer category rows */
+  .nav-bottom .nav-trigger {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-bottom .nav-trigger::after {
+    content: '';
+    position: static;
+    left: auto; right: auto; bottom: auto;
+    width: 13px; height: 13px;
+    flex: 0 0 auto;
+    margin-left: 16px;
+    background:
+      linear-gradient(var(--gold), var(--gold)) center/13px 1.4px no-repeat,
+      linear-gradient(var(--gold), var(--gold)) center/1.4px 13px no-repeat;
+    opacity: 0.85;
+    transform: none;
+  }
+  .nav-bottom .nav-trigger[aria-expanded="true"]::after {
+    transform: rotate(45deg) !important;
+    opacity: 1;
+  }
+  /* Plain links (Destacados) get a thin arrow instead of the +/× */
+  .nav-bottom a.nav-link {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-bottom a.nav-link::after {
+    content: '→';
+    position: static;
+    left: auto; right: auto; bottom: auto;
+    width: auto; height: auto;
+    transform: none;
+    background: none;
+    margin-left: 16px;
+    color: var(--gold);
+    opacity: 0.7;
+    font-size: 14px;
+  }
+
+  /* Gold hairline rhythm + active-press feedback inside the sheet */
+  .nav-bottom .nav-link,
+  .nav-bottom .nav-search {
+    border-bottom: 1px solid rgba(201,162,93,0.16) !important;
+  }
+  .nav-bottom .nav-trigger:active,
+  .nav-bottom a.nav-link:active {
+    background: rgba(201,162,93,0.08);
+  }
+  .nav-bottom .nav-trigger[aria-expanded="true"] {
+    color: var(--gold) !important;
+  }
+
+  /* A hair of gold at the very top of the sheet for the luxury cue */
+  .nav-mobile-head { border-bottom-color: rgba(201,162,93,0.22) !important; }
+  .nav-mobile-grip { background: rgba(201,162,93,0.4) !important; }
 }
