@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tarjeta de Propiedad · Certificado de Autenticidad · Preto by Dala&Co</title>
+<meta name="description" content="Genera el certificado de autenticidad y tarjeta de propiedad de tu pieza Preto by Dala&Co — garantía de oro 18k." />
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/png" href="assets/preto-logo-gold.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Pinyon+Script&family=Inter:wght@200;300;400;500&display=swap" />
+<link rel="stylesheet" href="styles.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  body { background: var(--paper); color: var(--bone); }
+  .legal-bar {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px clamp(22px, 5vw, 80px);
+    background: #F5F5F0; border-bottom: 1px solid rgba(17,17,17,0.08);
+  }
+  .legal-bar a.legal-mark { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .legal-bar .legal-mark img { height: 30px; width: auto; }
+  .legal-bar .legal-mark .by { font-family: var(--script); color: var(--gold); font-size: 21px; line-height: 1; }
+  .legal-back { font-family: var(--sans); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(17,17,17,0.75); text-decoration: none; transition: color .3s ease; }
+  .legal-back:hover { color: var(--gold); }
+
+  .tp-wrap { max-width: 1080px; margin: 0 auto; padding: clamp(40px, 6vw, 80px) clamp(22px, 5vw, 40px) 110px; }
+  .tp-eyebrow { font-family: var(--sans); font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; }
+  .tp-title { font-family: var(--serif); font-weight: 300; line-height: 1.04; font-size: clamp(36px, 6vw, 64px); letter-spacing: -0.01em; margin-bottom: 14px; }
+  .tp-title .script { font-family: var(--script); color: var(--gold); font-size: 1.2em; }
+  .tp-lede { font-family: var(--serif); font-style: italic; font-size: clamp(17px, 2.2vw, 21px); line-height: 1.55; color: rgba(17,17,17,0.78); max-width: 640px; margin-bottom: 48px; }
+
+  .tp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: start; }
+
+  /* Form */
+  .tp-form { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 22px; }
+  .field { display: flex; flex-direction: column; gap: 9px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-family: var(--sans); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(17,17,17,0.72); }
+  .field label .req { color: var(--gold); }
+  .field input, .field select, .field textarea {
+    font-family: var(--serif); font-size: 18px; color: var(--bone);
+    background: transparent; border: 0; border-bottom: 1px solid rgba(17,17,17,0.2);
+    padding: 9px 2px; transition: border-color .3s ease;
+  }
+  .field textarea { min-height: 70px; resize: vertical; line-height: 1.5; font-size: 16px; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-bottom-color: var(--gold); }
+  .field select { appearance: none; cursor: pointer; }
+  .field input::placeholder, .field textarea::placeholder { color: rgba(17,17,17,0.3); font-style: italic; }
+
+  /* Pieces builder */
+  #piezas { display: flex; flex-direction: column; gap: 4px; }
+  .pieza-row { display: grid; grid-template-columns: 1fr 132px 32px; gap: 10px; align-items: center; }
+  @media (max-width: 520px) { .pieza-row { grid-template-columns: 1fr 86px 28px; } }
+  .pieza-row input { font-family: var(--serif); font-size: 16px; color: var(--bone); background: transparent; border: 0; border-bottom: 1px solid rgba(17,17,17,0.2); padding: 8px 2px; transition: border-color .3s ease; }
+  .pieza-row input:focus { outline: none; border-bottom-color: var(--gold); }
+  .pieza-row input::placeholder { color: rgba(17,17,17,0.3); font-style: italic; }
+  .pz-del { background: transparent; border: 0; cursor: pointer; font-size: 20px; line-height: 1; color: rgba(17,17,17,0.35); transition: color .2s ease; padding: 4px; }
+  .pz-del:hover { color: #9a2a2a; }
+  .tp-add-pieza { margin-top: 6px; align-self: flex-start; background: transparent; border: 0; cursor: pointer; font-family: var(--sans); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-deep); padding: 6px 0; }
+  .tp-add-pieza:hover { color: var(--gold); }
+
+  .tp-actions { grid-column: 1/-1; display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 26px; border: 0; cursor: pointer;
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    transition: background .25s ease, transform .25s ease, color .25s ease;
+  }
+  .btn-gold { color: #0a0807; background: var(--gold); }
+  .btn-gold:hover { background: #d9b86a; transform: translateY(-1px); }
+  .btn-wa { color: #0a0807; background: #25D366; }
+  .btn-wa:hover { background: #2ee87a; transform: translateY(-1px); }
+  .btn-ghost { color: var(--bone); background: transparent; border: 1px solid rgba(17,17,17,0.25); }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold-deep); }
+
+  /* Live certificate preview */
+  .tp-preview-col { position: sticky; top: 96px; }
+  .tp-preview-label { font-family: var(--sans); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(17,17,17,0.45); margin-bottom: 14px; }
+
+  .cert {
+    --c-gold: #B68D40;
+    --c-bg: radial-gradient(120% 80% at 50% 0%, #1c1a17 0%, #0d0c0a 60%, #080706 100%);
+    --c-fg: #EFECE6;
+    --c-brand: #F4F2EC;
+    --c-muted: rgba(255,255,255,0.6);
+    --c-faint: rgba(255,255,255,0.48);
+    --c-line: rgba(255,255,255,0.1);
+    --c-inner: rgba(182,141,64,0.28);
+    --c-border: rgba(182,141,64,0.5);
+    --c-shadow: rgba(0,0,0,0.6);
+    position: relative; aspect-ratio: 1 / 1.32; width: 100%;
+    background: var(--c-bg);
+    border: 1px solid var(--c-border);
+    color: var(--c-fg); overflow: hidden;
+    box-shadow: 0 30px 70px -30px var(--c-shadow);
+    transition: background .4s ease, border-color .4s ease, color .4s ease;
+  }
+  /* Línea Dala&Co — lujo claro, refinado, atemporal */
+  .cert.theme-dala {
+    --c-bg: linear-gradient(158deg, #F7F2E7 0%, #EFE7D5 55%, #E8DCC4 100%);
+    --c-fg: #241D12;
+    --c-brand: #241D12;
+    --c-muted: rgba(36,29,18,0.66);
+    --c-faint: rgba(36,29,18,0.5);
+    --c-line: rgba(36,29,18,0.14);
+    --c-inner: rgba(138,107,46,0.32);
+    --c-border: rgba(138,107,46,0.55);
+    --c-shadow: rgba(120,96,40,0.28);
+  }
+  .cert::before {
+    content: ''; position: absolute; inset: 14px; border: 1px solid var(--c-inner); pointer-events: none;
+    transition: border-color .4s ease, opacity .3s ease;
+  }
+  .cert.border-simple::before { opacity: 0; }
+  .cert.border-none { border-color: transparent; }
+  .cert.border-none::before { opacity: 0; }
+  .cert-inner { position: absolute; inset: 0; padding: 34px 38px; display: flex; flex-direction: column; }
+  .cert-top { display: flex; align-items: flex-start; justify-content: space-between; }
+  .cert-brand { font-family: var(--serif); font-weight: 300; font-size: 30px; letter-spacing: 0.04em; line-height: 1; color: var(--c-brand); }
+  .cert-brand .by { display: block; font-family: var(--script); color: var(--c-gold); font-size: 0.72em; letter-spacing: 0; margin-top: 3px; }
+  .cert-seal {
+    width: 64px; height: 64px; border-radius: 50%;
+    border: 1px solid var(--c-gold); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; flex-shrink: 0;
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .cert.seal-off .cert-seal { opacity: 0; transform: scale(0.8); pointer-events: none; }
+  .cert-seal .k { font-family: var(--serif); font-weight: 400; font-size: 26px; color: var(--c-gold); line-height: 0.9; }
+  .cert-seal .au { font-family: var(--sans); font-size: 7px; letter-spacing: 0.2em; color: var(--c-faint); margin-top: 3px; }
+
+  .cert-head { margin-top: 26px; }
+  .cert-kicker { font-family: var(--sans); font-size: 9.5px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--c-gold); }
+  .cert-h1 { font-family: var(--serif); font-weight: 300; font-size: 34px; line-height: 1.05; margin-top: 8px; }
+  .cert.title-caps .cert-h1 { text-transform: uppercase; font-size: 25px; letter-spacing: 0.12em; font-weight: 400; }
+  .cert.foil-on .cert-h1 { background: linear-gradient(95deg, var(--c-gold), #F0E4C4 45%, var(--c-gold) 80%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .cert-sub { font-family: var(--sans); font-weight: 300; font-size: 11.5px; line-height: 1.6; color: var(--c-muted); margin-top: 12px; max-width: 92%; }
+
+  .cert-rows { margin-top: auto; }
+  .cert-row { display: grid; grid-template-columns: 38% 1fr; gap: 10px; padding: 9px 0; border-top: 1px solid var(--c-line); }
+  .cert-row .l { font-family: var(--sans); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-faint); align-self: center; }
+  .cert-row .v { font-family: var(--serif); font-size: 15px; color: var(--c-fg); word-break: break-word; }
+  .cert-row .v.gold { color: var(--c-gold); }
+
+  .cert-foot { margin-top: 22px; display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; }
+  .cert-sign { flex: 1; }
+  .cert-sign .line { border-bottom: 1px solid var(--c-gold); height: 22px; opacity: 0.7; }
+  .cert-sign .cap { font-family: var(--sans); font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--c-faint); margin-top: 6px; }
+  .cert-warr { text-align: right; }
+  .cert-warr b { font-family: var(--serif); font-size: 19px; color: var(--c-gold); display: block; }
+  .cert-warr small { font-family: var(--sans); font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-faint); }
+
+  .tp-hint { font-family: var(--sans); font-weight: 300; font-size: 13px; line-height: 1.6; color: rgba(17,17,17,0.6); margin-top: 18px; }
+  .tp-hint a { color: var(--gold-deep); text-decoration: none; border-bottom: 1px solid rgba(138,107,46,0.35); }
+
+  .legal-foot { text-align: center; padding: 40px 22px 60px; border-top: 1px solid rgba(17,17,17,0.1); font-family: var(--sans); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(17,17,17,0.45); }
+  .legal-foot .script { font-family: var(--script); color: var(--gold); font-size: 18px; text-transform: none; letter-spacing: 0; }
+  .legal-foot a { color: inherit; text-decoration: none; }
+  .legal-foot a:hover { color: var(--gold); }
+
+  @media (max-width: 860px) {
+    .tp-grid { grid-template-columns: 1fr; }
+    .tp-preview-col { position: static; order: -1; max-width: 420px; margin: 0 auto 8px; width: 100%; }
+  }
+  @media (max-width: 520px) {
+    .tp-form { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="legal-bar">
+  <a class="legal-mark" href="index.html">
+    <img src="assets/preto-logo-black.png" alt="Preto" />
+    <span class="by">by Dala&amp;Co</span>
+  </a>
+  <a class="legal-back" href="index.html">← Volver a la tienda</a>
+</div>
+
+<main class="tp-wrap">
+  <div class="tp-eyebrow">— Certificado de autenticidad</div>
+  <h1 class="tp-title">Tarjeta de <span class="script">propiedad.</span></h1>
+  <p class="tp-lede">
+    Genera el certificado verídico de tu pieza: garantiza que el material es <strong>oro 18k</strong>,
+    registra los datos del pedido y se entrega al cliente por WhatsApp o correo al momento de la compra.
+  </p>
+
+  <div class="tp-grid">
+    <!-- FORM -->
+    <form class="tp-form" id="tpForm" autocomplete="off">
+      <div class="field full">
+        <label for="cliente">Nombre del cliente <span class="req">*</span></label>
+        <input type="text" id="cliente" placeholder="Nombre completo" required />
+      </div>
+
+      <div class="field">
+        <label for="pedido">Número de pedido <span class="req">*</span></label>
+        <input type="text" id="pedido" placeholder="Ej. PRT-001247" required />
+      </div>
+
+      <div class="field">
+        <label for="fecha">Fecha de compra <span class="req">*</span></label>
+        <input type="date" id="fecha" required />
+      </div>
+
+      <div class="field full">
+        <label>Piezas del pedido <span class="req">*</span></label>
+        <div id="piezas"></div>
+        <button type="button" class="tp-add-pieza" id="addPieza">+ Agregar pieza</button>
+      </div>
+
+      <div class="field full">
+        <label for="descripcion">Descripción del producto <span class="req">*</span></label>
+        <textarea id="descripcion" placeholder="Se compone automáticamente con las piezas de arriba" required></textarea>
+      </div>
+
+      <div class="field">
+        <label for="material">Material certificado</label>
+        <select id="material">
+          <option value="Oro 18k garantizado">Oro 18k</option>
+          <option value="Oro 18k · Diamantes naturales">Oro 18k · Diamantes</option>
+          <option value="Oro 14k garantizado">Oro 14k</option>
+          <option value="Plata 925 garantizada">Plata 925</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="serie">N.º de serie</label>
+        <input type="text" id="serie" placeholder="Se genera solo" />
+      </div>
+
+      <div class="field">
+        <label for="telCliente">WhatsApp del cliente</label>
+        <input type="tel" id="telCliente" placeholder="+57 ___ ___ ____" />
+      </div>
+
+      <div class="field">
+        <label for="correoCliente">Correo del cliente</label>
+        <input type="email" id="correoCliente" placeholder="correo@ejemplo.com" />
+      </div>
+
+      <div class="tp-actions">
+        <button type="button" class="btn btn-gold" id="btnPdf">↓ Descargar certificado (PDF)</button>
+        <button type="button" class="btn btn-wa" id="btnWa">Enviar por WhatsApp</button>
+        <button type="button" class="btn btn-ghost" id="btnMail">Enviar por correo</button>
+      </div>
+      <p class="tp-hint full" id="tpHint">
+        Las piezas se cargan solas con lo que el cliente eligió. Solo agrega el <strong>peso</strong>
+        de cada una y el cliente completa sus datos. El n.º de serie y la firma hacen único cada certificado.
+      </p>
+    </form>
+
+    <!-- LIVE PREVIEW -->
+    <div class="tp-preview-col">
+      <div class="tp-preview-label">Vista previa en vivo</div>
+      <div class="cert" id="certCard">
+        <div class="cert-inner">
+          <div class="cert-top">
+            <div class="cert-brand">Preto<span class="by">by Dala&amp;Co</span></div>
+            <div class="cert-seal"><span class="k" id="sealK">18k</span><span class="au">ORO · AU</span></div>
+          </div>
+          <div class="cert-head">
+            <div class="cert-kicker">Certificado de autenticidad</div>
+            <div class="cert-h1">Tarjeta de propiedad</div>
+            <div class="cert-sub">Certificamos que la pieza descrita es auténtica y está elaborada en el material indicado, garantizado por Preto by Dala&amp;Co.</div>
+          </div>
+          <div class="cert-rows">
+            <div class="cert-row"><span class="l">Cliente</span><span class="v" id="pvCliente">—</span></div>
+            <div class="cert-row"><span class="l">N.º de pedido</span><span class="v" id="pvPedido">—</span></div>
+            <div class="cert-row"><span class="l">Fecha de compra</span><span class="v" id="pvFecha">—</span></div>
+            <div class="cert-row"><span class="l">Producto</span><span class="v" id="pvDesc">—</span></div>
+            <div class="cert-row"><span class="l">Material</span><span class="v gold" id="pvMaterial">Oro 18k garantizado</span></div>
+            <div class="cert-row"><span class="l">N.º de serie</span><span class="v" id="pvSerie">—</span></div>
+          </div>
+          <div class="cert-foot">
+            <div class="cert-sign">
+              <div class="line"></div>
+              <div class="cap">Firma autorizada · Preto by Dala&amp;Co</div>
+            </div>
+            <div class="cert-warr"><b id="pvWarr">3 años</b><small>Garantía</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="legal-foot">
+  <p><span class="script">Preto</span> by Dala&amp;Co · Hecho en Colombia · <a href="terminos.html">Términos y condiciones</a></p>
+</footer>
+
+<script>
+(function () {
+  var WA_DEFAULT = '573226955451';
+
+  // Shared styling state — read by the live card (applyCertTweaks) and the PDF (buildPdf)
+  window.CERT = window.CERT || { theme:'preto', gold:'#B68D40', title:'serif', border:'double', seal:true, foil:false, warranty:3, lifetime:false };
+
+  function $(id){ return document.getElementById(id); }
+  function v(id){ var el=$(id); return el ? el.value.trim() : ''; }
+
+  // ── Prefill: URL params then the saved quote ───────────────
+  var params = new URLSearchParams(location.search);
+  function setIf(id, key){ var x = params.get(key); if (x) $(id).value = x; }
+  setIf('cliente','cliente'); setIf('pedido','pedido'); setIf('fecha','fecha');
+  setIf('descripcion','desc'); setIf('telCliente','tel'); setIf('correoCliente','correo');
+
+  // Fecha default = hoy
+  if (!v('fecha')) {
+    var d = new Date(); $('fecha').value = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+
+  // ── Piezas builder (auto desde la selección del cliente) ────
+  var piezasBox = $('piezas');
+
+  function composeDesc(){
+    var parts = [];
+    piezasBox.querySelectorAll('.pieza-row').forEach(function(row){
+      var name = row.querySelector('.pz-name').value.trim();
+      var peso = row.querySelector('.pz-peso').value.trim();
+      if (!name && !peso) return;
+      parts.push(name + (peso ? ' · peso ' + peso : ''));
+    });
+    $('descripcion').value = parts.join(' + ');
+    if (typeof sync === 'function') sync();
+  }
+
+  function addRow(name, peso){
+    var row = document.createElement('div');
+    row.className = 'pieza-row';
+    var i1 = document.createElement('input');
+    i1.className = 'pz-name'; i1.type = 'text'; i1.placeholder = 'Pieza (ej. Cadena Rústica Preto)';
+    i1.value = name || '';
+    var i2 = document.createElement('input');
+    i2.className = 'pz-peso'; i2.type = 'text'; i2.placeholder = 'Peso (ej. 35 g)';
+    i2.value = peso || '';
+    var del = document.createElement('button');
+    del.type = 'button'; del.className = 'pz-del'; del.title = 'Quitar'; del.textContent = '×';
+    del.addEventListener('click', function(){ row.remove(); composeDesc(); });
+    i1.addEventListener('input', composeDesc);
+    i2.addEventListener('input', composeDesc);
+    row.appendChild(i1); row.appendChild(i2); row.appendChild(del);
+    piezasBox.appendChild(row);
+    return row;
+  }
+
+  // Carga las piezas elegidas por el cliente (de la bolsa)
+  var loadedFromQuote = false;
+  try {
+    var q = JSON.parse(localStorage.getItem('preto.quote.v1') || '[]');
+    if (q.length) {
+      q.forEach(function(it){
+        var label = it.name + (it.size ? ' · ' + it.size : '');
+        var n = (it.qty && it.qty > 1) ? it.qty : 1;
+        for (var k = 0; k < n; k++) addRow(label, '');
+      });
+      loadedFromQuote = true;
+    }
+  } catch(e){}
+
+  // Si vino una descripción por URL y no hubo bolsa, úsala como una pieza
+  if (!loadedFromQuote) {
+    if (v('descripcion')) addRow(v('descripcion'), '');
+    else addRow('', '');
+  }
+  // Componer la descripción inicial (salvo que ya viniera uná por URL sin bolsa)
+  if (loadedFromQuote || !params.get('desc')) composeDesc();
+
+  $('addPieza').addEventListener('click', function(){ var r = addRow('', ''); r.querySelector('.pz-name').focus(); });
+
+  // ── Serial number ──────────────────────────────────────────
+  function genSerie(){
+    var d = ($('fecha').value || '').replace(/-/g,'').slice(2); // YYMMDD
+    var rnd = Math.random().toString(36).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,4);
+    return 'PR-' + (d||'000000') + '-' + rnd;
+  }
+  if (!v('serie')) $('serie').value = genSerie();
+
+  // ── Fecha legible ──────────────────────────────────────────
+  function fechaLegible(iso){
+    if (!iso) return '—';
+    var p = iso.split('-'); if (p.length!==3) return iso;
+    var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    return parseInt(p[2],10)+' de '+meses[parseInt(p[1],10)-1]+' de '+p[0];
+  }
+
+  // ── Live preview ───────────────────────────────────────────
+  function sync(){
+    $('pvCliente').textContent  = v('cliente') || '—';
+    $('pvPedido').textContent   = v('pedido') || '—';
+    $('pvFecha').textContent    = fechaLegible(v('fecha'));
+    $('pvDesc').textContent     = v('descripcion') || '—';
+    $('pvMaterial').textContent = v('material') || 'Oro 18k garantizado';
+    $('pvSerie').textContent    = v('serie') || '—';
+    // seal karat
+    var m = v('material'); var k = '18k';
+    if (/14k/.test(m)) k='14k'; else if (/925|Plata/i.test(m)) k='925';
+    $('sealK').textContent = k;
+    $('sealK').nextElementSibling.textContent = /Plata/i.test(m) ? 'PLATA · AG' : 'ORO · AU';
+  }
+  ['cliente','pedido','fecha','descripcion','material','serie'].forEach(function(id){
+    $(id).addEventListener('input', sync);
+    $(id).addEventListener('change', sync);
+  });
+  sync();
+
+  // ── Apply Tweaks state to the live card (called by the React panel) ──
+  window.applyCertTweaks = function (t) {
+    window.CERT = Object.assign({}, window.CERT, t || {});
+    var c = $('certCard');
+    if (!c) return;
+    var S = window.CERT;
+    c.classList.toggle('theme-dala', S.theme === 'dala');
+    c.classList.remove('border-double','border-simple','border-none');
+    c.classList.add('border-' + (S.border || 'double'));
+    c.classList.toggle('seal-off', S.seal === false);
+    c.classList.toggle('title-caps', S.title === 'caps');
+    c.classList.toggle('foil-on', !!S.foil);
+    c.style.setProperty('--c-gold', S.gold || '#B68D40');
+    var warr = $('pvWarr');
+    if (warr) warr.textContent = S.lifetime ? 'De por vida' : ((S.warranty==null?3:S.warranty) + ' año' + (S.warranty===1?'':'s'));
+  };
+  window.applyCertTweaks(window.CERT);
+
+  // ── PDF ────────────────────────────────────────────────────
+  function buildPdf(){
+    var jsPDF = window.jspdf && window.jspdf.jsPDF;
+    if (!jsPDF) return null;
+    var doc = new jsPDF({ unit:'pt', format:'a4' });
+    var W = doc.internal.pageSize.getWidth();
+    var H = doc.internal.pageSize.getHeight();
+
+    // Palette derived from the Tweaks state (window.CERT)
+    var T = window.CERT || {};
+    function hexRgb(h){ h=String(h||'').replace('#',''); if(h.length===3)h=h.split('').map(function(c){return c+c;}).join(''); var n=parseInt(h,16); return [(n>>16)&255,(n>>8)&255,n&255]; }
+    var dala = (T.theme === 'dala');
+    var gold = hexRgb(T.gold || '#B68D40');
+    var goldSoft = gold.map(function(c){ return Math.round(c*0.8); });
+    var bgc = dala ? [243,238,225] : [11,10,8];
+    var paper = dala ? [36,29,18] : [244,242,236];
+    var ink = paper;
+    var mut = dala ? [122,106,76] : [150,146,140];
+    var faint = dala ? [150,130,96] : [90,86,80];
+    var rowline = dala ? [212,200,174] : [40,38,34];
+    var border = T.border || 'double';
+    var showSeal = (T.seal !== false);
+    function warrLabel(){ if (T.lifetime) return 'De por vida'; var w = (T.warranty==null?3:T.warranty); return w + ' año' + (w===1?'':'s'); }
+
+    // background
+    doc.setFillColor(bgc[0],bgc[1],bgc[2]); doc.rect(0,0,W,H,'F');
+    // frames (border treatment)
+    var m = 40;
+    if (border !== 'none') {
+      doc.setDrawColor(gold[0],gold[1],gold[2]); doc.setLineWidth(1.4); doc.rect(m,m,W-2*m,H-2*m);
+    }
+    if (border === 'double') {
+      doc.setDrawColor(goldSoft[0],goldSoft[1],goldSoft[2]); doc.setLineWidth(0.6); doc.rect(m+10,m+10,W-2*m-20,H-2*m-20);
+    }
+
+    var x = m+40, xr = W-m-40, y = m+78;
+
+    // Brand
+    doc.setTextColor(paper[0],paper[1],paper[2]);
+    doc.setFont('times','normal'); doc.setFontSize(34); doc.text('PRETO', x, y);
+    var pw = doc.getTextWidth('PRETO');
+    doc.setFont('times','italic'); doc.setFontSize(15); doc.setTextColor(gold[0],gold[1],gold[2]);
+    doc.text('by Dala&Co', x+pw+12, y);
+
+    // Seal (circle)
+    var m2 = v('material'); var k='18k', metal='ORO · AU';
+    if (/14k/.test(m2)) k='14k'; else if (/925|Plata/i.test(m2)){ k='925'; metal='PLATA · AG'; }
+    if (showSeal) {
+      var cx = xr-34, cy = y-8, r=34;
+      doc.setDrawColor(gold[0],gold[1],gold[2]); doc.setLineWidth(1); doc.circle(cx,cy,r);
+      doc.setLineWidth(0.5); doc.circle(cx,cy,r-4);
+      doc.setFont('times','normal'); doc.setFontSize(22); doc.setTextColor(gold[0],gold[1],gold[2]);
+      doc.text(k, cx, cy+3, {align:'center'});
+      doc.setFont('helvetica','normal'); doc.setFontSize(6); doc.setTextColor(mut[0],mut[1],mut[2]);
+      doc.text(metal, cx, cy+15, {align:'center'});
+    }
+
+    y += 64;
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(gold[0],gold[1],gold[2]);
+    doc.text('C E R T I F I C A D O   D E   A U T E N T I C I D A D', x, y);
+    y += 30;
+    doc.setFont('times','normal'); doc.setFontSize(38); doc.setTextColor(paper[0],paper[1],paper[2]);
+    doc.text('Tarjeta de Propiedad', x, y);
+    y += 26;
+    doc.setFont('times','italic'); doc.setFontSize(12.5); doc.setTextColor(mut[0],mut[1],mut[2]);
+    var intro = doc.splitTextToSize('Preto by Dala&Co certifica que la pieza descrita a continuacion es autentica y esta elaborada en el material garantizado que se indica.', W-2*x);
+    doc.text(intro, x, y); y += intro.length*16 + 18;
+
+    // Divider
+    doc.setDrawColor(goldSoft[0],goldSoft[1],goldSoft[2]); doc.setLineWidth(0.6); doc.line(x,y,xr,y); y += 30;
+
+    // Rows
+    var rows = [
+      ['Nombre del cliente', v('cliente') || '—'],
+      ['Numero de pedido', v('pedido') || '—'],
+      ['Fecha de compra', fechaLegible(v('fecha'))],
+      ['Descripcion del producto', v('descripcion') || '—'],
+      ['Material certificado', v('material') || 'Oro 18k garantizado'],
+      ['Numero de serie', v('serie') || '—']
+    ];
+    rows.forEach(function(rw){
+      doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(mut[0],mut[1],mut[2]);
+      doc.text(rw[0].toUpperCase(), x, y);
+      var isGold = /Material/i.test(rw[0]);
+      doc.setFont('times','normal'); doc.setFontSize(14);
+      if (isGold) doc.setTextColor(gold[0],gold[1],gold[2]); else doc.setTextColor(paper[0],paper[1],paper[2]);
+      var vlines = doc.splitTextToSize(rw[1], xr - (x+170));
+      doc.text(vlines, x+170, y);
+      var rowH = Math.max(26, vlines.length*16 + 10);
+      y += rowH;
+      doc.setDrawColor(rowline[0],rowline[1],rowline[2]); doc.setLineWidth(0.5); doc.line(x, y-12, xr, y-12);
+    });
+
+    // Footer: signature + warranty
+    var fy = H - m - 70;
+    doc.setDrawColor(gold[0],gold[1],gold[2]); doc.setLineWidth(0.7); doc.line(x, fy, x+200, fy);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(mut[0],mut[1],mut[2]);
+    doc.text('FIRMA AUTORIZADA · PRETO BY DALA&CO', x, fy+14);
+
+    doc.setFont('times','normal'); doc.setFontSize(20); doc.setTextColor(gold[0],gold[1],gold[2]);
+    doc.text(warrLabel(), xr, fy-2, {align:'right'});
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(mut[0],mut[1],mut[2]);
+    doc.text('GARANTÍA DE FABRICACIÓN', xr, fy+12, {align:'right'});
+
+    // bottom line
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(faint[0],faint[1],faint[2]);
+    doc.text('Conserve este certificado · Atención: +57 322 695 5451 · pretogold.store', (x+xr)/2, H-m-26, {align:'center'});
+    return doc;
+  }
+
+  function safeName(){
+    var n = (v('cliente')||'cliente').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40);
+    return 'Tarjeta-Propiedad-Preto-'+(n||'cliente')+'.pdf';
+  }
+  var lastUrl=null;
+  function downloadPdf(){
+    var doc = buildPdf(); if (!doc){ alert('No se pudo generar el PDF.'); return false; }
+    var name = safeName();
+    try {
+      var blob = doc.output('blob');
+      if (lastUrl) URL.revokeObjectURL(lastUrl);
+      lastUrl = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href=lastUrl; a.download=name;
+      document.body.appendChild(a); a.click(); a.remove();
+    } catch(e){ doc.save(name); }
+    return true;
+  }
+
+  function requireFields(){
+    var form = $('tpForm');
+    if (!form.reportValidity()) return false;
+    return true;
+  }
+
+  function msgText(){
+    var L = [];
+    L.push('Hola ' + (v('cliente')||'') + ', ¡gracias por tu compra en Preto by Dala&Co! 🖤');
+    L.push('');
+    L.push('Adjuntamos tu CERTIFICADO DE AUTENTICIDAD · Tarjeta de Propiedad:');
+    L.push('• Pedido: ' + (v('pedido')||'—'));
+    L.push('• Fecha: ' + fechaLegible(v('fecha')));
+    L.push('• Producto: ' + (v('descripcion')||'—'));
+    L.push('• Material: ' + (v('material')||'Oro 18k garantizado'));
+    L.push('• N.º de serie: ' + (v('serie')||'—'));
+    L.push('• Garantía: ' + ((window.CERT && window.CERT.lifetime) ? 'De por vida' : (((window.CERT && window.CERT.warranty) || 3) + ' años')));
+    L.push('');
+    L.push('Conserva este certificado: respalda la autenticidad y propiedad de tu pieza.');
+    return L.join('\n');
+  }
+
+  // ── Actions ─────────────────────────────────────────────────
+  $('btnPdf').addEventListener('click', function(){ if (requireFields()) downloadPdf(); });
+
+  $('btnWa').addEventListener('click', function(){
+    if (!requireFields()) return;
+    downloadPdf(); // genera el PDF para adjuntar
+    var tel = (v('telCliente')||'').replace(/[^0-9]/g,'');
+    if (tel && tel.length <= 10) tel = '57' + tel; // Colombia por defecto
+    var base = tel ? ('https://wa.me/'+tel) : ('https://wa.me/'+WA_DEFAULT);
+    window.open(base + '?text=' + encodeURIComponent(msgText()), '_blank', 'noopener');
+  });
+
+  $('btnMail').addEventListener('click', function(){
+    if (!requireFields()) return;
+    downloadPdf();
+    var to = v('correoCliente');
+    var subject = 'Tu Certificado de Autenticidad · Preto by Dala&Co';
+    location.href = 'mailto:' + encodeURIComponent(to) +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(msgText() + '\n\n(Adjunta el PDF descargado a este correo.)');
+  });
+})();
+</script>
+
+<!-- ── Tweaks panel (luxury styling controls) ─────────────────── -->
+<div id="tweaks-root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "preto",
+  "gold": "#D4AF37",
+  "title": "serif",
+  "border": "double",
+  "seal": true,
+  "foil": false,
+  "warranty": 3,
+  "lifetime": false
+}/*EDITMODE-END*/;
+
+function CertTweaks() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  React.useEffect(() => { if (window.applyCertTweaks) window.applyCertTweaks(t); }, [t]);
+  return (
+    <TweaksPanel title="Tweaks">
+      <TweakSection label="Línea" />
+      <TweakRadio label="Identidad" value={t.theme}
+        options={[{ value: 'preto', label: 'Preto' }, { value: 'dala', label: 'Dala&Co' }]}
+        onChange={(v) => setTweak('theme', v)} />
+      <TweakColor label="Tono de oro" value={t.gold}
+        options={['#B68D40', '#D4AF37', '#8A6B2E', '#C8A24B']}
+        onChange={(v) => setTweak('gold', v)} />
+
+      <TweakSection label="Composición" />
+      <TweakRadio label="Título" value={t.title}
+        options={[{ value: 'serif', label: 'Serif' }, { value: 'caps', label: 'Versales' }]}
+        onChange={(v) => setTweak('title', v)} />
+      <TweakRadio label="Borde" value={t.border}
+        options={[{ value: 'double', label: 'Doble' }, { value: 'simple', label: 'Simple' }, { value: 'none', label: 'Ninguno' }]}
+        onChange={(v) => setTweak('border', v)} />
+      <TweakToggle label="Sello 18k" value={t.seal} onChange={(v) => setTweak('seal', v)} />
+      <TweakToggle label="Acabado dorado (título)" value={t.foil} onChange={(v) => setTweak('foil', v)} />
+
+      <TweakSection label="Garantía" />
+      <TweakToggle label="De por vida" value={t.lifetime} onChange={(v) => setTweak('lifetime', v)} />
+      {!t.lifetime && (
+        <TweakSlider label="Años" value={t.warranty} min={1} max={10} unit=" años"
+          onChange={(v) => setTweak('warranty', v)} />
+      )}
+    </TweaksPanel>
+  );
+}
+ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<CertTweaks />);
+</script>
+
+</body>
+</html>
