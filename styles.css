@@ -5,7 +5,7 @@
 /* Fonts are loaded via <link> in the HTML head for parallel fetch. */
 
 :root {
-  --onyx: #F5F5F0;
+  --onyx: #FAF8F2;
   --ink: #EFECE6;
   --soot: #D9D6D1;
   --char: #C8C5C0;
@@ -95,7 +95,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   height: var(--announce-h);
   z-index: 55;
   display: flex; align-items: center; justify-content: center;
-  background: #F5F5F0;
+  background: #FAF8F2;
   border-bottom: 1px solid var(--hairline);
   font-size: 11px;
   letter-spacing: 0.28em;
@@ -151,7 +151,7 @@ body.no-announce .announce { height: 0; border-color: transparent; }
   display: flex;
   flex-direction: column;
   padding: 0;
-  background: #F5F5F0;
+  background: #FAF8F2;
   border-bottom: 1px solid rgba(17,17,17,0.08);
   transition: background 0.4s ease, top 0.5s cubic-bezier(.2,.7,.2,1), transform 0.45s cubic-bezier(.2,.7,.2,1);
 }
@@ -192,12 +192,12 @@ a.nav-contact:hover { color: var(--gold); }
   border-top: 1px solid rgba(17,17,17,0.06);
 }
 .nav.solid {
-  background: #F5F5F0;
+  background: #FAF8F2;
   box-shadow: 0 2px 24px rgba(17,12,5,0.06);
 }
 .nav-left, .nav-right { display: none; }
 .nav.solid {
-  background: #F5F5F0;
+  background: #FAF8F2;
   padding: 14px var(--pad-x);
   border-bottom: 1px solid rgba(17,17,17,0.08);
   box-shadow: 0 2px 24px rgba(17,12,5,0.06);
@@ -353,19 +353,21 @@ body.nav-locked { overflow: hidden; }
 .mega-item:hover::before { width: 16px; }
 
 .nav-mark {
-  display: flex; align-items: center; gap: 16px;
-  justify-self: center;
+  display: flex; align-items: center; gap: 16px; justify-self: center;
 }
-.nav-mark img { height: 108px; width: auto; opacity: 0.98; transition: height 0.4s ease; }
-.nav.solid .nav-mark img { height: 80px; }
+.nav-mark img { height: 72px; width: auto; opacity: 0.98; mix-blend-mode: multiply; transition: height 0.4s ease; }
+.nav.solid .nav-mark img { height: 58px; }
 .nav-mark .by {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 24px;
-  letter-spacing: 0.18em;
+  font-weight: 400;
+  font-size: 18px;
+  letter-spacing: 0.24em;
   color: var(--gold-deep);
-  opacity: 0.9;
+  opacity: 0.82;
   white-space: nowrap;
+  align-self: center;
+  margin: 0;
 }
 
 .nav-top-right { display: inline-flex; align-items: center; gap: 18px; }
@@ -610,7 +612,7 @@ section {
   border-right: 1px solid var(--hairline-bone);
 }
 .split-pane.dala {
-  background: linear-gradient(135deg, #F5F5F0, #EAE6DE);
+  background: linear-gradient(135deg, #FAF8F2, #EAE6DE);
   color: var(--bone);
 }
 .split-pane .pane-mark {
@@ -746,7 +748,7 @@ section {
 .coll-foot {
   display: flex; flex-direction: column; gap: 18px;
   padding: 22px 24px 26px;
-  background: #F5F5F0;
+  background: #FAF8F2;
 }
 .coll-head {
   display: flex; justify-content: space-between; align-items: flex-end;
@@ -868,7 +870,7 @@ section {
   max-width: 1500px;
   margin: auto;
   padding: 80px var(--pad-x) 100px;
-  background: #F5F5F0;
+  background: #FAF8F2;
   border-left: 1px solid var(--hairline-bone);
   border-right: 1px solid var(--hairline-bone);
   transform: translateY(40px);
@@ -926,7 +928,7 @@ section {
 }
 .var-card {
   display: flex; flex-direction: column;
-  background: #F5F5F0;
+  background: #FAF8F2;
   border: 1px solid var(--hairline-bone);
   transition: border-color 0.4s ease, transform 0.5s cubic-bezier(.2,.7,.2,1);
 }
@@ -938,7 +940,7 @@ section {
   overflow: hidden;
 }
 .var-art.has-image {
-  background-color: #F5F5F0;
+  background-color: #FAF8F2;
   background-size: contain;
   background-position: center bottom;
   background-repeat: no-repeat;
@@ -1506,7 +1508,7 @@ section {
   background: repeating-linear-gradient(135deg, rgba(201,169,97,0.04) 0 1px, transparent 1px 16px);
 }
 .campaign-copy {
-  background: #F5F5F0;
+  background: #FAF8F2;
   padding: 120px var(--pad-x);
   display: flex; flex-direction: column; justify-content: center;
 }
@@ -1751,7 +1753,7 @@ section {
   font-size: 22px;
   font-weight: 300;
   letter-spacing: 0.01em;
-  color: #F5F5F0;
+  color: #FAF8F2;
   text-decoration: none;
   line-height: 1.35;
   transition: color .25s ease;
@@ -1998,7 +2000,7 @@ footer {
   bottom: 28px; right: 28px;
   z-index: 60;
   display: flex; align-items: center; gap: 14px;
-  background: #F5F5F0;
+  background: #FAF8F2;
   color: #111111;
   padding: 14px 22px 14px 14px;
   border: 1px solid rgba(182,141,64,0.35);
@@ -2045,7 +2047,7 @@ footer {
   position: fixed;
   top: 0; right: 0; bottom: 0;
   width: min(520px, 92vw);
-  background: #F5F5F0;
+  background: #FAF8F2;
   border-left: 1px solid var(--hairline);
   z-index: 80;
   transform: translateX(100%);
@@ -2282,7 +2284,7 @@ footer {
     z-index: 1100;
     width: 54px; height: 54px;
     border-radius: 50%;
-    background: #F5F5F0;
+    background: #FAF8F2;
     box-shadow: 0 10px 26px rgba(17,12,5,0.28);
     border: 1px solid rgba(17,17,17,0.08);
     flex-direction: column; align-items: center; justify-content: center;
@@ -2296,7 +2298,7 @@ footer {
     position: fixed;
     left: 0; right: 0; bottom: 0;
     z-index: 1200;
-    background: #F5F5F0;
+    background: #FAF8F2;
     border-top-left-radius: 22px;
     border-top-right-radius: 22px;
     box-shadow: 0 -26px 70px rgba(0,0,0,0.30);
@@ -2323,7 +2325,7 @@ footer {
     align-items: center;
     position: sticky;
     top: 0;
-    background: #F5F5F0;
+    background: #FAF8F2;
     padding: 12px 22px 14px;
     border-bottom: 1px solid rgba(17,17,17,0.08);
     z-index: 1;
@@ -3137,7 +3139,7 @@ footer {
     align-items: center;
     padding: 10px 14px !important;
     gap: 0;
-    background: #F5F5F0;
+    background: #FAF8F2;
     border-bottom: 1px solid rgba(17,17,17,0.06);
   }
   /* Promote hamburger to first column; hide top-left "Boutique" link */
@@ -3223,7 +3225,7 @@ footer {
     padding: 0 24px 56px;
     z-index: 2;
     max-width: none !important;
-    color: #F5F5F0;
+    color: #FAF8F2;
   }
   .hero-content .eyebrow {
     color: var(--gold);
@@ -3234,7 +3236,7 @@ footer {
   .hero-title {
     font-size: 38px !important;
     line-height: 1.08 !important;
-    color: #F5F5F0 !important;
+    color: #FAF8F2 !important;
     font-weight: 300;
   }
   .hero-title .line { display: block; }
