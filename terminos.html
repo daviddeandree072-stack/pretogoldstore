@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Términos y Condiciones · Preto by Dala&Co</title>
+<meta name="description" content="Términos y condiciones de uso, política de cambios, venta final, privacidad y garantía de la joyería artesanal de Preto by Dala&Co." />
+<link rel="icon" type="image/png" href="assets/preto-logo-gold.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Pinyon+Script&family=Inter:wght@200;300;400;500&display=swap" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  body { background: var(--paper); color: var(--bone); }
+  .legal-bar {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px clamp(22px, 5vw, 80px);
+    background: #F5F5F0;
+    border-bottom: 1px solid rgba(17,17,17,0.08);
+  }
+  .legal-bar a.legal-mark { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .legal-bar .legal-mark img { height: 30px; width: auto; }
+  .legal-bar .legal-mark .by { font-family: var(--script); color: var(--gold); font-size: 21px; line-height: 1; }
+  .legal-back {
+    font-family: var(--sans); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+    color: rgba(17,17,17,0.75); text-decoration: none; transition: color .3s ease;
+  }
+  .legal-back:hover { color: var(--gold); }
+  .legal-wrap { max-width: 860px; margin: 0 auto; padding: clamp(48px, 8vw, 110px) clamp(22px, 5vw, 40px) 120px; }
+  .legal-eyebrow {
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 22px;
+  }
+  .legal-title {
+    font-family: var(--serif); font-weight: 300; line-height: 1.04;
+    font-size: clamp(40px, 7vw, 78px); letter-spacing: -0.01em; margin-bottom: 18px;
+  }
+  .legal-title .script { font-family: var(--script); color: var(--gold); font-size: 1.25em; }
+  .legal-meta {
+    font-family: var(--sans); font-size: 12px; letter-spacing: 0.08em; color: rgba(17,17,17,0.5);
+    padding-bottom: 40px; margin-bottom: 48px; border-bottom: 1px solid rgba(17,17,17,0.12);
+  }
+  .legal-lede {
+    font-family: var(--serif); font-style: italic; font-size: clamp(19px, 2.4vw, 24px);
+    line-height: 1.55; color: rgba(17,17,17,0.82); margin-bottom: 56px;
+  }
+  .legal-wrap h2 {
+    font-family: var(--serif); font-weight: 400; font-size: clamp(24px, 3.2vw, 33px);
+    line-height: 1.15; margin: 56px 0 14px;
+  }
+  .legal-num { color: var(--gold); font-variant-numeric: tabular-nums; margin-right: 12px; }
+  .legal-wrap h3 {
+    font-family: var(--sans); font-weight: 500; font-size: 13px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: rgba(17,17,17,0.85); margin: 30px 0 10px;
+  }
+  .legal-wrap p, .legal-wrap li {
+    font-family: var(--sans); font-weight: 300; font-size: 16px; line-height: 1.78;
+    color: rgba(17,17,17,0.78); text-wrap: pretty;
+  }
+  .legal-wrap p { margin-bottom: 16px; }
+  .legal-wrap ul { list-style: none; margin: 8px 0 20px; padding: 0; }
+  .legal-wrap li { position: relative; padding-left: 22px; margin-bottom: 9px; }
+  .legal-wrap li::before {
+    content: ''; position: absolute; left: 2px; top: 12px;
+    width: 5px; height: 5px; background: var(--gold); transform: rotate(45deg);
+  }
+  .legal-wrap a { color: var(--gold-deep); text-decoration: none; border-bottom: 1px solid rgba(138,107,46,0.35); }
+  .legal-wrap a:hover { color: var(--gold); }
+  .legal-wrap strong { font-weight: 500; color: rgba(17,17,17,0.92); }
+  .legal-note {
+    margin-top: 60px; padding: 26px 30px;
+    background: rgba(182,141,64,0.07); border: 1px solid rgba(182,141,64,0.22);
+  }
+  .legal-note p { font-size: 14px; margin: 0; color: rgba(17,17,17,0.7); }
+  /* Certificate card */
+  .cert-card {
+    margin: 34px 0 10px; padding: 34px clamp(24px, 4vw, 44px);
+    background: #111; color: var(--bone);
+    border: 1px solid rgba(182,141,64,0.4);
+  }
+  .cert-card .cert-kicker {
+    font-family: var(--sans); font-size: 10px; letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 10px;
+  }
+  .cert-card .cert-head {
+    font-family: var(--serif); font-weight: 300; font-size: clamp(24px, 3.4vw, 34px);
+    line-height: 1.1; margin-bottom: 6px;
+  }
+  .cert-card .cert-by { font-family: var(--script); color: var(--gold); font-size: 22px; margin-bottom: 26px; }
+  .cert-row {
+    display: grid; grid-template-columns: minmax(160px, 200px) 1fr; gap: 0;
+    border-top: 1px solid rgba(255,255,255,0.12); padding: 14px 0;
+  }
+  .cert-row:last-child { border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .cert-row .cert-label {
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+  }
+  .cert-row .cert-line { border-bottom: 1px solid rgba(182,141,64,0.45); min-height: 18px; }
+  .legal-foot {
+    text-align: center; padding: 40px 22px 60px;
+    border-top: 1px solid rgba(17,17,17,0.1);
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(17,17,17,0.45);
+  }
+  .legal-foot .script { font-family: var(--script); color: var(--gold); font-size: 18px; text-transform: none; letter-spacing: 0; }
+  .legal-foot a { color: inherit; text-decoration: none; }
+  .legal-foot a:hover { color: var(--gold); }
+  @media (max-width: 560px) {
+    .cert-row { grid-template-columns: 1fr; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="legal-bar">
+  <a class="legal-mark" href="index.html">
+    <img src="assets/preto-logo-black.png" alt="Preto" />
+    <span class="by">by Dala&amp;Co</span>
+  </a>
+  <a class="legal-back" href="index.html">← Volver a la tienda</a>
+</div>
+
+<main class="legal-wrap">
+  <div class="legal-eyebrow">— Términos y condiciones</div>
+  <h1 class="legal-title">Términos &amp; <span class="script">condiciones.</span></h1>
+  <div class="legal-meta">Preto by Dala&amp;Co · Joyería artesanal · Colombia</div>
+
+  <p class="legal-lede">
+    Bienvenido a Preto by Dala&amp;Co, donde la elegancia y lo urbano se unen para ofrecerte
+    piezas de joyería únicas y auténticas. Nuestra prioridad es brindarte una experiencia de
+    compra excepcional y productos de alta calidad que reflejen tu estilo personal y tu esencia.
+  </p>
+  <p>
+    Valoramos profundamente tu privacidad y la seguridad de tus datos personales. A continuación,
+    te presentamos los términos y condiciones que rigen el uso de nuestra tienda y la compra de
+    nuestros productos. Al realizar una compra, aceptas estos términos, que nos permiten garantizarte
+    un servicio transparente y una atención personalizada en cada etapa del proceso.
+  </p>
+
+  <h2><span class="legal-num">01</span>Cambios</h2>
+  <p>
+    Solo los productos en Preto by Dala&amp;Co. son elegibles para cambio dentro de los
+    <strong>30 días</strong> posteriores a la compra.
+  </p>
+
+  <h2><span class="legal-num">02</span>Venta final</h2>
+  <p>
+    Todos los productos personalizados de cualquier manera o hechos según especificaciones
+    personalizadas no se pueden cancelar ni cambiar, incluidos, entre otros, los productos grabados.
+  </p>
+  <p>
+    Todas las ventas son finales y todos los depósitos no son reembolsables.
+  </p>
+
+  <h2><span class="legal-num">03</span>Privacidad y seguridad</h2>
+  <p>
+    Este sitio de Internet es propiedad de Preto by Dala&amp;Co, y todo el contenido y los productos
+    que se muestran en este sitio están protegidos por las leyes de derechos de autor y marcas
+    registradas de Colombia y del mundo entero. Los estilos de joyería artesanal también están
+    protegidos por patentes de diseño y registros de diseño. El uso de cualquiera de las imágenes
+    de este sitio constituye una infracción de los derechos de autor.
+  </p>
+  <p>
+    Preto by Dala&amp;Co se ha esforzado por garantizar que la información publicada en este sitio sea
+    correcta y esté actualizada. Preto by Dala&amp;Co se reserva el derecho de corregir el contenido del
+    sitio en cualquier momento sin previo aviso y, además, no garantiza la exactitud, precisión,
+    minuciosidad o integridad de toda la información disponible en este sitio.
+  </p>
+  <p>
+    Para conocer cómo recolectamos, usamos y protegemos tus datos personales, consulta nuestra
+    <a href="privacidad.html">Política de tratamiento de datos</a>.
+  </p>
+
+  <h2><span class="legal-num">04</span>Certificado y garantía</h2>
+  <p>
+    En Preto by Dala&amp;Co, uno de nuestros pilares fundamentales es ofrecerte una experiencia
+    exclusiva y auténtica a través de nuestra joyería artesanal. Nos comprometemos a garantizar que
+    cada producto que compres se encuentre en excelentes condiciones, porque entendemos que esto no
+    solo refleja nuestra calidad, sino que también brinda la seguridad y confianza que mereces como cliente.
+  </p>
+
+  <h3>Duración de la garantía</h3>
+  <p>
+    Este certificado garantiza que su joyería artesanal adquirida en Preto by Dala&amp;Co está cubierta
+    por un periodo de <strong>hasta 3 años</strong> a partir de la fecha de compra.
+  </p>
+
+  <h3>Condiciones de la garantía</h3>
+  <ul>
+    <li><strong>Exigencia de garantía:</strong> la garantía debe ser exigida únicamente en Preto by Dala&amp;Co. Cualquier arreglo o modificación realizada en una joyería diferente anulará esta garantía.</li>
+    <li><strong>Cobertura:</strong> esta garantía cubre defectos de fabricación y problemas de calidad en el producto.</li>
+  </ul>
+
+  <h3>Exclusiones — La garantía no cubre</h3>
+  <ul>
+    <li>Robos o pérdidas.</li>
+    <li>Daños causados por accidentes naturales.</li>
+    <li>Mal uso o abuso del producto.</li>
+    <li>Reparaciones inadecuadas realizadas por un centro de servicio no autorizado.</li>
+    <li>Daños causados por desastres naturales, desgaste extraordinario y/o daños por humedad.</li>
+    <li>Anulación de la garantía si el número de serie se ha borrado o no es legible.</li>
+  </ul>
+
+  <div class="cert-card">
+    <div class="cert-kicker">Políticas de devolución · Materiales preciosos</div>
+    <div class="cert-head">Certificado de garantía</div>
+    <div class="cert-by">Preto by Dala&amp;Co</div>
+    <div class="cert-row"><span class="cert-label">Nombre del cliente</span><span class="cert-line"></span></div>
+    <div class="cert-row"><span class="cert-label">Número de pedido</span><span class="cert-line"></span></div>
+    <div class="cert-row"><span class="cert-label">Fecha de compra</span><span class="cert-line"></span></div>
+    <div class="cert-row"><span class="cert-label">Descripción del producto</span><span class="cert-line"></span></div>
+  </div>
+
+  <div class="legal-note">
+    <p>
+      Al realizar una compra en Preto by Dala&amp;Co, declaras haber leído y aceptado estos términos
+      y condiciones. Para cualquier solicitud relacionada con cambios, garantía o tu certificado,
+      escríbenos a <a href="mailto:concierge@preto.co">concierge@preto.co</a> o por
+      <a href="https://wa.me/573226955451" target="_blank" rel="noopener">WhatsApp</a>.
+    </p>
+  </div>
+</main>
+
+<footer class="legal-foot">
+  <p><span class="script">Preto</span> by Dala&amp;Co · Hecho en Colombia · <a href="index.html">Volver a la tienda</a></p>
+</footer>
+
+</body>
+</html>
