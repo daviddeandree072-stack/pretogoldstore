@@ -262,8 +262,11 @@
         else { document.body.classList.remove('authed'); if (ordersUnsub){ ordersUnsub(); ordersUnsub=null; } }
       });
     } catch(e){ console.error(e); $('loginErr').textContent = 'Error al conectar con Firebase.'; }
-  } else {
+  } else if (!CONFIGURED) {
     $('loginErr').textContent = 'Falta pegar la configuración de Firebase en el archivo (ver guía).';
+    $('loginBtn').disabled = true;
+  } else {
+    $('loginErr').textContent = 'No se pudo cargar Firebase. Revisa tu conexión a internet y recarga la página.';
     $('loginBtn').disabled = true;
   }
 
