@@ -373,7 +373,8 @@ document.querySelectorAll('.pcard').forEach(card => {
 document.querySelectorAll('.pcard-fav').forEach(btn => {
   btn.addEventListener('click', e => {
     e.stopPropagation();
-    btn.classList.toggle('on');
+    if (window.PretoFav) window.PretoFav.toggle(btn.dataset.id, btn);
+    else btn.classList.toggle('on');
   });
 });
 
@@ -1147,6 +1148,8 @@ function openWhatsApp(items) {
 // The cotización is sent through the facturación form (datos + privacidad), which
 // then opens WhatsApp with the summary. The quote already lives in localStorage.
 document.getElementById('sendWa').addEventListener('click', () => {
+  try { localStorage.setItem('preto.quoteSentAt', String(Date.now())); } catch(e){}
+  if (window.PretoAccount && window.PretoAccount.markQuoteSent) window.PretoAccount.markQuoteSent();
   window.location.href = 'facturacion.html';
 });
 document.getElementById('waBtn').addEventListener('click', () => {
