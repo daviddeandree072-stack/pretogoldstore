@@ -70,17 +70,39 @@ const DALA_RING_VARIANTS = [
     blurb: 'Iconografía íntima. Una oración pequeña en oro 18k.' },
 ];
 
+const PRETO_EARRING_VARIANTS = [
+  { sub: 'Topo Preto',     id: 'PRT-EA-TOP', label: 'EARRINGS · STUD',   note: 'Par de pendientes.',
+    blurb: 'Topo en ónix negro y oro de Chocó. Un punto de luz oscura, discreto y permanente sobre el lóbulo.' },
+  { sub: 'Argolla Preto',  id: 'PRT-EA-ARG', label: 'EARRINGS · HOOP',   note: 'Par de pendientes.',
+    blurb: 'Argolla en oro chocoano con cuenta de ónix. Movimiento limpio que enmarca el rostro con sobriedad.' },
+  { sub: 'Candonga Preto', id: 'PRT-EA-CAN', label: 'EARRINGS · HOOP XL', note: 'Par de pendientes.',
+    blurb: 'Candonga de mayor diámetro en oro de Chocó. Presencia nocturna que se impone sin perder elegancia.' },
+  { sub: 'Colgante Preto', id: 'PRT-EA-COL', label: 'EARRINGS · DROP',   note: 'Par de pendientes.',
+    blurb: 'Pendiente colgante de ónix y oro chocoano. Caída fluida que acompaña cada gesto con luz oscura.' },
+];
+
+const DALA_EARRING_VARIANTS = [
+  { sub: 'Topo Dala&Co',     id: 'DAL-EA-TOP', label: 'EARRINGS · STUD',   note: 'Par de pendientes.',
+    blurb: 'Topo en oro de 18k pulido. Una caricia de luz cálida, íntima y para siempre sobre el lóbulo.' },
+  { sub: 'Argolla Dala&Co',  id: 'DAL-EA-ARG', label: 'EARRINGS · HOOP',   note: 'Par de pendientes.',
+    blurb: 'Argolla en oro de 18k de caída ligera. Brillo limpio que ilumina el rostro de día y de noche.' },
+  { sub: 'Candonga Dala&Co', id: 'DAL-EA-CAN', label: 'EARRINGS · HOOP XL', note: 'Par de pendientes.',
+    blurb: 'Candonga de mayor diámetro en oro de 18k. Volumen cálido y presencia luminosa sin recargar.' },
+  { sub: 'Colgante Dala&Co', id: 'DAL-EA-COL', label: 'EARRINGS · DROP',   note: 'Par de pendientes.',
+    blurb: 'Pendiente colgante en oro de 18k. Movimiento delicado de luz cálida que acompaña cada gesto.' },
+];
+
 const ROSARY_SIZES = ['50 cm', '55 cm', '60 cm', '65 cm'];
 
 const PRETO_ROSARY_VARIANTS = [
-  { sub: 'Clásico Preto',    id: 'PRT-RO-CLA', label: 'ROSARY · CLASSIC', sizes: ROSARY_SIZES, image: 'assets/preto-hero.jpg',
+  { sub: 'Clásico Preto',    id: 'PRT-RO-CLA', label: 'ROSARY · CLASSIC', sizes: ROSARY_SIZES, image: 'assets/rosario-clasico-preto.jpg',
     blurb: 'Cinco decenas en ónix negro y oro de Chocó, rematadas en crucifijo tallado a mano. La pieza devocional por excelencia de la casa.' },
   { sub: 'Decenario Preto',  id: 'PRT-RO-DEC', label: 'ROSARY · DECADE',  sizes: ROSARY_SIZES,
     blurb: 'Una sola decena en ónix y oro. Oración discreta para llevar en el bolsillo o enrollada en la muñeca.' },
   { sub: 'Cuello Preto',     id: 'PRT-RO-CUE', label: 'ROSARY · COLLAR',  sizes: ROSARY_SIZES,
     blurb: 'Rosario de caída corta, pensado para lucirse al cuello. Presencia nocturna y silencio espiritual.' },
-  { sub: 'Cruz Mayor Preto', id: 'PRT-RO-CRU', label: 'ROSARY · CROSS',   sizes: ROSARY_SIZES,
-    blurb: 'Crucifijo de mayor tamaño tallado en oro, sostenido por cuentas de ónix. Devoción que se impone con sobriedad.' },
+  { sub: 'Cruz Mayor Preto', id: 'PRT-RO-CRU', label: 'ROSARY · CROSS',   sizes: ['60 cm'], image: 'assets/rosario-cruz-mayor-preto.jpg',
+    blurb: 'Elaborado en oro chocoano según el estilo artesanal del Chocó, donde cada cuenta honra el oficio de quienes lo trabajan. Más que una joya, es la presencia y el valor del oro chocoano hecho devoción cotidiana sobre quien lo viste.' },
 ];
 
 const DALA_ROSARY_VARIANTS = [
@@ -151,8 +173,8 @@ const LINES = [
         desc: 'Anillos en oro con circón negro. Cuatro carácteres —liso, cubano, rústico y sacro— para una misma identidad urbana.' },
       { id: 'PRT-BR-007', name: 'Pulseras Hilo Preto',  label: 'BRACELET · CORD',      size: 'c-3',
         desc: 'Pulsera de hilo encerado con remates en oro. Discreta, resistente y pensada para acompañar el día a día sin perder elegancia.' },
-      { id: 'PRT-EA-011', name: 'Pendientes Preto',     label: 'EARRINGS · ONYX',      size: 'c-4',
-        desc: 'Pendientes en ónix y oro. Un punto de luz oscura que enmarca el rostro con sobriedad absoluta.' },
+      { id: 'PRT-EA-011', name: 'Pendientes Preto',     label: 'EARRINGS · ONYX',      size: 'c-4', variants: PRETO_EARRING_VARIANTS, variantPrefix: 'Pendiente',
+        desc: 'Pendientes en ónix negro y oro de Chocó. Un punto de luz oscura que enmarca el rostro con sobriedad absoluta, en cuatro estilos de autor.' },
     ],
   },
   {
@@ -169,8 +191,8 @@ const LINES = [
         desc: 'Anillos en oro de 18k. La sencillez como lujo absoluto, disponible en cuatro acabados irrepetibles.' },
       { id: 'DAL-BR-018', name: 'Pulseras Hilo Dala&Co', label: 'BRACELET · CORD',     size: 'd-3',
         desc: 'Pulsera de hilo con cierre en oro de 18k. Ligereza íntima que se adapta a la muñeca como una segunda piel.' },
-      { id: 'DAL-EA-021', name: 'Pendientes Dala&Co',    label: 'EARRINGS · GOLD',     size: 'd-4',
-        desc: 'Pendientes en oro de 18k. Una caricia de luz cálida, hecha para acompañar tanto el día como la noche.' },
+      { id: 'DAL-EA-021', name: 'Pendientes Dala&Co',    label: 'EARRINGS · GOLD',     size: 'd-4', variants: DALA_EARRING_VARIANTS, variantPrefix: 'Pendiente',
+        desc: 'Pendientes en oro de 18k. Una caricia de luz cálida, hecha para acompañar el día y la noche, en cuatro estilos de autor.' },
     ],
   },
 ];

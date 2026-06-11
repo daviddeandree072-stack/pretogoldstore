@@ -940,11 +940,11 @@ section {
   overflow: hidden;
 }
 .var-art.has-image {
-  background-color: #FAF8F2;
-  background-size: contain;
-  background-position: center bottom;
+  background-color: #0f0f0f;
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
-  padding: 8px;
+  padding: 0;
 }
 .var-art.has-image::before,
 .var-art.has-image::after { display: none; }
@@ -2632,7 +2632,7 @@ footer {
 
 .pdp-media { position: relative; background: #0f0f0f; min-height: 420px; }
 .pdp-art { position: absolute; inset: 0; }
-.pdp-art.has-image { background-size: cover; background-position: center; }
+.pdp-art.has-image { background-size: contain; background-position: center; background-repeat: no-repeat; }
 .pdp-art:not(.has-image) {
   display: flex; align-items: center; justify-content: center;
   background:
