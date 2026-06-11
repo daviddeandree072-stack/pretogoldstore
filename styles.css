@@ -360,6 +360,26 @@ body.nav-locked { overflow: hidden; }
 .nav-mark img { height: 72px; width: auto; opacity: 0.98; transition: height 0.4s ease; }
 .nav-mark .logo-dark { display: none; }
 .nav.solid .nav-mark img { height: 58px; }
+
+/* Fallback de texto si el PNG del logo no carga (p. ej. asset no desplegado) */
+.nav-mark .logo-fallback { display: none; flex-direction: column; align-items: center; line-height: 1; }
+.nav-mark.logo-failed img { display: none !important; }
+.nav-mark.logo-failed .logo-fallback { display: flex; }
+.nav-mark .lf-name {
+  font-family: "Pinyon Script", var(--serif), cursive;
+  font-size: 46px;
+  color: #1a1a1a;
+  letter-spacing: 0.01em;
+}
+.nav-mark .lf-by {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  color: var(--gold, #b08d57);
+  margin-top: 2px;
+}
+html[data-theme="dark"] .nav-mark .lf-name { color: #f3efe7; }
 .nav-mark .by {
   font-family: var(--serif);
   font-style: italic;
