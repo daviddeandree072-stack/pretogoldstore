@@ -11,6 +11,14 @@
   Cache-Control: public, max-age=0, must-revalidate
 /app.js
   Cache-Control: public, max-age=0, must-revalidate
+/precios.js
+  Cache-Control: public, max-age=0, must-revalidate
+/cuenta.js
+  Cache-Control: public, max-age=0, must-revalidate
+/chatbot-preto.js
+  Cache-Control: public, max-age=0, must-revalidate
+/joyeria/pdp-precio.js
+  Cache-Control: public, max-age=0, must-revalidate
 
 # HTML: siempre revalidar
 /*.html

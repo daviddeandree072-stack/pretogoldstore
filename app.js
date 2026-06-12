@@ -1550,3 +1550,25 @@ searchSuggest.querySelectorAll('.sg-chip').forEach(chip => {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && searchOverlay.classList.contains('open')) closeSearch();
 });
+
+
+/* ── Deep links: index.html#card-<ID> abre la pieza directamente ──
+   Permite que las páginas de producto (/joyeria/*.html) y los links
+   compartidos por WhatsApp lleven directo a la ficha en la tienda. */
+(function () {
+  function openFromHash() {
+    const m = (location.hash || '').match(/^#card-(.+)$/);
+    if (!m) return;
+    const id = decodeURIComponent(m[1]);
+    const prod = COLLECTIONS.find(x => x.id === id);
+    if (!prod) return;
+    setTimeout(() => {
+      try {
+        if (prod.variants) openCategory(id);
+        else openProduct(id);
+      } catch (e) { console.warn('[Preto] deep link:', e); }
+    }, 350);
+  }
+  window.addEventListener('hashchange', openFromHash);
+  openFromHash();
+})();
