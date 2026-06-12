@@ -3,19 +3,60 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Preto by Dala&Co — Joyería de Autor</title>
-<meta name="description" content="Casa de alta joyería entre Chocó y Bogotá. Cadenas, anillos, rosarios, pulseras y pendientes en oro chocoano y oro de 18k. Joyería de autor, piezas únicas bajo cotización." />
+<title>Joyería de Oro 18k en Colombia — Cadenas, Anillos y Rosarios | Preto by Dala&Co</title>
+<meta name="description" content="Cadenas, anillos, rosarios y pulseras en oro 18k y oro chocoano trazable. Casa de alta joyería entre Chocó y Bogotá con concierge personal por WhatsApp y envío nacional asegurado." />
+<link rel="canonical" href="https://pretogold.store/" />
 <meta name="theme-color" content="#0f0f0f" />
 <link rel="icon" type="image/png" href="assets/preto-logo-gold.png" />
 <link rel="apple-touch-icon" href="assets/preto-logo-gold.png" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Preto by Dala&Co — Joyería de Autor" />
 <meta property="og:description" content="Lujo nacido de la identidad. Oro chocoano y oro de 18k convertidos en joyería de autor." />
-<meta property="og:image" content="assets/preto-hero.jpg" />
+<meta property="og:image" content="https://pretogold.store/assets/preto-hero.jpg" />
+<meta property="og:url" content="https://pretogold.store/" />
 <meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["Organization", "JewelryStore"],
+      "@id": "https://pretogold.store/#org",
+      "name": "Preto by Dala&Co",
+      "alternateName": "Preto Gold Store",
+      "url": "https://pretogold.store/",
+      "logo": "https://pretogold.store/assets/preto-logo-black.png",
+      "image": "https://pretogold.store/assets/preto-hero.jpg",
+      "description": "Casa de alta joyería entre Chocó y Bogotá. Cadenas, anillos, rosarios, pulseras y pendientes en oro chocoano trazable y oro de 18k.",
+      "telephone": "+573226955451",
+      "email": "concierge@preto.co",
+      "currenciesAccepted": "COP",
+      "priceRange": "$$$",
+      "address": { "@type": "PostalAddress", "addressLocality": "Bogotá", "addressCountry": "CO" },
+      "areaServed": "CO",
+      "sameAs": ["https://www.instagram.com/pretostoregold"],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "telephone": "+573226955451",
+        "email": "concierge@preto.co",
+        "availableLanguage": "es"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://pretogold.store/#website",
+      "url": "https://pretogold.store/",
+      "name": "Preto by Dala&Co",
+      "inLanguage": "es",
+      "publisher": { "@id": "https://pretogold.store/#org" }
+    }
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="preload" as="image" href="assets/preto-logo-black.png" />
+<link rel="preload" as="image" href="assets/hero-banner.jpg" fetchpriority="high" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Pinyon+Script&family=Inter:wght@200;300;400;500&display=swap" />
 <link rel="stylesheet" href="styles.css" />
 <script>
@@ -584,10 +625,11 @@
     Acceso anticipado a piezas únicas, invitaciones privadas a
     nuestro atelier y conversaciones con la casa.
   </p>
-  <form class="news-form" onsubmit="event.preventDefault(); this.querySelector('input').value=''; alert('Gracias. Pronto recibirá noticias de la casa.');">
-    <input type="email" placeholder="su correo electrónico" required />
+  <form class="news-form" id="newsForm">
+    <input type="email" name="email" placeholder="su correo electrónico" autocomplete="email" required />
     <button type="submit">Suscribirse <span class="arr"></span></button>
   </form>
+  <p class="news-ok" id="newsOk" hidden>Bienvenido a la casa. Recibirá la próxima <span class="script">edición</span> antes que nadie.</p>
 </section>
 
 <!-- ── FOOTER ───────────────────────────────────────────────── -->
@@ -788,6 +830,67 @@
     messagingSenderId: "521170629952",
     appId:             "1:521170629952:web:fbffb7893517d7a30336a5"
   };
+</script>
+
+<script>
+  /* ── Newsletter → Firestore (punto 04 del informe CRO) ──
+     Guarda cada suscripción en la colección "newsletter" del mismo
+     proyecto Firebase. Si la red falla, el correo queda en cola
+     local y se reintenta en la próxima visita. */
+  (function(){
+    var form = document.getElementById('newsForm');
+    if (!form) return;
+    var ok    = document.getElementById('newsOk');
+    var btn   = form.querySelector('button');
+    var input = form.querySelector('input[type="email"]');
+
+    function getDb(){
+      if (!window.firebase || !window.PRETO_FIREBASE_CONFIG) return null;
+      try {
+        if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(window.PRETO_FIREBASE_CONFIG);
+        return firebase.firestore();
+      } catch (e) { return null; }
+    }
+    function saveEmail(email){
+      var db = getDb();
+      if (!db) return Promise.resolve(false);
+      var id = email.replace(/[\/#?%\[\]]/g, '_');
+      return db.collection('newsletter').doc(id).set({
+        email: email,
+        status: 'suscrito',
+        source: 'web',
+        createdAt: new Date().toISOString()
+      }, { merge: true }).then(function(){ return true; }).catch(function(){ return false; });
+    }
+    function queueLocal(email){
+      try {
+        var q = JSON.parse(localStorage.getItem('preto.nl.pending') || '[]');
+        if (q.indexOf(email) === -1) q.push(email);
+        localStorage.setItem('preto.nl.pending', JSON.stringify(q));
+      } catch (e) {}
+    }
+    function retryQueue(){
+      var q;
+      try { q = JSON.parse(localStorage.getItem('preto.nl.pending') || '[]'); } catch (e) { q = []; }
+      if (!q.length) return;
+      Promise.all(q.map(saveEmail)).then(function(res){
+        var left = q.filter(function(_, i){ return !res[i]; });
+        try { localStorage.setItem('preto.nl.pending', JSON.stringify(left)); } catch (e) {}
+      });
+    }
+    form.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      var email = (input.value || '').trim().toLowerCase();
+      if (!email) return;
+      if (btn) btn.disabled = true;
+      saveEmail(email).then(function(saved){
+        if (!saved) queueLocal(email);
+        form.hidden = true;
+        if (ok) ok.hidden = false;
+      });
+    });
+    window.addEventListener('load', function(){ setTimeout(retryQueue, 4000); });
+  })();
 </script>
 
 <script src="app.js" defer></script>

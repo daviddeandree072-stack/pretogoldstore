@@ -1966,6 +1966,16 @@ section {
   display: inline-flex; align-items: center; gap: 10px;
 }
 .news-form button .arr { width: 24px; height: 1px; background: var(--gold); }
+.newsletter p.news-ok {
+  max-width: 520px;
+  margin: 10px auto 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.5;
+  color: var(--gold);
+}
+.newsletter p.news-ok .script { font-family: 'Pinyon Script', cursive; font-style: normal; font-size: 1.15em; }
 
 footer {
   padding: 80px var(--pad-x) 40px;
