@@ -9,17 +9,24 @@ const WA_NUMBER = '573226955451'; // Preto by Dala&Co · concierge
    Las piezas que NO estén en esta lista salen como "Bajo cotización".
    El seguro se calcula como un % del subtotal (cámbialo abajo).      */
 const INSURANCE_RATE = 0.02; // ← 2 %. Cambia por tu % real (ej. 0.03 = 3 %).
-const PRICES = {
-  // Regalos para bebé  (descomenta y pon el valor)
-  // 'PRT-BB-AMU': 480000,   // Amuleto de Protección Preto
-  // 'PRT-BB-RUS': 0,        // Pulsera Rústica Preto
-  // 'PRT-BB-CUB': 620000,   // Cubana Preto
-  // 'DAL-BB-AMU': 0,        // Amuleto de Protección Dala&Co
-  // 'DAL-BB-RUS': 0,        // Pulsera Rústica Dala&Co
-  // 'DAL-BB-CUB': 0,        // Cubana Dala&Co
-};
+/* Los precios ahora viven en precios.js — un solo archivo editable
+   que comparten la portada y las 47 fichas de /joyeria/ (punto 03). */
+const PRICES = (typeof window !== 'undefined' && window.PRETO_PRICES) ? window.PRETO_PRICES : {};
 function priceFor(id){ return (PRICES && PRICES[id] != null) ? PRICES[id] : null; }
 function fmtCOP(n){ try { return '$' + Math.round(n).toLocaleString('es-CO'); } catch(e){ return '$' + Math.round(n); } }
+/* Precio mínimo de una pieza o de una familia de variantes. */
+function minPriceFor(p){
+  if (p && p.variants) {
+    const vals = p.variants.map(v => priceFor(v.id)).filter(n => n != null);
+    return vals.length ? Math.min(...vals) : null;
+  }
+  return p ? priceFor(p.id) : null;
+}
+/* Etiqueta visible: "Desde $X" o "Bajo cotización" (modelo híbrido, punto 03). */
+function priceLabelFor(p){
+  const n = minPriceFor(p);
+  return (n != null) ? `Desde ${fmtCOP(n)}` : 'Bajo cotización';
+}
 
 const CHAIN_SIZES = ['45 cm', '50 cm', '55 cm', '60 cm'];
 
@@ -333,7 +340,7 @@ function makePcard(p, clone) {
     <div class="pcard-info">
       <h3 class="pcard-name">${p.name}</h3>
       <p class="pcard-spec">${p.label}</p>
-      <p class="pcard-cta">Bajo cotización</p>
+      <p class="pcard-cta">${priceLabelFor(p)}</p>
     </div>
   `;
   host.appendChild(el);
@@ -422,6 +429,10 @@ function openProduct(id) {
   document.getElementById('pdpSpec').textContent = p.label;
   document.getElementById('pdpDesc').textContent = p.desc || '';
 
+  // Precio "desde" (punto 03 CRO)
+  const pdpPriceEl = document.getElementById('pdpPrice');
+  if (pdpPriceEl) pdpPriceEl.textContent = priceLabelFor(p);
+
   // Variants / size / note
   const vWrap = document.getElementById('pdpVariants');
   let selectedSize = null;
@@ -481,6 +492,17 @@ function closeProduct() {
 }
 document.getElementById('pdpClose').addEventListener('click', closeProduct);
 pdp.querySelectorAll('[data-pdp-close]').forEach(el => el.addEventListener('click', closeProduct));
+// Línea de valoración (punto 07) → cierra la ficha y baja a los testimonios
+(function () {
+  const r = document.getElementById('pdpRating');
+  if (!r) return;
+  r.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeProduct();
+    const t = document.getElementById('testimonios');
+    if (t) setTimeout(() => window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' }), 120);
+  });
+})();
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && pdp.classList.contains('open')) closeProduct();
 });
@@ -775,6 +797,7 @@ function openLine(lineKey) {
                 <span class="var-ref">Ref. ${p.id}</span>
               </div>
               <p class="var-blurb">${p.desc}</p>
+              <p class="var-price">${priceLabelFor(p)}</p>
               <button class="var-add line-go" data-id="${p.id}">
                 <span>${hasVar ? 'Ver variantes' : 'Ver pieza'}</span>
                 <span class="arrow"></span>
@@ -855,6 +878,7 @@ function openCategory(productId, backToLine) {
                 <span class="var-ref">Ref. ${v.id}</span>
               </div>
               <p class="var-blurb">${v.blurb}</p>
+              <p class="var-price">${priceLabelFor(v)}</p>
               ${optionsMarkup}
               <button class="var-add" data-id="${v.id}">
                 <span>Añadir a cotización</span>
@@ -1141,20 +1165,20 @@ function buildWaMessage(items) {
   if (!items.length) {
     lines.push('— Quisiera recibir una conversación con un asesor para descubrir la colección.');
   } else {
-    let subtotal = 0; let allPriced = true;
+    let subtotal = 0; let insurable = 0; let allPriced = true;
     items.forEach((it, i) => {
       const sizePart = it.size ? ` · ${it.size}` : '';
       const lineTotal = (it.price != null) ? it.price * it.qty : null;
-      if (it.price != null) subtotal += lineTotal; else allPriced = false;
+      if (it.price != null) { subtotal += lineTotal; if (it.kind !== 'giftcard') insurable += lineTotal; } else allPriced = false;
       const pricePart = (it.price != null) ? ` — ${fmtCOP(lineTotal)}` : ' — Bajo cotización';
       lines.push(`${String(i+1).padStart(2,'0')}. ${it.name}${sizePart} (Ref. ${it.id}) · ×${it.qty}${pricePart}`);
       if (it.note) lines.push(`    ↳ ${it.note}`);
     });
     lines.push('');
     if (subtotal > 0) {
-      const seguro = Math.round(subtotal * INSURANCE_RATE);
+      const seguro = Math.round(insurable * INSURANCE_RATE);
       lines.push(`Subtotal: ${fmtCOP(subtotal)}`);
-      lines.push(`Seguro (${Math.round(INSURANCE_RATE*100)}%): ${fmtCOP(seguro)}`);
+      if (seguro > 0) lines.push(`Seguro (${Math.round(INSURANCE_RATE*100)}%): ${fmtCOP(seguro)}`);
       lines.push(`TOTAL: ${fmtCOP(subtotal + seguro)}${allPriced ? '' : ' (algunas piezas bajo cotización)'}`);
       lines.push('Envío nacional sin costo.');
       lines.push('');
@@ -1307,6 +1331,10 @@ function setupMega(triggerId, megaId) {
       if (href === '#gift-el' || href === '#gift-ella' || href === '#gift-bebe') {
         const w = href === '#gift-el' ? 'el' : (href === '#gift-ella' ? 'ella' : 'bebe');
         action = () => openGiftEdit(w);
+      } else if (href === '#sets') {
+        action = () => { if (window.openSets) window.openSets(); };
+      } else if (href === '#giftcard') {
+        action = () => { if (window.openGiftCard) window.openGiftCard(); };
       } else if (href === '#regalos') {
         // El arte de regalar → full-screen overlay
         action = openRegalos;
@@ -1495,7 +1523,7 @@ function renderSearch(list, q) {
         <div class="sr-info">
           <h3 class="sr-name">${p.name}</h3>
           <p class="sr-spec">${p.label}</p>
-          <p class="sr-cta">Bajo cotización</p>
+          <p class="sr-cta">${priceLabelFor(p)}</p>
         </div>
       </article>`;
   }).join('');

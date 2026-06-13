@@ -20,6 +20,33 @@
     { key: 'distinguido', label: 'Distinguido', min: 1500 },
     { key: 'maison',      label: 'Maison',      min: 5000 },
   ];
+  // Beneficios que se desbloquean en cada nivel del Círculo Preto.
+  // Son acumulativos: cada nivel suma a los del anterior.
+  const TIER_BENEFITS = {
+    iniciado: [
+      'Favoritos guardados en todos sus dispositivos',
+      'Seguimiento de sus pedidos en línea',
+      'Regalo de bienvenida en su primera pieza',
+      'Atención prioritaria por WhatsApp',
+    ],
+    distinguido: [
+      'Acceso anticipado a piezas únicas y ediciones',
+      'Limpieza anual gratuita de sus joyas',
+    ],
+    maison: [
+      'Invitación a eventos privados del atelier',
+      'Asesoría personal de la casa',
+      'Grabado de cortesía en su pieza',
+    ],
+  };
+  function benefitsUpTo(tierKey) {
+    const out = [];
+    for (const t of TIERS) {
+      (TIER_BENEFITS[t.key] || []).forEach((b) => out.push({ b, tier: t }));
+      if (t.key === tierKey) break;
+    }
+    return out;
+  }
   const BENEFITS = [
     'Sus favoritos guardados en todos sus dispositivos',
     'Seguimiento de sus pedidos en línea',
@@ -475,7 +502,7 @@
     body.innerHTML = `
       <div class="member">
         <div class="member-hd">
-          <span class="member-eyebrow">Miembro de la casa</span>
+          <span class="member-eyebrow">Círculo Preto · Miembro</span>
           <h3 class="member-name">Hola, <span class="script">${esc(greeting)}</span></h3>
           <p class="member-mail">${esc(currentUser.email || '')}</p>
         </div>
@@ -517,8 +544,9 @@
         <button class="btn-ghost" id="signOut" type="button">Cerrar sesión</button>
 
         <div class="member-benefits">
-          <span class="mb-eyebrow">Sus beneficios</span>
-          <ul>${BENEFITS.map((b) => `<li>${esc(b)}</li>`).join('')}</ul>
+          <span class="mb-eyebrow">Beneficios de su nivel</span>
+          <ul>${benefitsUpTo(tier.key).map((x) => `<li>${esc(x.b)}</li>`).join('')}</ul>
+          <a class="mb-link" href="circulo.html">Conozca el Círculo Preto →</a>
         </div>
       </div>`;
 

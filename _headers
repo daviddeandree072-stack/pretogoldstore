@@ -13,9 +13,15 @@
   Cache-Control: public, max-age=0, must-revalidate
 /precios.js
   Cache-Control: public, max-age=0, must-revalidate
+/finder.js
+  Cache-Control: public, max-age=0, must-revalidate
 /cuenta.js
   Cache-Control: public, max-age=0, must-revalidate
 /chatbot-preto.js
+  Cache-Control: public, max-age=0, must-revalidate
+/punto12.js
+  Cache-Control: public, max-age=0, must-revalidate
+/punto13.js
   Cache-Control: public, max-age=0, must-revalidate
 /joyeria/pdp-precio.js
   Cache-Control: public, max-age=0, must-revalidate
