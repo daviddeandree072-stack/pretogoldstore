@@ -252,7 +252,7 @@ const COLLECTIONS = [...LINES, ...ACCESORIOS].flatMap(line => {
           sizes: v.sizes,
           note: v.note,
           desc: v.blurb,
-          image: (vi === 0 ? p.image : null) || null,
+          image: v.image || (vi === 0 ? p.image : null) || null,
         });
       });
     }
@@ -283,7 +283,7 @@ function expandLine(line) {
       id: v.id,
       name: `${prefix} ${v.sub}`,
       label: v.label,
-      image: (i === 0 ? p.image : null) || null,
+      image: v.image || (i === 0 ? p.image : null) || null,
       desc: v.blurb,
       sizes: v.sizes || null,
       note: v.note || null,
