@@ -940,10 +940,11 @@
   </svg>
 </template>
 
-<!-- Firebase (mismo proyecto que el panel admin: preto-pedidos) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<!-- ── Firebase BAJO DEMANDA (punto 11 — dieta de JS) ──────────────
+     Antes se descargaban ~600 KB de Firebase (app + auth + firestore)
+     de forma bloqueante en CADA visita. Ahora solo se cargan cuando
+     el cliente abre su cuenta o se suscribe al newsletter — el ~95 %
+     de visitantes que no toca ninguna de las dos paga 0 KB.          -->
 <script>
   window.PRETO_FIREBASE_CONFIG = {
     apiKey:            "AIzaSyAuvR7AhwZAPzoUUz2YmJqyliwNecSVcoo",
@@ -953,6 +954,42 @@
     messagingSenderId: "521170629952",
     appId:             "1:521170629952:web:fbffb7893517d7a30336a5"
   };
+
+  /* Cargador perezoso: inyecta los SDK solo la primera vez que se
+     necesitan y devuelve una promesa cacheada (carga una sola vez). */
+  window.PretoFirebase = (function () {
+    var BASE = 'https://www.gstatic.com/firebasejs/10.12.2/';
+    var promise = null;
+    function inject(src) {
+      return new Promise(function (resolve, reject) {
+        var s = document.createElement('script');
+        s.src = src; s.async = false;        // preserva el orden de ejecución
+        s.onload = resolve;
+        s.onerror = function () { reject(new Error('No se pudo cargar ' + src)); };
+        document.head.appendChild(s);
+      });
+    }
+    function load() {
+      if (promise) return promise;
+      // app-compat debe estar listo antes que auth/firestore.
+      promise = inject(BASE + 'firebase-app-compat.js')
+        .then(function () {
+          return Promise.all([
+            inject(BASE + 'firebase-auth-compat.js'),
+            inject(BASE + 'firebase-firestore-compat.js')
+          ]);
+        })
+        .then(function () {
+          if (window.firebase && window.PRETO_FIREBASE_CONFIG &&
+              (!firebase.apps || !firebase.apps.length)) {
+            firebase.initializeApp(window.PRETO_FIREBASE_CONFIG);
+          }
+          return window.firebase;
+        });
+      return promise;
+    }
+    return { load: load };
+  })();
 </script>
 
 <script>
@@ -967,23 +1004,20 @@
     var btn   = form.querySelector('button');
     var input = form.querySelector('input[type="email"]');
 
-    function getDb(){
-      if (!window.firebase || !window.PRETO_FIREBASE_CONFIG) return null;
-      try {
-        if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(window.PRETO_FIREBASE_CONFIG);
-        return firebase.firestore();
-      } catch (e) { return null; }
-    }
     function saveEmail(email){
-      var db = getDb();
-      if (!db) return Promise.resolve(false);
-      var id = email.replace(/[\/#?%\[\]]/g, '_');
-      return db.collection('newsletter').doc(id).set({
-        email: email,
-        status: 'suscrito',
-        source: 'web',
-        createdAt: new Date().toISOString()
-      }, { merge: true }).then(function(){ return true; }).catch(function(){ return false; });
+      if (!window.PretoFirebase || !window.PRETO_FIREBASE_CONFIG) return Promise.resolve(false);
+      return window.PretoFirebase.load().then(function(){
+        try {
+          var db = firebase.firestore();
+          var id = email.replace(/[\/#?%\[\]]/g, '_');
+          return db.collection('newsletter').doc(id).set({
+            email: email,
+            status: 'suscrito',
+            source: 'web',
+            createdAt: new Date().toISOString()
+          }, { merge: true }).then(function(){ return true; }).catch(function(){ return false; });
+        } catch (e) { return false; }
+      }).catch(function(){ return false; });
     }
     function queueLocal(email){
       try {

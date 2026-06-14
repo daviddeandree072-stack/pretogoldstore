@@ -202,7 +202,7 @@
   }
   function openWish() { renderWishDrawer(); openPanel($('wishDrawer')); }
   function closeWish() { closePanels(); }
-  function openAcct() { openPanel($('acctDrawer')); }
+  function openAcct() { ensureFirebase(); openPanel($('acctDrawer')); }
 
   if (panelVeil) panelVeil.addEventListener('click', closePanels);
   if ($('closeWish')) $('closeWish').addEventListener('click', closePanels);
@@ -234,25 +234,42 @@
   /* ════════ FIREBASE (Auth + Firestore) ────────────────────────
      Reutiliza el proyecto del panel admin.                        */
   let auth = null, db = null, fbReady = false, currentUser = null, custDoc = null, ordersCache = null;
+  let fbLoading = null;
 
-  function initFirebase() {
+  /* Carga Firebase BAJO DEMANDA (punto 11 — dieta de JS).
+     Se invoca al abrir la cuenta, no al cargar la página. Devuelve
+     una promesa cacheada para que solo se inicialice una vez. */
+  function ensureFirebase() {
+    if (fbReady) return Promise.resolve(true);
+    if (fbLoading) return fbLoading;
     const cfg = window.PRETO_FIREBASE_CONFIG;
-    if (!cfg || !window.firebase) { renderAcct(); return; }
-    try {
-      const app = firebase.apps && firebase.apps.length ? firebase.app() : firebase.initializeApp(cfg);
-      auth = firebase.auth();
-      db = firebase.firestore();
-      try { auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); } catch (e) {}
-      fbReady = true;
-      auth.onAuthStateChanged(onAuthChange);
-    } catch (e) {
-      console.warn('[Preto] Firebase no disponible:', e);
-      renderAcct();
-    }
+    if (!cfg || !window.PretoFirebase) { renderAcct(); return Promise.resolve(false); }
+    fbLoading = window.PretoFirebase.load().then(function () {
+      try {
+        firebase.apps && firebase.apps.length ? firebase.app() : firebase.initializeApp(cfg);
+        auth = firebase.auth();
+        db = firebase.firestore();
+        try { auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); } catch (e) {}
+        fbReady = true;
+        auth.onAuthStateChanged(onAuthChange);
+        return true;
+      } catch (e) {
+        console.warn('[Preto] Firebase no disponible:', e);
+        renderAcct();
+        return false;
+      }
+    }).catch(function () { renderAcct(); return false; });
+    return fbLoading;
   }
 
   function onAuthChange(user) {
     currentUser = user || null;
+    // Recuerda si este dispositivo tuvo sesión, para precargar Firebase
+    // en tiempo libre en futuras visitas y restaurar la cuenta sola.
+    try {
+      if (user) localStorage.setItem('preto.acct', '1');
+      else localStorage.removeItem('preto.acct');
+    } catch (e) {}
     updateAcctDot();
     if (user) {
       ensureCustomerDoc(user).then(() => {
@@ -453,39 +470,50 @@
 
     $('authForm').addEventListener('submit', (ev) => {
       ev.preventDefault();
-      if (!fbReady) { setErr('Servicio de cuentas no disponible en la vista previa.'); return; }
       const email = $('auEmail').value.trim();
       const pwd = $('auPwd').value;
       const name = ($('auName') && $('auName').value.trim()) || '';
       if (!email || !pwd) { setErr('Complete su correo y contraseña.'); return; }
       submit.disabled = true;
+      setErr('Conectando…');
       const done = () => { submit.disabled = false; };
-      if (mode === 'up') {
-        auth.createUserWithEmailAndPassword(email, pwd)
-          .then((cred) => { if (name && cred.user) return cred.user.updateProfile({ displayName: name }); })
-          .then(done)
-          .catch((e) => { done(); setErr(authError(e.code)); });
-      } else {
-        auth.signInWithEmailAndPassword(email, pwd)
-          .then(done)
-          .catch((e) => { done(); setErr(authError(e.code)); });
-      }
+      ensureFirebase().then((ok) => {
+        if (!ok || !fbReady) { done(); setErr('No se pudo conectar al servicio de cuentas. Revise su conexión.'); return; }
+        setErr('');
+        if (mode === 'up') {
+          auth.createUserWithEmailAndPassword(email, pwd)
+            .then((cred) => { if (name && cred.user) return cred.user.updateProfile({ displayName: name }); })
+            .then(done)
+            .catch((e) => { done(); setErr(authError(e.code)); });
+        } else {
+          auth.signInWithEmailAndPassword(email, pwd)
+            .then(done)
+            .catch((e) => { done(); setErr(authError(e.code)); });
+        }
+      });
     });
 
     const gbtn = $('googleBtn');
     if (gbtn) gbtn.addEventListener('click', () => {
-      if (!fbReady) { setErr('Servicio de cuentas no disponible en la vista previa.'); return; }
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider).catch((e) => setErr(authError(e.code)));
+      setErr('Conectando…');
+      ensureFirebase().then((ok) => {
+        if (!ok || !fbReady) { setErr('No se pudo conectar al servicio de cuentas. Revise su conexión.'); return; }
+        setErr('');
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider).catch((e) => setErr(authError(e.code)));
+      });
     });
 
     if (forgot) forgot.addEventListener('click', () => {
-      if (!fbReady) { setErr('Servicio de cuentas no disponible en la vista previa.'); return; }
       const email = $('auEmail').value.trim();
       if (!email) { setErr('Escriba su correo para enviarle el enlace de recuperación.'); return; }
-      auth.sendPasswordResetEmail(email)
-        .then(() => setErr('Le enviamos un correo para restablecer su contraseña.'))
-        .catch((e) => setErr(authError(e.code)));
+      setErr('Conectando…');
+      ensureFirebase().then((ok) => {
+        if (!ok || !fbReady) { setErr('No se pudo conectar al servicio de cuentas. Revise su conexión.'); return; }
+        auth.sendPasswordResetEmail(email)
+          .then(() => setErr('Le enviamos un correo para restablecer su contraseña.'))
+          .catch((e) => setErr(authError(e.code)));
+      });
     });
 
     setMode('in');
@@ -622,7 +650,15 @@
   renderWishCount();
   renderWishDrawer();
   renderAcct();
-  initFirebase();
+  /* Solo precargamos Firebase automáticamente si este dispositivo ya
+     inició sesión antes (para restaurar la cuenta sin que el cliente
+     tenga que abrir el panel). Los visitantes nuevos no pagan nada. */
+  try {
+    if (localStorage.getItem('preto.acct') === '1') {
+      const idle = window.requestIdleCallback || function (f) { return setTimeout(f, 1200); };
+      idle(function () { ensureFirebase(); });
+    }
+  } catch (e) {}
 
   // Marca actividad al navegar por el sitio (alimenta el recordatorio).
   let actTimer = null;
