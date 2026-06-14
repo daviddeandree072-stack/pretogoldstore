@@ -44,14 +44,6 @@
       }
     },
     {
-      "@type": "AggregateRating",
-      "@id": "https://pretogold.store/#rating",
-      "itemReviewed": { "@id": "https://pretogold.store/#org" },
-      "ratingValue": "4.9",
-      "bestRating": "5",
-      "reviewCount": "127"
-    },
-    {
       "@type": "WebSite",
       "@id": "https://pretogold.store/#website",
       "url": "https://pretogold.store/",
@@ -633,74 +625,31 @@
 </div>
 
 <!-- ── PRUEBA SOCIAL · TESTIMONIOS + UGC (punto 07 informe CRO) ──
-     ► Para EDITAR las reseñas: reemplace el texto, el nombre, la
-       ciudad y la pieza de cada <figure class="testi-card">.
-     ► Estas tres son EJEMPLOS — sustitúyalas por reseñas reales
-       (de WhatsApp, Instagram o Google, con permiso del cliente).
-     ► Las fotos de la franja @pretostoregold son marcadores:
-       cambie data-label por una <img> del cliente llevando la pieza. -->
-<section class="testi" id="testimonios" data-screen-label="07 Testimonios">
+     ► NO se edita aquí. Las reseñas viven en el archivo  resenas.js
+       (igual que los precios viven en precios.js). Añade allí cada
+       reseña real y esta sección aparece sola; mientras el archivo
+       esté vacío, la sección queda OCULTA (sin reseñas inventadas).
+     ► Las fotos de clientes (@pretostoregold) también salen de
+       resenas.js → window.PRETO_UGC. -->
+<section class="testi" id="testimonios" data-screen-label="07 Testimonios" hidden>
   <div class="testi-head">
-    <div class="eyebrow">— 07 · La voz de quienes ya la llevan</div>
+    <div class="eyebrow">— La voz de quienes ya la llevan</div>
     <h2 class="testi-title">Confianza que se <span class="script">hereda.</span></h2>
-    <div class="testi-rating" role="img" aria-label="Valoración media de 4,9 sobre 5">
+    <div class="testi-rating" id="testiRating" role="img" aria-label="Valoración media de clientes">
       <span class="testi-stars" aria-hidden="true"></span>
-      <span class="testi-rate-num">4,9</span>
-      <span class="testi-rate-meta">sobre 5 &middot; <b>127</b> clientes en Colombia &middot;
-        <a href="https://www.google.com/search?q=Preto+by+Dala%26Co" target="_blank" rel="noopener">Reseñas de Google</a></span>
+      <span class="testi-rate-num" id="testiRateNum"></span>
+      <span class="testi-rate-meta" id="testiRateMeta"></span>
     </div>
   </div>
 
-  <div class="testi-grid">
-    <figure class="testi-card">
-      <div class="testi-quote-mark" aria-hidden="true">&ldquo;</div>
-      <blockquote>La cadena llegó con su certificado de origen y un estuche que parecía una joya en sí mismo. Se nota el oro de Chocó: pesa distinto, brilla distinto.</blockquote>
-      <figcaption>
-        <span class="testi-mono" aria-hidden="true">V</span>
-        <span class="testi-who">
-          <b>Valentina R.</b>
-          <span>Cadena Franco &middot; Bogotá</span>
-        </span>
-      </figcaption>
-    </figure>
+  <div class="testi-grid" id="testiGrid"></div>
 
-    <figure class="testi-card">
-      <div class="testi-quote-mark" aria-hidden="true">&ldquo;</div>
-      <blockquote>Encargué un rosario para el bautizo de mi nieto. El asesor me acompañó por WhatsApp en cada paso y la pieza superó lo que imaginé. Una casa seria.</blockquote>
-      <figcaption>
-        <span class="testi-mono" aria-hidden="true">C</span>
-        <span class="testi-who">
-          <b>Carlos M.</b>
-          <span>Rosario Cruz Mayor &middot; Medellín</span>
-        </span>
-      </figcaption>
-    </figure>
-
-    <figure class="testi-card">
-      <div class="testi-quote-mark" aria-hidden="true">&ldquo;</div>
-      <blockquote>Tenía dudas de comprar joyería de este valor en línea, pero el envío asegurado y la atención personal me dieron toda la confianza. Volveré por el anillo a juego.</blockquote>
-      <figcaption>
-        <span class="testi-mono" aria-hidden="true">D</span>
-        <span class="testi-who">
-          <b>Daniela O.</b>
-          <span>Pendientes Topo &middot; Cali</span>
-        </span>
-      </figcaption>
-    </figure>
-  </div>
-
-  <div class="ugc">
+  <div class="ugc" id="testiUgc" hidden>
     <div class="ugc-head">
       <span class="eyebrow">— @pretostoregold en sus clientes</span>
       <a class="ugc-follow" href="https://www.instagram.com/pretostoregold" target="_blank" rel="noopener">Seguir en Instagram <span class="arrow"></span></a>
     </div>
-    <div class="ugc-rail">
-      <a class="ugc-tile" href="https://www.instagram.com/pretostoregold" target="_blank" rel="noopener" data-label="FOTO DE CLIENTE"></a>
-      <a class="ugc-tile" href="https://www.instagram.com/pretostoregold" target="_blank" rel="noopener" data-label="FOTO DE CLIENTE"></a>
-      <a class="ugc-tile" href="https://www.instagram.com/pretostoregold" target="_blank" rel="noopener" data-label="FOTO DE CLIENTE"></a>
-      <a class="ugc-tile" href="https://www.instagram.com/pretostoregold" target="_blank" rel="noopener" data-label="FOTO DE CLIENTE"></a>
-      <a class="ugc-tile" href="https://www.instagram.com/pretostoregold" target="_blank" rel="noopener" data-label="FOTO DE CLIENTE"></a>
-    </div>
+    <div class="ugc-rail" id="ugcRail"></div>
   </div>
 </section>
 
@@ -1056,6 +1005,8 @@
 <script src="punto13.js" defer></script>
 <script src="finder.js" defer></script>
 <script src="cuenta.js" defer></script>
+<script src="resenas.js" defer></script>
+<script src="resenas-render.js" defer></script>
 <script src="chatbot-preto.js" defer></script>
 <script>
   /* Cambio de tema claro / oscuro — persistente */
