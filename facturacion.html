@@ -141,11 +141,10 @@
     <ul class="cot-list" id="cotList"></ul>
   </section>
 
-  <!-- Netlify Forms: las respuestas llegan al panel de Netlify (y por correo si activa las notificaciones) -->
-  <form class="fact-form" name="facturacion" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="factForm">
-    <input type="hidden" name="form-name" value="facturacion" />
+  <!-- Las cotizaciones se guardan en Firestore (colección "cotizaciones") + WhatsApp + PDF. -->
+  <form class="fact-form" name="facturacion" id="factForm">
     <input type="hidden" name="cotizacion_detalle" id="cotDetalle" />
-    <p class="hp"><label>No llenar este campo: <input name="bot-field" /></label></p>
+    <p class="hp"><label>No llenar este campo: <input name="bot-field" id="botField" /></label></p>
 
     <div class="field full">
       <label for="nombre">Nombre o razón social <span class="req">*</span></label>
@@ -229,6 +228,33 @@
 <footer class="legal-foot">
   <p><span class="script">Preto</span> by Dala&amp;Co · Hecho en Colombia · <a href="privacidad.html">Política de privacidad</a></p>
 </footer>
+
+<!-- Firebase (mismo proyecto preto-pedidos) — guarda la cotización.
+     Reemplaza el envío por Netlify Forms, que no funciona en Cloudflare.
+     Cada cotización enviada queda en la colección "cotizaciones". -->
+<script>
+  window.PRETO_FIREBASE_CONFIG = {
+    apiKey:            "AIzaSyAuvR7AhwZAPzoUUz2YmJqyliwNecSVcoo",
+    authDomain:        "preto-pedidos.firebaseapp.com",
+    projectId:         "preto-pedidos",
+    storageBucket:     "preto-pedidos.firebasestorage.app",
+    messagingSenderId: "521170629952",
+    appId:             "1:521170629952:web:fbffb7893517d7a30336a5"
+  };
+  window.PretoFirebase = (function () {
+    var BASE = 'https://www.gstatic.com/firebasejs/10.12.2/';
+    var promise = null;
+    function inject(src){ return new Promise(function(res,rej){ var s=document.createElement('script'); s.src=src; s.async=false; s.onload=res; s.onerror=function(){rej(new Error(src));}; document.head.appendChild(s); }); }
+    function load(){
+      if (promise) return promise;
+      promise = inject(BASE+'firebase-app-compat.js')
+        .then(function(){ return inject(BASE+'firebase-firestore-compat.js'); })
+        .then(function(){ if (window.firebase && (!firebase.apps||!firebase.apps.length)) firebase.initializeApp(window.PRETO_FIREBASE_CONFIG); return window.firebase; });
+      return promise;
+    }
+    return { load: load };
+  })();
+</script>
 
 <script>
   (function () {
@@ -478,6 +504,43 @@
     }
 
     /* ── Submit: PDF + WhatsApp + Netlify record ──────────── */
+    var COTKEY = 'preto.cot.pending';
+    function buildCotDoc(){
+      var T = computeTotals();
+      return {
+        nombre: val('nombre'), tipo_documento: val('tipodoc'), numero_documento: val('numdoc'),
+        telefono: val('tel'), correo: val('correo'), ciudad: val('ciudad'), direccion: val('direccion'),
+        pedido: val('pedido'), notas: val('notas'), acepta_politica: true,
+        piezas: quote, subtotal: T.subtotal, seguro: T.seguro, total: T.total, todo_con_precio: T.allPriced,
+        estado: 'nueva', fuente: 'facturacion.html', creado_iso: new Date().toISOString()
+      };
+    }
+    function writeCot(doc){
+      if (!window.PretoFirebase || !window.PRETO_FIREBASE_CONFIG) return Promise.resolve(false);
+      return window.PretoFirebase.load().then(function(){
+        try {
+          var db = firebase.firestore();
+          var d = Object.assign({}, doc);
+          d.creado = firebase.firestore.FieldValue.serverTimestamp();
+          return db.collection('cotizaciones').add(d).then(function(){ return true; }).catch(function(){ return false; });
+        } catch(e){ return false; }
+      }).catch(function(){ return false; });
+    }
+    function queueCot(doc){ try { var q=JSON.parse(localStorage.getItem(COTKEY)||'[]'); q.push(doc); localStorage.setItem(COTKEY, JSON.stringify(q)); } catch(e){} }
+    function saveQuoteToFirestore(){
+      var doc = buildCotDoc();
+      writeCot(doc).then(function(ok){ if(!ok) queueCot(doc); });
+    }
+    function retryCotQueue(){
+      var q; try { q=JSON.parse(localStorage.getItem(COTKEY)||'[]'); } catch(e){ q=[]; }
+      if(!q.length) return;
+      Promise.all(q.map(writeCot)).then(function(res){
+        var left=q.filter(function(_,i){ return !res[i]; });
+        try { localStorage.setItem(COTKEY, JSON.stringify(left)); } catch(e){}
+      });
+    }
+    window.addEventListener('load', function(){ setTimeout(retryCotQueue, 4000); });
+
     var form = document.getElementById('factForm');
     var status = document.getElementById('factStatus');
     var submit = document.getElementById('factSubmit');
@@ -486,11 +549,14 @@
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+      var bf = document.getElementById('botField');
+      if (bf && bf.value) return;            // honeypot anti-spam
       if (!form.reportValidity()) return;
 
       // WhatsApp first (synchronous, inside the click gesture → not blocked)
       window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(buildWa()), '_blank', 'noopener');
       var pdfOk = makeAndDownloadPdf();
+      saveQuoteToFirestore();                // guarda en Firestore (autorizado por la casilla)
 
       submit.disabled = true;
       submit.textContent = 'Enviando…';
@@ -511,5 +577,7 @@
   })();
 </script>
 
+<script src="cookies.js" defer></script>
+<script src="analitica.js" defer></script>
 </body>
 </html>

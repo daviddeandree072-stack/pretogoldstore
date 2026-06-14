@@ -964,7 +964,7 @@ section {
 }
 .var-art.has-image {
   background-color: #0f0f0f;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   padding: 0;
@@ -1944,10 +1944,34 @@ section {
   max-width: 520px;
   margin: 0 auto;
   display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.news-row {
+  display: flex;
   gap: 0;
   border-bottom: 1px solid var(--hairline);
   padding-bottom: 16px;
 }
+.news-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 11.5px;
+  line-height: 1.55;
+  letter-spacing: 0.02em;
+  color: rgba(243,239,231,0.55);
+  cursor: pointer;
+}
+.news-consent input {
+  width: 15px; height: 15px; margin-top: 2px; flex-shrink: 0;
+  accent-color: var(--gold); cursor: pointer;
+}
+.news-consent a { color: var(--gold); text-decoration: none; border-bottom: 1px solid rgba(182,141,64,0.4); }
+.news-consent a:hover { opacity: 0.75; }
 .news-form input {
   flex: 1;
   background: transparent;
@@ -2621,7 +2645,7 @@ footer {
 }
 .pcard-art { position: absolute; inset: 0; }
 .pcard-art.has-image {
-  background-size: cover; background-position: center;
+  background-size: contain; background-position: center; background-repeat: no-repeat;
   transition: transform 1.3s cubic-bezier(.2,.7,.2,1);
 }
 .pcard:hover .pcard-art.has-image { transform: scale(1.05); }
@@ -2988,7 +3012,7 @@ footer {
   overflow: hidden;
   background: #0f0f0f;
 }
-.sr-art.has-image { background-size: cover; background-position: center; }
+.sr-art.has-image { background-size: contain; background-position: center; background-repeat: no-repeat; }
 .sr-art:not(.has-image) {
   display: flex; align-items: center; justify-content: center;
   background:
