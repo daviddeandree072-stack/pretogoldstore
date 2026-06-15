@@ -268,6 +268,7 @@ a.nav-contact:hover { color: var(--gold); }
 .nav-drawer { display: contents; }
 .nav-mobile-head { display: none; }
 .nav-scrim { display: none; }
+.nav-sheet-close { display: none; }
 body.nav-locked { overflow: hidden; }
 
 /* Joyería mega trigger */
@@ -436,7 +437,7 @@ html[data-theme="dark"] .nav-mark .lf-name { color: #f3efe7; }
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: #0a0807 url('assets/hero-banner.jpg') 72% 50% / cover no-repeat;
+  background: #0a0807 url('assets/hero-inicio.jpg') 72% 50% / cover no-repeat;
   box-shadow: 0 40px 80px -30px rgba(0,0,0,0.8);
 }
 .hero-bg::before {
@@ -2475,10 +2476,33 @@ footer {
   .nav.menu-open .nav-bottom > *:nth-child(5) { animation-delay: .30s; }
   .nav.menu-open .nav-bottom > *:nth-child(6) { animation-delay: .35s; }
   .nav.menu-open .nav-bottom > *:nth-child(n+7) { animation-delay: .40s; }
+
+  /* Botón "Cerrar menú" grande al final de la hoja — cómodo para el pulgar */
+  .nav-sheet-close {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 8px 0 0;
+    padding: 20px 24px calc(22px + max(0px, env(safe-area-inset-bottom)));
+    background: none;
+    border: 0;
+    border-top: 1px solid rgba(201,162,93,0.20);
+    color: var(--gold);
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+  }
+  .nav-sheet-close:active { background: rgba(201,162,93,0.08); }
   /* Evita que la barra (con su transform) "atrape" al panel y lo mande arriba.
      z-index alto: saca a la barra (y a su hijo, el panel) POR ENCIMA del velo,
      para que el menú se vea nítido y no quede tapado por el desenfoque. */
   .nav.menu-open { transform: none !important; z-index: 1300 !important; }
+  /* Con el menú abierto, ocultar la hamburguesa-X de arriba: el cierre vive
+     abajo (botón "Cerrar menú"), cómodo para el pulgar y sin dos "equis". */
+  .nav.menu-open .nav-burger { display: none !important; }
   /* Con el menú abierto, ocultar el botón flotante (no debe tapar las opciones) */
   .nav.menu-open ~ .nav-fab { display: none; }
 
@@ -2590,7 +2614,7 @@ footer {
     max-width: none;
     margin: 0;
     aspect-ratio: 1 / 1;
-    background: #0a0807 url('assets/hero-banner.jpg') 70% 50% / cover no-repeat;
+    background: #0a0807 url('assets/hero-inicio.jpg') 70% 50% / cover no-repeat;
   }
   .hero-bg::after {
     background:
