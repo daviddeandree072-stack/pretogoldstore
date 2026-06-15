@@ -25,7 +25,7 @@
   'use strict';
 
   var CONFIG = {
-    GA4_ID:     'G-XXXXXXXXXX',   // ← PEGA AQUÍ tu ID de Google Analytics 4
+    GA4_ID:     'G-PR29XCGHPY',   // ← Preto Gold Store · pretogold.store
     PIXEL_ID:   '',               // ← (opcional) ID de Meta Pixel
     CLARITY_ID: ''                // ← (opcional) ID de Microsoft Clarity
   };
