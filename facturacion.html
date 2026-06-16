@@ -527,18 +527,71 @@
         .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40);
       return 'Cotizacion-Preto-' + (n||'cliente') + '.pdf';
     }
-    var lastPdfUrl=null, lastPdfName=null, lastPdfBase64=null;
+    var lastPdfUrl=null, lastPdfName=null, lastPdfBase64=null, correoEnviado=false;
+
+    /* ── Correo automático con el PDF adjunto (extensión Trigger Email) ──
+       El navegador crea un documento en la colección «mail» y la
+       extensión de Firebase lo entrega. Lleva el PDF como adjunto.     */
+    function emailHtml(){
+      var T = computeTotals(), rows = '';
+      quote.forEach(function(it){
+        var lt = (it.price!=null) ? it.price*(it.qty||1) : null;
+        rows += '<tr>'
+          + '<td style="padding:12px 0;border-top:1px solid #eee;font:15px/1.4 Georgia,serif;color:#1a1a1a;">'
+            + escapeHtml(it.name) + (it.size?' · '+escapeHtml(it.size):'')
+            + '<div style="font:11px/1.5 Arial,sans-serif;color:#999;letter-spacing:1px;text-transform:uppercase;margin-top:3px;">Ref. '+escapeHtml(it.id)+' · ×'+(it.qty||1)+'</div></td>'
+          + '<td style="padding:12px 0;border-top:1px solid #eee;font:15px Georgia,serif;color:#1a1a1a;text-align:right;white-space:nowrap;">'+(lt!=null?fmtCOP(lt):'Bajo cotización')+'</td></tr>';
+      });
+      var totals = '';
+      if (T.anyPriced){
+        totals = '<table width="100%" style="margin-top:8px;border-collapse:collapse;">'
+          + '<tr><td style="font:12px Arial,sans-serif;color:#888;padding:4px 0;">Subtotal</td><td style="text-align:right;font:14px Georgia,serif;color:#1a1a1a;">'+fmtCOP(T.subtotal)+'</td></tr>'
+          + '<tr><td style="font:12px Arial,sans-serif;color:#888;padding:4px 0;">Seguro ('+Math.round(INSURANCE_RATE*100)+'%)</td><td style="text-align:right;font:14px Georgia,serif;color:#1a1a1a;">'+fmtCOP(T.seguro)+'</td></tr>'
+          + '<tr><td style="font:13px Arial,sans-serif;color:#1a1a1a;font-weight:bold;padding:8px 0 0;border-top:1px solid #1a1a1a;">TOTAL</td><td style="text-align:right;font:18px Georgia,serif;color:#1a1a1a;padding:8px 0 0;border-top:1px solid #1a1a1a;">'+fmtCOP(T.total)+'</td></tr></table>';
+      }
+      return '<div style="max-width:560px;margin:0 auto;padding:32px 28px;background:#faf9f6;font-family:Arial,sans-serif;">'
+        + '<div style="text-align:center;padding-bottom:20px;border-bottom:1px solid #e0ddd5;font:28px Georgia,serif;letter-spacing:2px;color:#1a1a1a;">PRETO <span style="color:#b68d40;font-style:italic;font-size:15px;">by Dala&amp;Co</span></div>'
+        + '<p style="font:15px/1.7 Georgia,serif;color:#444;margin:24px 0;">Hola '+escapeHtml(val('nombre')||'')+', gracias por su interés en nuestra casa. Adjuntamos su cotización en PDF. Este es el resumen:</p>'
+        + '<div style="font:11px Arial,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#b68d40;margin-bottom:6px;">Piezas solicitadas</div>'
+        + '<table width="100%" style="border-collapse:collapse;">'+rows+'</table>'+totals
+        + '<div style="margin:26px 0;padding:18px;background:#fff;border:1px solid #e0ddd5;text-align:center;">'
+          + '<div style="font:11px Arial,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#b68d40;">&#10003; Pago seguro con Wompi</div>'
+          + '<p style="font:13px/1.5 Georgia,serif;font-style:italic;color:#555;margin:8px 0 0;">Aceptamos todas las tarjetas de crédito y débito, además de PSE y Nequi. Su asesor le enviará el link de pago por WhatsApp.</p></div>'
+        + '<p style="font:13px/1.7 Arial,sans-serif;color:#888;text-align:center;margin-top:24px;">Atención por WhatsApp · +57 322 695 5451<br>Preto by Dala&amp;Co · Hecho en Colombia · pretogold.store</p></div>';
+    }
+    function sendQuoteEmail(){
+      if (correoEnviado) return;
+      if (!window.PretoFirebase || !window.PRETO_FIREBASE_CONFIG) return;
+      var to = val('correo'); if (!to || to.indexOf('@') < 1) return;
+      correoEnviado = true;
+      window.PretoFirebase.load().then(function(){
+        try {
+          var db = firebase.firestore();
+          var message = { subject: 'Su cotización — Preto by Dala&Co', html: emailHtml() };
+          if (lastPdfBase64) message.attachments = [{ filename: lastPdfName || 'Cotizacion-Preto.pdf', content: lastPdfBase64, encoding: 'base64' }];
+          db.collection('mail').add({
+            to: to,
+            bcc: 'concierge@preto.co',
+            replyTo: 'concierge@preto.co',
+            message: message,
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+          }).catch(function(){ correoEnviado = false; });
+        } catch(e){ correoEnviado = false; }
+      }).catch(function(){ correoEnviado = false; });
+    }
 
     function makeAndDownloadPdf(){
       var doc = buildPdf();
       if (!doc) return false;
       lastPdfName = safeFile();
-      // 1) Guarda el PDF en base64 para adjuntarlo al correo (lo envía la Cloud Function).
+      // 1) Guarda el PDF en base64 para adjuntarlo al correo.
       try {
         var datauri = doc.output('datauristring');
         lastPdfBase64 = datauri.substring(datauri.indexOf(',') + 1);
       } catch(e){ lastPdfBase64 = null; }
-      // 2) Descarga el PDF en el dispositivo.
+      // 2) Envía el correo automático con el PDF adjunto (mejor esfuerzo).
+      sendQuoteEmail();
+      // 3) Descarga el PDF en el dispositivo.
       try {
         var blob = doc.output('blob');
         if (lastPdfUrl) URL.revokeObjectURL(lastPdfUrl);
@@ -558,10 +611,7 @@
         telefono: val('tel'), correo: val('correo'), ciudad: val('ciudad'), direccion: val('direccion'),
         pedido: val('pedido'), notas: val('notas'), acepta_politica: true,
         piezas: quote, subtotal: T.subtotal, seguro: T.seguro, total: T.total, todo_con_precio: T.allPriced,
-        estado: 'nueva', fuente: 'facturacion.html', creado_iso: new Date().toISOString(),
-        enviar_correo: true,
-        pdf_nombre: lastPdfName || 'Cotizacion-Preto.pdf',
-        pdf_base64: lastPdfBase64 || null
+        estado: 'nueva', fuente: 'facturacion.html', creado_iso: new Date().toISOString()
       };
     }
     function writeCot(doc){
