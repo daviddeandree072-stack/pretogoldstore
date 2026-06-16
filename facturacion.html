@@ -74,6 +74,17 @@
   .fact-done a:hover { color: var(--gold); }
   .fact-pdf-link { display: inline-block; margin: 0 auto 20px; font-family: var(--sans); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-deep); text-decoration: none; border-bottom: 1px solid rgba(138,107,46,0.4); padding-bottom: 4px; }
   .fact-pdf-link:hover { color: var(--gold); border-bottom-color: var(--gold); }
+  .done-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 360px; margin: 0 auto 14px; }
+  .done-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; box-sizing: border-box; padding: 15px 28px; font-family: var(--sans); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: background .25s ease, transform .25s ease, color .25s ease, border-color .25s ease; }
+  .done-btn-gold { background: var(--gold); color: #0a0807 !important; border: 0; }
+  .done-btn-gold:hover { background: #d9b86a; transform: translateY(-1px); color: #0a0807 !important; }
+  .done-btn-ghost { background: transparent; color: var(--gold-deep) !important; border: 1px solid rgba(138,107,46,0.4); }
+  .done-btn-ghost:hover { border-color: var(--gold); color: var(--gold) !important; transform: translateY(-1px); }
+  .done-pdf-note { font-family: var(--sans); font-size: 12px !important; color: rgba(17,17,17,0.45) !important; margin: 0 auto 22px !important; }
+  .fact-pay { grid-column: 1 / -1; text-align: center; margin-top: 8px; padding-top: 24px; border-top: 1px solid rgba(17,17,17,0.1); }
+  .fact-pay .pay-note-txt { margin: 13px auto 9px; max-width: 430px; }
+  .done-pay-wompi { text-align: center; padding-bottom: 18px; margin-bottom: 18px; border-bottom: 1px solid rgba(17,17,17,0.1); }
+  .done-pay-wompi .pay-note-txt { margin: 13px auto 9px; max-width: 410px; }
   body.sent .fact-form { display: none; }
   body.sent .fact-done { display: block; }
   body.sent .fact-lede, body.sent .fact-title, body.sent .fact-eyebrow { display: none; }
@@ -202,6 +213,18 @@
         <a href="privacidad.html" target="_blank" rel="noopener">Política de Tratamiento de Datos</a> de Preto by Dala&amp;Co.</label>
     </div>
 
+    <div class="fact-pay">
+      <span class="wompi-seal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3 5 6v5c0 4.2 2.8 7.6 7 9 4.2-1.4 7-4.8 7-9V6l-7-3Z"></path>
+          <path d="m9.2 12 1.9 1.9 3.7-3.8"></path>
+        </svg>
+        Pago seguro con <b>Wompi</b>
+      </span>
+      <p class="pay-note-txt">Aceptamos <b>todas las tarjetas de crédito</b> y débito, además de PSE y Nequi.</p>
+      <span class="pay-brands">Visa · Mastercard · American Express · Diners · PSE · Nequi</span>
+    </div>
+
     <div class="fact-status" id="factStatus" hidden></div>
 
     <button type="submit" class="fact-submit" id="factSubmit">Enviar cotización <span aria-hidden="true">→</span></button>
@@ -210,9 +233,20 @@
   <div class="fact-done" id="factDone">
     <div class="glyph">Preto</div>
     <h2>Cotización enviada.</h2>
-    <p>Gracias. Hemos recibido sus datos y su cotización. Abrimos WhatsApp para finalizar la conversación con un asesor; si no se abrió, escríbanos al +57 322 695 5451.</p>
+    <p>Gracias. Su cotización en PDF se descargó automáticamente y enviamos una copia a su correo. Continúe por WhatsApp para finalizar con un asesor — puede adjuntar el PDF descargado.</p>
     <div class="done-pay">
-      <span class="done-pay-title">Datos para tu pago</span>
+      <div class="done-pay-wompi">
+        <span class="wompi-seal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3 5 6v5c0 4.2 2.8 7.6 7 9 4.2-1.4 7-4.8 7-9V6l-7-3Z"></path>
+            <path d="m9.2 12 1.9 1.9 3.7-3.8"></path>
+          </svg>
+          Pago seguro con <b>Wompi</b>
+        </span>
+        <p class="pay-note-txt">Aceptamos <b>todas las tarjetas de crédito</b> y débito, además de PSE y Nequi. Su asesor le enviará el link de pago seguro por WhatsApp.</p>
+        <span class="pay-brands">Visa · Mastercard · American Express · Diners · PSE · Nequi</span>
+      </div>
+      <span class="done-pay-title">O por transferencia directa</span>
       <div class="done-pay-grid">
         <div><b>Bancolombia · Ahorros</b><span>912-395939-71</span><small>David Andrés Lozano Mena</small></div>
         <div><b>Nequi</b><span>322 695 5451</span><small>David Andrés Lozano Mena</small></div>
@@ -220,7 +254,12 @@
       </div>
       <p class="done-pay-note">Envío nacional sin costo · Solo se cobra el seguro del producto.</p>
     </div>
-    <a href="#" id="pdfRedownload" class="fact-pdf-link" hidden>↓ Descargar mi cotización en PDF</a>
+    <div class="done-actions">
+      <a href="#" id="pdfRedownload" class="done-btn done-btn-gold" download>↓ Descargar mi cotización (PDF)</a>
+      <a href="#" id="waContinue" class="done-btn done-btn-ghost" target="_blank" rel="noopener">Continuar por WhatsApp</a>
+      <a href="#" id="emailCopy" class="done-btn done-btn-ghost">Enviar copia por correo</a>
+    </div>
+    <p class="done-pdf-note">¿No inició la descarga? Toca «Descargar mi cotización (PDF)».</p>
     <a href="index.html">← Volver a la tienda</a>
   </div>
 </main>
@@ -488,11 +527,18 @@
         .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40);
       return 'Cotizacion-Preto-' + (n||'cliente') + '.pdf';
     }
-    var lastPdfUrl=null, lastPdfName=null;
+    var lastPdfUrl=null, lastPdfName=null, lastPdfBase64=null;
+
     function makeAndDownloadPdf(){
       var doc = buildPdf();
       if (!doc) return false;
       lastPdfName = safeFile();
+      // 1) Guarda el PDF en base64 para adjuntarlo al correo (lo envía la Cloud Function).
+      try {
+        var datauri = doc.output('datauristring');
+        lastPdfBase64 = datauri.substring(datauri.indexOf(',') + 1);
+      } catch(e){ lastPdfBase64 = null; }
+      // 2) Descarga el PDF en el dispositivo.
       try {
         var blob = doc.output('blob');
         if (lastPdfUrl) URL.revokeObjectURL(lastPdfUrl);
@@ -512,7 +558,10 @@
         telefono: val('tel'), correo: val('correo'), ciudad: val('ciudad'), direccion: val('direccion'),
         pedido: val('pedido'), notas: val('notas'), acepta_politica: true,
         piezas: quote, subtotal: T.subtotal, seguro: T.seguro, total: T.total, todo_con_precio: T.allPriced,
-        estado: 'nueva', fuente: 'facturacion.html', creado_iso: new Date().toISOString()
+        estado: 'nueva', fuente: 'facturacion.html', creado_iso: new Date().toISOString(),
+        enviar_correo: true,
+        pdf_nombre: lastPdfName || 'Cotizacion-Preto.pdf',
+        pdf_base64: lastPdfBase64 || null
       };
     }
     function writeCot(doc){
@@ -545,7 +594,16 @@
     var status = document.getElementById('factStatus');
     var submit = document.getElementById('factSubmit');
     var redownload = document.getElementById('pdfRedownload');
+    var waContinue = document.getElementById('waContinue');
+    var emailCopy  = document.getElementById('emailCopy');
+    var STORE_EMAIL = 'concierge@preto.co';
     if (!form) return;
+
+    function buildMailtoHref(){
+      return 'mailto:' + STORE_EMAIL +
+        '?subject=' + encodeURIComponent('Mi cotización — Preto by Dala&Co') +
+        '&body='    + encodeURIComponent(buildWa());
+    }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -553,26 +611,36 @@
       if (bf && bf.value) return;            // honeypot anti-spam
       if (!form.reportValidity()) return;
 
-      // WhatsApp first (synchronous, inside the click gesture → not blocked)
-      window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(buildWa()), '_blank', 'noopener');
-      var pdfOk = makeAndDownloadPdf();
-      saveQuoteToFirestore();                // guarda en Firestore (autorizado por la casilla)
-
       submit.disabled = true;
-      submit.textContent = 'Enviando…';
+      submit.textContent = 'Generando su PDF…';
       status.hidden = true; status.classList.remove('err');
 
-      var finish = function () {
-        try { localStorage.removeItem(QKEY); } catch (e) {}
-        if (pdfOk && redownload && lastPdfUrl) {
-          redownload.hidden = false;
+      // 1) Genera y DESCARGA el PDF automáticamente (dentro del gesto del clic).
+      var pdfOk = makeAndDownloadPdf();
+
+      // 2) Prepara los botones de la pantalla de éxito (sin navegar todavía).
+      if (waContinue) waContinue.href = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(buildWa());
+      if (emailCopy)  emailCopy.href  = buildMailtoHref();
+
+      // 3) Botón persistente de descarga (respaldo para tocar de nuevo).
+      if (redownload) {
+        if (pdfOk && lastPdfUrl) {
           redownload.href = lastPdfUrl;
           redownload.setAttribute('download', lastPdfName || 'Cotizacion-Preto.pdf');
+        } else {
+          // jsPDF no cargó: regenera el PDF al tocar el botón.
+          redownload.removeAttribute('download');
+          redownload.href = '#';
+          redownload.onclick = function (ev) { ev.preventDefault(); makeAndDownloadPdf(); };
         }
-        document.body.classList.add('sent');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      };
-      finish();
+      }
+
+      // 4) Guarda la cotización en Firestore (autorizado por la casilla).
+      saveQuoteToFirestore();
+
+      try { localStorage.removeItem(QKEY); } catch (e) {}
+      document.body.classList.add('sent');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   })();
 </script>
