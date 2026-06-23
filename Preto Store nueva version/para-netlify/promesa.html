@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>La promesa Preto — Autenticidad, garantía y envíos · Preto by Dala&Co</title>
+<meta name="description" content="Lo que garantiza cada compra en Preto by Dala&Co: certificado de autenticidad en oro 18k, garantía de hasta 3 años, cambios en 30 días, envío nacional asegurado con Interrapidísimo y pagos verificados por el concierge." />
+<link rel="canonical" href="https://pretogold.store/promesa.html" />
+<link rel="icon" type="image/png" href="assets/preto-logo-gold.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Pinyon+Script&family=Inter:wght@200;300;400;500&display=swap" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  body { background: var(--paper); color: var(--bone); }
+  .legal-bar {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px clamp(22px, 5vw, 80px);
+    background: #F5F5F0;
+    border-bottom: 1px solid rgba(17,17,17,0.08);
+  }
+  .legal-bar a.legal-mark { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .legal-bar .legal-mark img { height: 30px; width: auto; }
+  .legal-bar .legal-mark .by { font-family: var(--script); color: var(--gold); font-size: 21px; line-height: 1; }
+  .legal-back {
+    font-family: var(--sans); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+    color: rgba(17,17,17,0.75); text-decoration: none; transition: color .3s ease;
+  }
+  .legal-back:hover { color: var(--gold); }
+  .legal-wrap { max-width: 860px; margin: 0 auto; padding: clamp(48px, 8vw, 110px) clamp(22px, 5vw, 40px) 120px; }
+  .legal-eyebrow {
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 22px;
+  }
+  .legal-title {
+    font-family: var(--serif); font-weight: 300; line-height: 1.04;
+    font-size: clamp(40px, 7vw, 78px); letter-spacing: -0.01em; margin-bottom: 18px;
+  }
+  .legal-title .script { font-family: var(--script); color: var(--gold); font-size: 1.25em; }
+  .legal-meta {
+    font-family: var(--sans); font-size: 12px; letter-spacing: 0.08em; color: rgba(17,17,17,0.5);
+    padding-bottom: 40px; margin-bottom: 48px; border-bottom: 1px solid rgba(17,17,17,0.12);
+  }
+  .legal-lede {
+    font-family: var(--serif); font-style: italic; font-size: clamp(19px, 2.4vw, 24px);
+    line-height: 1.55; color: rgba(17,17,17,0.82); margin-bottom: 56px;
+  }
+  .legal-wrap h2 {
+    font-family: var(--serif); font-weight: 400; font-size: clamp(24px, 3.2vw, 33px);
+    line-height: 1.15; margin: 56px 0 14px;
+  }
+  .legal-num { color: var(--gold); font-variant-numeric: tabular-nums; margin-right: 12px; }
+  .legal-wrap h3 {
+    font-family: var(--sans); font-weight: 500; font-size: 13px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: rgba(17,17,17,0.85); margin: 30px 0 10px;
+  }
+  .legal-wrap p, .legal-wrap li {
+    font-family: var(--sans); font-weight: 300; font-size: 16px; line-height: 1.78;
+    color: rgba(17,17,17,0.78); text-wrap: pretty;
+  }
+  .legal-wrap p { margin-bottom: 16px; }
+  .legal-wrap ul { list-style: none; margin: 8px 0 20px; padding: 0; }
+  .legal-wrap li { position: relative; padding-left: 22px; margin-bottom: 9px; }
+  .legal-wrap li::before {
+    content: ''; position: absolute; left: 2px; top: 12px;
+    width: 5px; height: 5px; background: var(--gold); transform: rotate(45deg);
+  }
+  .legal-wrap a { color: var(--gold-deep); text-decoration: none; border-bottom: 1px solid rgba(138,107,46,0.35); }
+  .legal-wrap a:hover { color: var(--gold); }
+  .legal-wrap strong { font-weight: 500; color: rgba(17,17,17,0.92); }
+  .legal-note {
+    margin-top: 60px; padding: 26px 30px;
+    background: rgba(182,141,64,0.07); border: 1px solid rgba(182,141,64,0.22);
+  }
+  .legal-note p { font-size: 14px; margin: 0; color: rgba(17,17,17,0.7); }
+  /* Certificate card */
+  .cert-card {
+    margin: 34px 0 10px; padding: 34px clamp(24px, 4vw, 44px);
+    background: #111; color: var(--bone);
+    border: 1px solid rgba(182,141,64,0.4);
+  }
+  .cert-card .cert-kicker {
+    font-family: var(--sans); font-size: 10px; letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 10px;
+  }
+  .cert-card .cert-head {
+    font-family: var(--serif); font-weight: 300; font-size: clamp(24px, 3.4vw, 34px);
+    line-height: 1.1; margin-bottom: 6px;
+  }
+  .cert-card .cert-by { font-family: var(--script); color: var(--gold); font-size: 22px; margin-bottom: 26px; }
+  .cert-row {
+    display: grid; grid-template-columns: minmax(160px, 200px) 1fr; gap: 0;
+    border-top: 1px solid rgba(255,255,255,0.12); padding: 14px 0;
+  }
+  .cert-row:last-child { border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .cert-row .cert-label {
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+  }
+  .cert-row .cert-line { border-bottom: 1px solid rgba(182,141,64,0.45); min-height: 18px; }
+  /* Shipping cards */
+  .ship-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 26px 0 10px;
+  }
+  .ship-card {
+    border: 1px solid rgba(17,17,17,0.14); padding: 26px 28px; background: #FFFFFF;
+  }
+  .ship-card h4 {
+    font-family: var(--sans); font-weight: 500; font-size: 12px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold-deep); margin: 0 0 12px;
+  }
+  .ship-card p { font-size: 15px; margin: 0; }
+  /* Payment chips */
+  .promesa-pay {
+    display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0 8px;
+  }
+  .promesa-pay span {
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: rgba(17,17,17,0.78); border: 1px solid rgba(17,17,17,0.22); padding: 8px 16px;
+  }
+  /* CTA */
+  .promesa-cta {
+    margin-top: 70px; text-align: center;
+    padding: clamp(40px, 6vw, 64px) clamp(24px, 5vw, 60px);
+    background: #111; border: 1px solid rgba(182,141,64,0.4);
+  }
+  .promesa-cta .script { font-family: var(--script); color: var(--gold); font-size: clamp(30px, 4.4vw, 44px); display: block; margin-bottom: 8px; }
+  .promesa-cta p { color: rgba(243,239,231,0.7); font-family: var(--sans); font-weight: 300; font-size: 15px; max-width: 480px; margin: 0 auto 28px; }
+  .promesa-cta a {
+    display: inline-block; font-family: var(--sans); font-size: 11px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: #111; background: var(--gold);
+    padding: 16px 36px; text-decoration: none; border: 0; transition: opacity .3s ease;
+  }
+  .promesa-cta a:hover { opacity: 0.85; }
+  .legal-foot {
+    text-align: center; padding: 40px 22px 60px;
+    border-top: 1px solid rgba(17,17,17,0.1);
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(17,17,17,0.45);
+  }
+  .legal-foot .script { font-family: var(--script); color: var(--gold); font-size: 18px; text-transform: none; letter-spacing: 0; }
+  .legal-foot a { color: inherit; text-decoration: none; }
+  .legal-foot a:hover { color: var(--gold); }
+  @media (max-width: 640px) {
+    .ship-grid { grid-template-columns: 1fr; }
+    .cert-row { grid-template-columns: 1fr; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="legal-bar">
+  <a class="legal-mark" href="index.html">
+    <img src="assets/preto-logo-black.png" alt="Preto" />
+    <span class="by">by Dala&amp;Co</span>
+  </a>
+  <a class="legal-back" href="index.html">← Volver a la tienda</a>
+</div>
+
+<main class="legal-wrap">
+  <div class="legal-eyebrow">— El compromiso de la casa</div>
+  <h1 class="legal-title">La promesa <span class="script">Preto.</span></h1>
+  <div class="legal-meta">Autenticidad · Garantía · Envíos · Pagos — Preto by Dala&amp;Co · Colombia</div>
+
+  <p class="legal-lede">
+    Comprar una joya a distancia exige confianza. Esta página reúne, sin letra
+    pequeña, todo lo que la casa garantiza en cada pieza que sale del atelier.
+  </p>
+
+  <h2><span class="legal-num">01</span>Autenticidad certificada</h2>
+  <p>
+    Cada pieza se entrega con su <strong>Tarjeta de Propiedad</strong>: un certificado de
+    autenticidad que garantiza que el material es <strong>oro 18k</strong> y registra los
+    datos de su pedido. Se entrega con la compra y se envía también a su correo o WhatsApp,
+    para que siempre tenga respaldo de su inversión.
+  </p>
+  <div class="cert-card">
+    <div class="cert-kicker">Certificado de autenticidad · Oro 18k</div>
+    <div class="cert-head">Tarjeta de propiedad</div>
+    <div class="cert-by">Preto by Dala&amp;Co</div>
+    <div class="cert-row"><span class="cert-label">Propietario</span><span class="cert-line"></span></div>
+    <div class="cert-row"><span class="cert-label">Fecha de compra</span><span class="cert-line"></span></div>
+    <div class="cert-row"><span class="cert-label">Descripción del producto</span><span class="cert-line"></span></div>
+    <div class="cert-row"><span class="cert-label">Material</span><span class="cert-line" style="display:flex;align-items:flex-end;color:var(--gold);font-family:var(--serif);font-size:16px;border-bottom:1px solid rgba(182,141,64,0.45);">Oro 18k</span></div>
+  </div>
+
+  <h2><span class="legal-num">02</span>Garantía de hasta 3 años</h2>
+  <p>
+    Su joya está cubierta por una garantía de <strong>hasta 3 años</strong> desde la fecha
+    de compra, que ampara defectos de fabricación y problemas de calidad. La garantía se
+    hace válida directamente con la casa — cualquier intervención en otra joyería la anula.
+    Las condiciones completas están en los
+    <a href="terminos.html">términos y condiciones</a>.
+  </p>
+
+  <h2><span class="legal-num">03</span>Cambios dentro de 30 días</h2>
+  <p>
+    Las piezas de línea son elegibles para cambio dentro de los <strong>30 días</strong>
+    posteriores a la compra. Escríbanos por WhatsApp con su Tarjeta de Propiedad a mano
+    y el concierge coordina todo el proceso.
+  </p>
+
+  <h2><span class="legal-num">04</span>Envío nacional asegurado</h2>
+  <p>
+    Cada envío viaja <strong>asegurado</strong> con <strong>Interrapidísimo</strong> y con
+    número de guía que compartimos apenas la pieza sale del atelier. Los tiempos de entrega
+    se confirman al momento de la cotización, según su ciudad.
+  </p>
+  <div class="ship-grid">
+    <div class="ship-card">
+      <h4>Ciudades principales</h4>
+      <p>Envío <strong>sin costo</strong>. El seguro de transporte se cotiza aparte, según el valor de la pieza.</p>
+    </div>
+    <div class="ship-card">
+      <h4>Resto del país</h4>
+      <p>Envío y seguro de transporte al destino, cotizados junto con su pieza antes de confirmar.</p>
+    </div>
+  </div>
+
+  <h2><span class="legal-num">05</span>Pagos verificados con el concierge</h2>
+  <p>
+    Aceptamos los métodos de pago más usados en Colombia. Los datos de pago se comparten
+    <strong>únicamente</strong> en la conversación oficial de WhatsApp de la casa
+    (+57&nbsp;322&nbsp;695&nbsp;5451) al confirmar su pedido — nunca por otros canales.
+  </p>
+  <div class="promesa-pay">
+    <span>Nequi</span>
+    <span>Llave · Nu</span>
+    <span>Bancolombia</span>
+  </div>
+
+  <h2><span class="legal-num">06</span>El arte de regalar</h2>
+  <p>
+    ¿Su pieza es un regalo? <strong>Avísenos al cotizar</strong> y la prepararemos con un
+    empaque de regalo especial, distinto al empaque de línea — pensado para que el momento
+    de abrirlo esté a la altura de lo que contiene.
+  </p>
+
+  <div class="legal-note">
+    <p>
+      <strong>Una sola puerta de entrada.</strong> Toda compra, cambio o garantía se gestiona
+      con el concierge por WhatsApp al +57&nbsp;322&nbsp;695&nbsp;5451 o al correo
+      <a href="mailto:concierge@preto.co">concierge@preto.co</a>. Desconfíe de cualquier
+      otro número o cuenta que se presente a nombre de la casa.
+    </p>
+  </div>
+
+  <div class="promesa-cta">
+    <span class="script">¿Hablamos?</span>
+    <p>El concierge de la casa resuelve cualquier duda sobre su pieza, el envío o la garantía — sin compromiso.</p>
+    <a href="https://wa.me/573226955451" target="_blank" rel="noopener">Escribir al concierge</a>
+  </div>
+</main>
+
+<div class="legal-foot">
+  <span class="script">Preto by Dala&amp;Co</span><br /><br />
+  <a href="index.html">Tienda</a> &nbsp;·&nbsp; <a href="terminos.html">Términos</a> &nbsp;·&nbsp; <a href="privacidad.html">Privacidad</a> &nbsp;·&nbsp; <a href="facturacion.html">Facturación</a>
+</div>
+
+</body>
+</html>

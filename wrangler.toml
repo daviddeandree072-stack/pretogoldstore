@@ -1,6 +1,0 @@
-name = "pretogoldstore"
-compatibility_date = "2025-06-01"
-
-# Sitio 100% estático (HTML/CSS/JS).
-[assets]
-directory = "./"

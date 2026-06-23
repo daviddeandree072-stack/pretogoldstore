@@ -1,0 +1,9 @@
+{
+  "name": "preto-netlify-resend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Funciones serverless de Preto by Dala&Co — correo automático de cotizaciones con Resend.",
+  "engines": {
+    "node": ">=18"
+  }
+}

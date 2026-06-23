@@ -1,0 +1,14 @@
+# ───────────────────────────────────────────────────────────────
+# Preto by Dala&Co · Configuración de Netlify
+# ───────────────────────────────────────────────────────────────
+# Sitio estático (HTML/CSS/JS) + funciones serverless para Resend.
+# No hay paso de compilación: Netlify publica los archivos tal cual
+# y detecta las funciones en netlify/functions.
+# ───────────────────────────────────────────────────────────────
+
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
