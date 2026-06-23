@@ -1,0 +1,57 @@
+# ─────────────────────────────────────────────────────────────
+#  CACHÉ
+# ─────────────────────────────────────────────────────────────
+
+# Imágenes y fuentes: caché de 1 año
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# CSS y JS: revalidar siempre (cambios al instante)
+/styles.css
+  Cache-Control: public, max-age=0, must-revalidate
+/app.js
+  Cache-Control: public, max-age=0, must-revalidate
+/precios.js
+  Cache-Control: public, max-age=0, must-revalidate
+/finder.js
+  Cache-Control: public, max-age=0, must-revalidate
+/cuenta.js
+  Cache-Control: public, max-age=0, must-revalidate
+/chatbot-preto.js
+  Cache-Control: public, max-age=0, must-revalidate
+/punto12.js
+  Cache-Control: public, max-age=0, must-revalidate
+/punto13.js
+  Cache-Control: public, max-age=0, must-revalidate
+/joyeria/pdp-precio.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+# HTML: siempre revalidar
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# ─────────────────────────────────────────────────────────────
+#  SEGURIDAD · blindaje para todo el sitio
+# ─────────────────────────────────────────────────────────────
+/*
+  # Obliga a usar siempre HTTPS (conexión cifrada) durante 2 años
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+
+  # Define exactamente de dónde puede cargar recursos el sitio.
+  # Bloquea scripts, imágenes o estilos inyectados por un atacante.
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://firebaseinstallations.googleapis.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com wss://*.firebaseio.com; frame-src https://preto-pedidos.firebaseapp.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+
+  # Impide que otra web "incruste" tu tienda en un iframe (robo de clics / clickjacking)
+  X-Frame-Options: DENY
+
+  # Evita que el navegador "adivine" tipos de archivo (bloquea trucos de subida maliciosa)
+  X-Content-Type-Options: nosniff
+
+  # No filtra la dirección completa de tus páginas a sitios externos
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Desactiva funciones del navegador que tu tienda no usa (cámara, micrófono, ubicación, pagos)
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+
+  # Aísla tu página de otras ventanas/pestañas para mayor protección
+  Cross-Origin-Opener-Policy: same-origin
