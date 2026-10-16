@@ -80,6 +80,7 @@ async function estadoCortesia(email, code) {
       if (normCode(c.welcomeCode) !== codigo) continue;
       if (c.welcomeRedeemed) return 'usada';
       const creado = new Date(c.createdAt || c.welcomeCreatedAt || 0).getTime();
+      if (creado && creado > Date.now() + 86400000) return 'invalida';   // alta "en el futuro": manipulada
       if (creado && (Date.now() - creado) / 86400000 > CORTESIA.days) return 'usada';
       return 'ok';
     }

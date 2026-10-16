@@ -33,11 +33,14 @@
   #    Construida para NO romper nada del sitio actual:
   #      · script/style en línea permitidos (la web los usa mucho)
   #      · Firebase (gstatic), Google Fonts, login de Google: permitidos
+  #      · reCAPTCHA (www.google.com/recaptcha/): lo carga App Check.
+  #        Sin él App Check no obtiene token y, en modo Enforce,
+  #        Firestore rechaza pedidos, cuentas y newsletter.
   #      · Firestore / función de correo (Resend): permitidos por https
   #      · object-src 'none' + base-uri 'self' + form-action 'self':
   #        bloquea plugins, secuestro de <base> y envío de formularios
   #        a sitios externos (defensa real contra inyecciones).
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com https://apis.google.com https://cdnjs.cloudflare.com https://*.bold.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://connect.facebook.net https://www.facebook.com https://*.bold.co; worker-src 'self' blob:; frame-src 'self' https://*.firebaseapp.com https://accounts.google.com https://*.google.com https://*.bold.co; object-src 'none'; base-uri 'self'; form-action 'self' https://*.bold.co; frame-ancestors 'self'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com https://apis.google.com https://cdnjs.cloudflare.com https://*.bold.co https://www.google.com/recaptcha/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://*.googletagmanager.com https://stats.g.doubleclick.net https://connect.facebook.net https://www.facebook.com https://*.bold.co; worker-src 'self' blob:; frame-src 'self' https://*.firebaseapp.com https://accounts.google.com https://*.google.com https://*.bold.co; object-src 'none'; base-uri 'self'; form-action 'self' https://*.bold.co; frame-ancestors 'self'; upgrade-insecure-requests
 
 # ════════════════════════════════════════════════════════════════
 #  PÁGINAS PRIVADAS — nunca indexadas, nunca guardadas en caché

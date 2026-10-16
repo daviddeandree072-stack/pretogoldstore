@@ -21,6 +21,51 @@
    ─────────────────────────────────────────────────────────────── */
 const crypto = require('crypto');
 
+/* ── Total esperado, calculado con NUESTRA lista ──────────────────
+   El pedido en Firestore lo escribe el navegador (create abierto en
+   las reglas), así que su campo `total` no es de fiar: se podía
+   guardar un pedido con piezas caras y total barato, pagar lo barato
+   y verlo marcado como pagado. Aquí se recalcula con precios.js — las
+   mismas reglas que bold-hash.js — a partir de las piezas del pedido.
+   Si cambias una regla allá, cámbiala aquí también. */
+const { PRICES, SIZE_PRICES } = require('../../precios.js');
+const INSURANCE_RATE = 0.08;
+const CORTESIA = { amount: 150000, min: 2300000 };
+const GIFT_ID = 'GIFT-CARD', GIFT_MIN = 100000, GIFT_MAX = 20000000, MAX_QTY = 10;
+
+function precioDe(item) {
+  const id = String(item && item.id || '').trim();
+  if (!id) return null;
+  if (id === GIFT_ID) {
+    const p = Math.round(Number(item.price) || 0);
+    return (p >= GIFT_MIN && p <= GIFT_MAX) ? p : null;
+  }
+  const size = String(item.size || '').trim();
+  const porMedida = SIZE_PRICES && SIZE_PRICES[id];
+  if (porMedida && size && porMedida[size] != null) return Math.round(porMedida[size]);
+  if (PRICES && PRICES[id] != null) return Math.round(PRICES[id]);
+  return null;                                   // bajo cotización: no se cobra en línea
+}
+
+function totalEsperado(order) {
+  const items = Array.isArray(order && order.items) ? order.items : [];
+  let subtotal = 0, asegurable = 0, alguna = false;
+  for (const it of items) {
+    if (!it || typeof it !== 'object') continue;
+    const p = precioDe(it);
+    if (p == null) continue;
+    let qty = Math.round(Number(it.qty) || 1);
+    if (qty < 1) qty = 1;
+    if (qty > MAX_QTY) qty = MAX_QTY;
+    subtotal += p * qty;
+    if (String(it.id).trim() !== GIFT_ID) asegurable += p * qty;
+    alguna = true;
+  }
+  if (!alguna) return null;
+  const desc = (order.codigo_cortesia && subtotal >= CORTESIA.min) ? CORTESIA.amount : 0;
+  return Math.max(0, subtotal + Math.round(asegurable * INSURANCE_RATE) - desc);
+}
+
 const SECRET         = process.env.BOLD_SECRET_KEY;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL     = process.env.FROM_EMAIL  || 'Preto by Dala&Co <onboarding@resend.dev>';
@@ -80,13 +125,23 @@ async function marcarPagado(reference, info) {
     const previo = order && order.status ? String(order.status) : '';
     const yaAvanzado = ['confirmado', 'taller', 'enviado', 'entregado'].indexOf(previo) !== -1;
 
+    // Bold reintenta el aviso si no recibe respuesta a tiempo: el mismo
+    // pago no se procesa ni se avisa dos veces.
+    if (order && info.txId && String(order.bold_transaction_id || '') === String(info.txId) &&
+        (order.paid === true || order.pago_revisar === true)) {
+      return { ok: true, order: order, montoOk: order.monto_verificado !== false, duplicado: true };
+    }
+
     /* ── Comparación de montos ────────────────────────────────
        Solo comparamos cuando tenemos dos números de verdad. Si Bold no
        manda el monto o el pedido no trae total, no podemos verificar:
        se marca pagado igual (comportamiento de siempre) pero queda
        registrado que no se pudo comprobar. */
     const pagado   = Number(String(info.amount == null ? '' : info.amount).replace(/[^\d.-]/g, ''));
-    const esperado = Number(order && order.total);
+    // Total recalculado con nuestra lista; el guardado solo si el pedido
+    // no trae piezas reconocibles (pedidos antiguos).
+    const calc     = order ? totalEsperado(order) : null;
+    const esperado = calc != null ? calc : Number(order && order.total);
     const comparable = isFinite(pagado) && pagado > 0 && isFinite(esperado) && esperado > 0;
     const coincide = comparable ? Math.abs(pagado - esperado) <= 1 : null;
 
@@ -330,6 +385,42 @@ async function avisarTienda(info) {
   } catch (e) { console.error('Error enviando aviso:', e.message); }
 }
 
+/* Venta anulada en Bold (VOID_APPROVED): el dinero vuelve al cliente,
+   así que el pedido deja de estar pagado y queda para revisar. */
+async function registrarAnulacion(reference, info) {
+  const db = getDb();
+  if (db && reference) {
+    try {
+      await db.collection('orders').doc(String(reference)).set({
+        paid: false,
+        pago_revisar: true,
+        pago_revisar_motivo: 'Bold anuló la transacción.',
+        bold_status: info.status || 'VOID_APPROVED',
+        anuladoAt: new Date().toISOString()
+      }, { merge: true });
+    } catch (e) { console.error('Error registrando la anulación:', e.message); }
+  }
+  if (!RESEND_API_KEY) return;
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: FROM_EMAIL,
+        to: [STORE_EMAIL],
+        subject: `⚠️ PAGO ANULADO (Bold) · ${reference || 'sin referencia'}`,
+        html: `<div style="max-width:560px;margin:0 auto;font-family:Arial,sans-serif;color:${INK};padding:24px 30px;border:1px solid #eee;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#8a1f1f;margin:0 0 8px;">Bold · Venta anulada</p>
+          <p style="font-family:Georgia,serif;font-size:20px;margin:0 0 14px;">${info.amount ? esc(fmtCOP(info.amount)) + ' · ' : ''}${esc(reference)}</p>
+          <p style="font-size:14px;line-height:1.6;color:#555;margin:0;">Bold anuló esta transacción${info.txId ? ' (ID ' + esc(info.txId) + ')' : ''}. El pedido quedó como <b>no pagado</b> y con la bandera “Revisar” en tu panel. No fabriques ni envíes nada hasta confirmarlo en Bold.</p>
+        </div>`
+      })
+    });
+    if (!res.ok) console.error('Resend (anulación):', res.status, await res.text());
+  } catch (e) { console.error('Error avisando la anulación:', e.message); }
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Método no permitido' };
 
@@ -350,10 +441,21 @@ exports.handler = async (event) => {
   const type = String(payload.type || payload.event || data.status || '').toUpperCase();
   const status = String(data.status || payload.status || type || '').toUpperCase();
 
-  // Estados que cuentan como pago exitoso
-  const aprobado = /APPROVED|SALE_APPROVED|PAID|ACCEPTED|APROBAD/.test(type + ' ' + status);
+  /* Estados. OJO: Bold manda VOID_APPROVED cuando se ANULA una venta y
+     la palabra APPROVED aparece también ahí. Antes eso se leía como un
+     pago nuevo: se marcaba pagado y salían los correos de confirmación. */
+  const tipo = type + ' ' + status;
+  const anulado = /VOID|REFUND|REVERS|ANULA|CHARGEBACK/.test(tipo);
+  const aprobado = !anulado && /APPROVED|PAID|ACCEPTED|APROBAD/.test(tipo);
 
-  if (aprobado) {
+  if (anulado && /APPROVED|APROBAD/.test(tipo)) {
+    const refAnulada = data.metadata && data.metadata.reference || data.reference || data.order_id || '';
+    await registrarAnulacion(refAnulada, {
+      txId:   data.payment_id || data.transaction_id || data.id || '',
+      status: status,
+      amount: data.amount && (data.amount.total || data.amount) || ''
+    });
+  } else if (aprobado) {
     const info = {
       amount:    data.amount && (data.amount.total || data.amount) || data.total || payload.amount || '',
       reference: data.metadata && data.metadata.reference || data.reference || data.order_id || data.payment_id || '',
@@ -365,6 +467,10 @@ exports.handler = async (event) => {
     // 1) Marcar el pedido como pagado en Firebase (automático) y traer
     //    sus datos para que el aviso diga quién pidió y qué pidió.
     const res = await marcarPagado(info.reference, info);
+    if (res.duplicado) {
+      console.log('Webhook Bold repetido (ya procesado):', info.reference);
+      return { statusCode: 200, body: JSON.stringify({ received: true, duplicate: true }) };
+    }
     info.marcado = res.ok;
     info.order = res.order;
     info.montoOk = res.montoOk;      // false = pagó distinto al total (solo interno)

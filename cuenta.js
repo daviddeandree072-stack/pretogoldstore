@@ -326,7 +326,7 @@
         renderAcct();
       });
     } else {
-      custDoc = null; ordersCache = null;
+      custDoc = null; ordersCache = null; ordersNeedVerify = false;
       try { localStorage.removeItem('preto.profile'); } catch (e) {}
       renderAcct();
     }
@@ -446,8 +446,21 @@
   window.PretoAccount = { markQuoteSent, openSignup };
 
   /* ── Pedidos del cliente ──────────────────────────────────── */
+  var ordersNeedVerify = false;
   async function loadOrders() {
+    ordersNeedVerify = false;
     if (!db || !currentUser || !currentUser.email) { ordersCache = []; return; }
+    /* Los pedidos llevan cédula, teléfono y dirección: las reglas solo
+       los muestran a un correo CONFIRMADO. Google llega confirmado; con
+       correo y contraseña hay que abrir el enlace que enviamos. */
+    if (!currentUser.emailVerified) {
+      try { await currentUser.reload(); } catch (e) {}
+      if (currentUser.emailVerified) {
+        try { await currentUser.getIdToken(true); } catch (e) {}
+      } else {
+        ordersNeedVerify = true; ordersCache = []; renderAcct(); return;
+      }
+    }
     try {
       const snap = await db.collection('orders').where('email', '==', currentUser.email).get();
       ordersCache = snap.docs.map((d) => { const o = d.data(); o.id = d.id; return o; });
@@ -584,7 +597,12 @@
         setErr('');
         if (mode === 'up') {
           auth.createUserWithEmailAndPassword(email, pwd)
-            .then((cred) => { if (name && cred.user) return cred.user.updateProfile({ displayName: name }); })
+            .then((cred) => {
+              // Enlace de confirmación: sin correo confirmado las reglas no
+              // muestran "Mis pedidos" (protege compras de otras personas).
+              try { if (cred.user) cred.user.sendEmailVerification().catch(() => {}); } catch (e) {}
+              if (name && cred.user) return cred.user.updateProfile({ displayName: name });
+            })
             .then(done)
             .catch((e) => { done(); setErr(authError(e.code)); });
         } else {
@@ -723,6 +741,23 @@
   function renderMemberOrders() {
     const box = $('memberOrders');
     if (!box) return;
+    if (ordersNeedVerify) {
+      const btn = 'background:none;border:0;padding:0;cursor:pointer;';
+      box.innerHTML = `<p class="mo-empty">Para ver sus pedidos, confirme su correo con el enlace que le enviamos a ${esc((currentUser && currentUser.email) || '')}.</p>
+        <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;">
+          <button class="mb-link" id="moVerifySend" type="button" style="${btn}">Reenviar el enlace</button>
+          <button class="mb-link" id="moVerifyDone" type="button" style="${btn}">Ya lo confirmé</button>
+        </div>`;
+      const vs = $('moVerifySend'), vd = $('moVerifyDone');
+      if (vs) vs.addEventListener('click', () => {
+        vs.disabled = true;
+        Promise.resolve(currentUser && currentUser.sendEmailVerification())
+          .then(() => { vs.textContent = 'Enlace enviado ✓'; })
+          .catch(() => { vs.textContent = 'Intente en unos minutos'; vs.disabled = false; });
+      });
+      if (vd) vd.addEventListener('click', () => { vd.textContent = 'Comprobando…'; loadOrders(); });
+      return;
+    }
     if (ordersCache === null) {
       box.innerHTML = `<p class="mo-empty">No pudimos cargar sus pedidos en este momento. Intente de nuevo más tarde.</p>`;
       return;

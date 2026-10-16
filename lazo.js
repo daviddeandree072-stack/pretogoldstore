@@ -276,7 +276,7 @@
       return fetch('/.netlify/functions/lazo-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ correo: mail, temporada: TEMPORADA })
+        body: JSON.stringify({ correo: mail, temporada: TEMPORADA, abre: TARGET })
       }).then(function (r) { return !!(r && r.ok); }).catch(function () { return false; });
     } catch (e) { return Promise.resolve(false); }
   }

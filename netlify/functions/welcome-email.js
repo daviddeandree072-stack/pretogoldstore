@@ -62,6 +62,54 @@ function rateLimited(email) {
   return RATE.count > 30 || per > 3;
 }
 
+/* ── ¿Es una cuenta recién creada de verdad? ──────────────────────
+   La cabecera Origin la puede falsificar cualquiera fuera de un
+   navegador, así que sola no impide usar nuestro remitente como
+   altavoz. Con la cuenta de servicio se comprueba que el correo es de
+   una ficha de cliente que aún no recibió la bienvenida; el código y
+   el nombre salen de esa ficha, no de la petición, y al enviar se
+   marca welcomeEmailSent para que no se repita. Sin cuenta de
+   servicio (o si Firestore falla) quedan las otras capas: nunca se
+   bloquea una bienvenida legítima por esto. */
+let adminDb = null;
+function getDb() {
+  if (adminDb) return adminDb;
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (!raw) return null;
+  try {
+    const admin = require('firebase-admin');
+    if (!admin.apps.length) {
+      const cred = JSON.parse(raw);
+      if (cred.private_key) cred.private_key = cred.private_key.replace(/\\n/g, '\n');
+      admin.initializeApp({ credential: admin.credential.cert(cred) });
+    }
+    adminDb = admin.firestore();
+    return adminDb;
+  } catch (e) {
+    console.error('welcome-email: Firebase Admin no disponible:', e.message);
+    return null;
+  }
+}
+async function fichaDeBienvenida(correo) {
+  const db = getDb();
+  if (!db) return { estado: 'sin-verificar' };
+  const variantes = Array.from(new Set([correo, correo.toLowerCase()]));
+  try {
+    for (const mail of variantes) {
+      const snap = await db.collection('customers').where('email', '==', mail).limit(5).get();
+      for (const doc of snap.docs) {
+        const c = doc.data() || {};
+        if (c.welcomeEmailSent) continue;
+        return { estado: 'ok', ref: doc.ref, codigo: String(c.welcomeCode || ''), nombre: String(c.name || '') };
+      }
+    }
+    return { estado: 'no' };
+  } catch (e) {
+    console.error('welcome-email: no se pudo comprobar la ficha:', e.message);
+    return { estado: 'sin-verificar' };
+  }
+}
+
 const GOLD  = '#967434';
 const INK   = '#141414';
 const PAPER = '#ffffff';
@@ -290,8 +338,22 @@ exports.handler = async (event) => {
     console.warn('welcome-email: límite de envíos alcanzado para', correo);
     return { statusCode: 429, headers, body: 'Demasiadas solicitudes. Intenta más tarde.' };
   }
-  const nombre = String(data.nombre || '').slice(0, 80);
-  const codigo = String(data.codigo || '').slice(0, 40);
+  let nombre = String(data.nombre || '').slice(0, 80);
+  let codigo = String(data.codigo || '').trim().toUpperCase().slice(0, 40);
+  if (!/^[A-Z0-9]{4,40}$/.test(codigo)) codigo = '';
+
+  let ficha = null;
+  if (!isInternal) {
+    ficha = await fichaDeBienvenida(correo);
+    if (ficha.estado === 'no') {
+      console.warn('welcome-email: sin ficha nueva para', correo);
+      return { statusCode: 403, headers, body: 'Solicitud no válida' };
+    }
+    if (ficha.estado === 'ok') {
+      if (ficha.codigo) codigo = ficha.codigo;
+      if (ficha.nombre) nombre = ficha.nombre.slice(0, 80);
+    }
+  }
 
   try {
     const sent = await sendEmail({
@@ -300,6 +362,10 @@ exports.handler = async (event) => {
       subject: 'Un gesto de la Maison · Preto by Dala&Co',
       html: welcomeEmail({ nombre: nombre, codigo: codigo })
     });
+    if (ficha && ficha.ref) {
+      try { await ficha.ref.set({ welcomeEmailSent: new Date().toISOString() }, { merge: true }); }
+      catch (e) { console.warn('welcome-email: no se pudo marcar welcomeEmailSent:', e.message); }
+    }
     console.log('Correo de bienvenida enviado a', correo);
     return { statusCode: 200, headers, body: JSON.stringify({ ok: true, id: sent }) };
   } catch (e) {

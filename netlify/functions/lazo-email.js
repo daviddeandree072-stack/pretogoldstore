@@ -1,6 +1,6 @@
 /* ───────────────────────────────────────────────────────────────
-   Preto by Dala&Co · Correo automático de la campaña «El lazo»
-   (Amor y Amistad · sábado 19 de septiembre de 2026)
+   Preto by Dala&Co · Correo automático de las campañas de temporada
+   («El lazo» y las demás fechas del calendario de temporadas.js)
    ───────────────────────────────────────────────────────────────
    La llama la web en cuanto un cliente deja su correo en la sección
    #lazo de index.html:
@@ -8,11 +8,13 @@
      fetch('/.netlify/functions/lazo-email', {
        method: 'POST',
        headers: { 'Content-Type': 'application/json' },
-       body: JSON.stringify({ correo })
+       body: JSON.stringify({ correo, temporada, abre })
      })
 
-   Envía UN correo con la promoción de Amor y Amistad: la selección
-   de la fecha y el camino real a la cortesía de $150.000.
+   Envía UN correo con la promoción de la fecha ACTIVA: lazo.js manda
+   el id de la temporada y su día de apertura (window.PRETO_TEMPORADA).
+   Antes el texto estaba fijo en Amor y Amistad · 19 de septiembre y
+   salía igual en octubre, noviembre o diciembre.
 
    POR QUÉ NO LLEVA UN CÓDIGO DE LA CAMPAÑA: el descuento se valida
    contra el welcomeCode de la cuenta del cliente (facturacion.html y
@@ -71,6 +73,42 @@ const PAPER = '#ffffff';
 const SOFT  = '#f5f5f0';
 
 const SITE           = 'https://pretogold.store';
+
+/* Textos de cada fecha, verbatim de temporadas.js (label, título y la
+   primera frase del lede). Si cambias uno allá, cámbialo aquí. */
+const CAMPANAS = {
+  mujer:    { label: 'Día de la Mujer · La voz',            titulo: 'La',    script: 'voz',        frase: 'Una joya no adorna: declara.' },
+  silencio: { label: 'Semana Santa · El silencio',          titulo: 'El',    script: 'silencio',   frase: 'La casa guarda la semana y el taller descansa.' },
+  madre:    { label: 'Día de la Madre · Sostener',          titulo: 'Quien', script: 'sostiene',   frase: 'Hay manos que se recuerdan por lo que cargaron.' },
+  padre:    { label: 'Día del Padre · La estructura',       titulo: 'La',    script: 'estructura', frase: 'Lo que sostiene una casa rara vez se ve.' },
+  bandera:  { label: 'Independencia · La bandera',          titulo: 'La',    script: 'bandera',    frase: 'Oro, noche y tierra: los tres colores ya eran materia antes de ser símbolo.' },
+  amor:     { label: 'Amor y Amistad · El lazo',            titulo: 'El',    script: 'lazo',       frase: 'Un regalo es un nudo entre dos personas.' },
+  penumbra: { label: 'Halloween · Penumbra elegante',       titulo: 'La',    script: 'penumbra',   frase: 'El oro solo se entiende cuando hay poca luz.' },
+  urgencia: { label: 'Black Friday · Urgencia sin gritar',  titulo: 'El',    script: 'viernes',    frase: 'Un solo día, sin estridencia.' },
+  fuego:    { label: 'Velitas y Navidad · Fuego pequeño',   titulo: 'Fuego', script: 'pequeño',    frase: 'Una luz se pasa a la siguiente y ninguna pierde nada.' }
+};
+const DIA = 86400000;
+function fechaLarga(ms) {   // "sábado 31 de octubre"
+  try { return new Date(ms).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Bogota' }).replace(',', ''); }
+  catch (e) { return ''; }
+}
+function fechaCorta(ms) {   // "24 de octubre"
+  try { return new Date(ms).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', timeZone: 'America/Bogota' }); }
+  catch (e) { return ''; }
+}
+/* La fecha de apertura llega del navegador: solo se usa si es creíble
+   (entre 45 días atrás y 120 adelante). Si no, el correo no la nombra. */
+function contexto(id, abre) {
+  const c = CAMPANAS[id];
+  if (!c) return null;
+  const ms = Number(abre), now = Date.now();
+  const ok = isFinite(ms) && ms > now - 45 * DIA && ms < now + 120 * DIA;
+  return Object.assign({ id: id, corto: c.label.split(' · ')[0] }, c, {
+    fecha:   ok ? fechaLarga(ms) : '',
+    encargo: ok ? fechaCorta(ms - 7 * DIA) : '',
+    abierta: ok && ms <= now
+  });
+}
 const INSTAGRAM_URL  = 'https://www.instagram.com/pretostoregold';
 const INSTAGRAM_USER = '@pretostoregold';
 
@@ -103,7 +141,10 @@ function pieza(num, nombre, nota, url, cta) {
 }
 
 /* ── Plantilla del correo de la campaña ─────────────────────── */
-function lazoEmail() {
+function lazoEmail(ctx) {
+  const amor = ctx.id === 'amor';
+  const BG  = amor ? WINE : INK;     // septiembre conserva su vino; las demás, la casa
+  const ACC = amor ? ROSE : GOLD;
   const para = 'font-family:Arial,sans-serif;font-size:15px;line-height:1.75;color:#444;margin:0 0 16px;';
   const li   = 'font-family:Arial,sans-serif;font-size:14px;line-height:1.7;color:#555;margin:0 0 9px;';
 
@@ -119,24 +160,26 @@ function lazoEmail() {
       </td></tr>
 
       <!-- Portada de la campaña -->
-      <tr><td style="background:${WINE};padding:46px 40px 44px;text-align:center;">
-        <p style="font-family:Arial,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:${ROSE};margin:0 0 20px;">Amor y Amistad &middot; s&aacute;bado 19 de septiembre</p>
-        <p style="font-family:Georgia,serif;font-size:52px;line-height:1;color:${CREAM};margin:0 0 18px;">El <span style="font-style:italic;color:${ROSE};">lazo</span></p>
-        <p style="font-family:Georgia,serif;font-style:italic;font-size:16px;line-height:1.6;color:rgba(244,238,231,0.76);margin:0;">Un regalo es un nudo entre dos personas.</p>
+      <tr><td style="background:${BG};padding:46px 40px 44px;text-align:center;">
+        <p style="font-family:Arial,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:${ACC};margin:0 0 20px;">${esc(ctx.corto)}${ctx.fecha ? ' &middot; ' + esc(ctx.fecha) : ''}</p>
+        <p style="font-family:Georgia,serif;font-size:52px;line-height:1;color:${CREAM};margin:0 0 18px;">${esc(ctx.titulo)} <span style="font-style:italic;color:${ACC};">${esc(ctx.script)}</span></p>
+        <p style="font-family:Georgia,serif;font-style:italic;font-size:16px;line-height:1.6;color:rgba(244,238,231,0.76);margin:0;">${esc(ctx.frase)}</p>
       </td></tr>
 
       <!-- Apertura -->
       <tr><td style="padding:40px 40px 0;">
-        ${eyebrow('Su lugar est&aacute; guardado')}
-        <p style="${para}">Gracias por dejarnos su correo. Queda anotado para la selecci&oacute;n de Amor y Amistad, que la casa publica el <strong style="color:${INK};">s&aacute;bado 19 de septiembre</strong>.</p>
-        <p style="${para}">Mientras llega la fecha, estas son las tres piezas que la casa reserva para este gesto. Cada una puede verse y encargarse desde hoy.</p>
+        ${eyebrow(ctx.abierta ? 'La selecci&oacute;n est&aacute; abierta' : 'Su lugar est&aacute; guardado')}
+        <p style="${para}">Gracias por dejarnos su correo. ${ctx.abierta
+          ? `La selecci&oacute;n de ${esc(ctx.corto)} ya est&aacute; publicada.`
+          : `Queda anotado para la selecci&oacute;n de ${esc(ctx.corto)}, que la casa publica ${ctx.fecha ? `el <strong style="color:${INK};">${esc(ctx.fecha)}</strong>` : 'muy pronto'}.`}</p>
+        <p style="${para}">${ctx.abierta ? 'Estas' : 'Mientras llega la fecha, estas'} son las tres piezas que la casa reserva para este gesto. Cada una puede verse y encargarse desde hoy.</p>
       </td></tr>
 
       <!-- La selección -->
       <tr><td style="padding:26px 40px 0;">
         ${eyebrow('La selecci&oacute;n de la fecha')}
-        ${pieza('01', 'Cadena Lazo &middot; Oro 18k', 'Dije floral de circones. Entrelazado fino, de ca&iacute;da fluida.', SITE + '/joyeria/cadena-lazo-oro-18k.html', 'Ver la pieza')}
-        ${pieza('02', 'Pendiente Tr&eacute;bol Dala&amp;Co', 'Textura de rayos grabada a mano. Medida &uacute;nica de 5 mm.', SITE + '/joyeria/pendiente-trebol-dala-y-co.html', 'Ver la pieza')}
+        ${pieza('01', 'Cadena Lazo &middot; Oro 18k', 'Dije floral de circones. Entrelazado fino, de ca&iacute;da fluida.', SITE + '/joyeria/cadena-lazo-oro-18k', 'Ver la pieza')}
+        ${pieza('02', 'Pendiente Tr&eacute;bol Dala&amp;Co', 'Textura de rayos grabada a mano. Medida &uacute;nica de 5 mm.', SITE + '/joyeria/pendiente-trebol-dala-y-co', 'Ver la pieza')}
         ${pieza('03', 'Tarjeta de regalo', 'El monto lo elige quien la env&iacute;a. La pieza, quien la recibe.', SITE + '/#giftcard', 'Elegir el monto')}
       </td></tr>
 
@@ -157,10 +200,12 @@ function lazoEmail() {
       <!-- Condiciones -->
       <tr><td style="padding:34px 40px 0;">
         ${eyebrow('Lo que conviene saber')}
-        <p style="${li}">&bull; La selecci&oacute;n se publica el <strong>19 de septiembre</strong>. Le avisamos ese mismo d&iacute;a.</p>
+        <p style="${li}">&bull; ${ctx.abierta
+          ? 'La selecci&oacute;n ya est&aacute; en la portada de la casa.'
+          : (ctx.fecha ? `La selecci&oacute;n se publica el <strong>${esc(ctx.fecha)}</strong>. Le avisamos ese mismo d&iacute;a.` : 'Le avisamos el d&iacute;a que se publique la selecci&oacute;n.')}</p>
         <p style="${li}">&bull; La cortes&iacute;a de $150.000 es para la <strong>primera adquisici&oacute;n</strong> y vive en su cuenta.</p>
         <p style="${li}">&bull; Env&iacute;o nacional asegurado y empaque de la casa, sin costo adicional.</p>
-        <p style="${li}">&bull; Para encargos a la medida, escriba al concierge antes del 12 de septiembre.</p>
+        <p style="${li}">&bull; Para encargos a la medida, escriba al concierge ${(!ctx.abierta && ctx.encargo) ? 'antes del ' + esc(ctx.encargo) : 'con una semana de anticipaci&oacute;n'}.</p>
       </td></tr>
 
       ${rule()}
@@ -189,7 +234,7 @@ function lazoEmail() {
           <span style="color:${GOLD};">Instagram</span> &nbsp;${esc(INSTAGRAM_USER)} &nbsp;&rarr;
         </a>
         <p style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:1px;color:rgba(255,255,255,0.5);margin:14px 0 0;">Preto by Dala&amp;Co &middot; Hecho en Colombia &middot; pretogold.store</p>
-        <p style="font-family:Arial,sans-serif;font-size:10px;line-height:1.6;color:rgba(255,255,255,0.35);margin:12px 0 0;">Recibe este correo porque dej&oacute; su direcci&oacute;n en la campa&ntilde;a de Amor y Amistad. Para no recibir m&aacute;s, responda a este mensaje con la palabra BAJA.</p>
+        <p style="font-family:Arial,sans-serif;font-size:10px;line-height:1.6;color:rgba(255,255,255,0.35);margin:12px 0 0;">Recibe este correo porque dej&oacute; su direcci&oacute;n en la campa&ntilde;a de ${esc(ctx.corto)}. Para no recibir m&aacute;s, responda a este mensaje con la palabra BAJA.</p>
       </td></tr>
 
     </table>
@@ -246,6 +291,8 @@ exports.handler = async (event) => {
   if (!correo || correo.length > 200 || !/\S+@\S+\.\S+/.test(correo)) {
     return { statusCode: 400, headers, body: 'Correo inválido' };
   }
+  const ctx = contexto(String(data.temporada || 'amor').trim().toLowerCase(), data.abre);
+  if (!ctx) return { statusCode: 400, headers, body: 'Temporada inválida' };
   if (!isInternal && rateLimited(correo.toLowerCase())) {
     console.warn('lazo-email: límite de envíos alcanzado para', correo);
     return { statusCode: 429, headers, body: 'Demasiadas solicitudes. Intente más tarde.' };
@@ -255,10 +302,12 @@ exports.handler = async (event) => {
     const sent = await sendEmail({
       to: correo,
       replyTo: STORE_EMAIL,
-      subject: 'El lazo · Amor y Amistad en Preto by Dala&Co',
-      html: lazoEmail()
+      subject: ctx.id === 'amor'
+        ? 'El lazo · Amor y Amistad en Preto by Dala&Co'
+        : `${ctx.titulo} ${ctx.script} · ${ctx.corto} en Preto by Dala&Co`,
+      html: lazoEmail(ctx)
     });
-    console.log('lazo-email: promoción enviada a', correo);
+    console.log('lazo-email: promoción', ctx.id, 'enviada a', correo);
     return { statusCode: 200, headers, body: JSON.stringify({ ok: true, id: sent }) };
   } catch (e) {
     console.error('lazo-email: error de envío:', e.message);
