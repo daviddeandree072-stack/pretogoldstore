@@ -90,7 +90,7 @@
           <span class="xsell-name">${c.name}</span>
           <span class="xsell-price">${priceLabelFor(c)}</span>
         </span>
-        <button class="xsell-add" data-id="${c.id}" aria-label="Añadir ${c.name} a la cotización">
+        <button class="xsell-add" data-id="${c.id}" aria-label="Añadir ${c.name} al carrito">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg>
         </button>
       </article>`;
@@ -103,12 +103,19 @@
     const p = COLLECTIONS.find(x => x.id === id);
     if (!p || p.variants) { host.innerHTML = ''; host.style.display = 'none'; return; }
 
-    const comps = complementsFor(p);
-    if (!comps.length) { host.innerHTML = ''; host.style.display = 'none'; return; }
+    const used = new Set([p.id]);
+    const comps = LEAVES.filter(x => {
+      if (x.id === p.id || x.line !== p.line || used.has(x.id)) return false;
+      used.add(x.id);
+      return true;
+    });
+    comps.sort((a, b) => (b.image ? 1 : 0) - (a.image ? 1 : 0));
+    const picks = comps.slice(0, 4);
+    if (!picks.length) { host.innerHTML = ''; host.style.display = 'none'; return; }
 
     host.innerHTML = `
-      <span class="xsell-label">Completa el <span class="script">conjunto</span></span>
-      <div class="xsell-row">${comps.map(xsellCardMarkup).join('')}</div>`;
+      <span class="xsell-label">Te puede <span class="script">interesar</span></span>
+      <div class="xsell-row">${picks.map(xsellCardMarkup).join('')}</div>`;
     host.style.display = '';
 
     host.querySelectorAll('.xsell-card').forEach(card => {
@@ -239,13 +246,13 @@
     const { sum, allPriced } = setTotal(set);
     const priceLine = sum > 0
       ? `Conjunto desde ${fmtCOP(sum)}${allPriced ? '' : ' +'}`
-      : 'Conjunto bajo cotización';
+      : ((typeof waPriceBtn === 'function') ? waPriceBtn(set.id || '', set.name || set.label) : 'Conjunto: consultar precio');
     const art = set.image
       ? `<div class="var-art has-image" data-label="${set.label}" style="background-image:url('${set.image}')"></div>`
       : `<div class="var-art" data-label="${set.label}"></div>`;
     const pieces = set.items.map(it => {
       const p = leafById(it.id) || { name: it.id };
-      return `<li data-id="${it.id}"><span class="sp-name">${p.name}${it.size ? ` · ${it.size}` : ''}</span><span class="sp-price">${priceLabelFor(p)}</span></li>`;
+      return `<li data-id="${it.id}"><span class="sp-name">${p.name}${it.size ? ` · ${it.size}` : ''}</span><span class="sp-price">${(typeof minPriceFor === 'function' && minPriceFor(p) == null) ? 'Consultar precio' : priceLabelFor(p)}</span></li>`;
     }).join('');
     return `
       <article class="var-card set-card" data-set="${set.id}">
@@ -278,6 +285,7 @@
       else quote.push({
         key, id: it.id, name: p.name, col: p.col || '', size: size || null,
         note: p.note || null, desc: p.desc || null, price: priceFor(it.id), qty: 1,
+        image: p.image || null,
       });
     });
     saveQuote();
@@ -296,7 +304,7 @@
           <span class="eyebrow eyebrow-bone">${String(SETS.length).padStart(2, '0')} conjuntos</span>
         </div>
         <h2 class="cat-title">Conjuntos con <span class="script">nombre.</span></h2>
-        <p class="cat-sub">Piezas que la casa eligió para acompañarse entre sí. Añada el conjunto completo a su cotización o descubra cada pieza por separado.</p>
+        <p class="cat-sub">Piezas que la casa eligió para acompañarse entre sí. Añada el conjunto completo a su carrito o descubra cada pieza por separado.</p>
       </header>
       <div class="cat-grid">${SETS.map(setCardMarkup).join('')}</div>`;
 
@@ -323,19 +331,24 @@
   /* ════════ 3 · TARJETA DE REGALO (gift card digital) ═════════ */
 
   const GIFT_AMOUNTS = [300000, 500000, 800000, 1500000];
-  let gcState = { amount: 500000, to: '' };
+  let gcState = { amount: 500000, to: '', from: '' };
 
-  function addGiftCard(amount, recipient, sourceEl) {
+  function addGiftCard(amount, recipient, sender, sourceEl) {
     if (!amount || amount <= 0) return;
-    const key = 'GIFT-CARD|' + amount + (recipient ? '|' + recipient : '');
+    const key = 'GIFT-CARD|' + amount + (recipient ? '|para:' + recipient : '') + (sender ? '|de:' + sender : '');
     const existing = quote.find(x => x.key === key);
     const wasExisting = !!existing;
     if (existing) existing.qty += 1;
-    else quote.push({
-      key, id: 'GIFT-CARD', name: 'Tarjeta de regalo Preto', col: 'Tarjeta de regalo',
-      size: fmtCOP(amount), note: recipient ? ('Para: ' + recipient) : null,
-      desc: null, price: amount, qty: 1, kind: 'giftcard',
-    });
+    else {
+      const noteParts = [];
+      if (recipient) noteParts.push('Para: ' + recipient);
+      if (sender) noteParts.push('De: ' + sender);
+      quote.push({
+        key, id: 'GIFT-CARD', name: 'Tarjeta de regalo Preto', col: 'Tarjeta de regalo',
+        size: fmtCOP(amount), note: noteParts.length ? noteParts.join(' · ') : null,
+        desc: null, price: amount, qty: 1, kind: 'giftcard',
+      });
+    }
     const qtyNow = existing ? existing.qty : 1;
     saveQuote();
     triggerAddFeedback({ name: 'Tarjeta de regalo Preto', note: null }, fmtCOP(amount), qtyNow, wasExisting, sourceEl);
@@ -346,12 +359,17 @@
     const amtEl = document.getElementById('gcCardAmt');
     const toEl = document.getElementById('gcCardTo');
     if (amtEl) amtEl.textContent = gcState.amount > 0 ? fmtCOP(gcState.amount) : '—';
-    if (toEl) toEl.textContent = gcState.to ? ('Para ' + gcState.to) : '';
+    if (toEl) {
+      const parts = [];
+      if (gcState.to) parts.push('Para ' + gcState.to);
+      if (gcState.from) parts.push('De ' + gcState.from);
+      toEl.textContent = parts.join('  ·  ');
+    }
   }
 
   function openGiftCard() {
     if (typeof catShell === 'undefined' || !catShell) return;
-    gcState = { amount: 500000, to: '' };
+    gcState = { amount: 500000, to: '', from: '' };
     catShell.innerHTML = `
       <header class="cat-head">
         <button class="cat-back" id="catBack" aria-label="Volver"><span class="arr">←</span> Volver</button>
@@ -389,14 +407,19 @@
             <span>Para — opcional</span>
             <input id="gcTo" type="text" autocomplete="off" placeholder="Nombre de quien la recibe" />
           </label>
-          <button class="btn-gold gc-add" id="gcAdd">Añadir a cotización <span aria-hidden="true" style="margin-left:2px;">→</span></button>
-          <p class="gc-fine">La tarjeta se confirma y se entrega por WhatsApp junto con su cotización. El concierge coordina el envío digital al destinatario.</p>
+          <label class="gc-field">
+            <span>De — opcional</span>
+            <input id="gcFrom" type="text" autocomplete="off" placeholder="Su nombre (de parte de quien)" />
+          </label>
+          <button class="btn-gold gc-add" id="gcAdd">Añadir al carrito <span aria-hidden="true" style="margin-left:2px;">→</span></button>
+          <p class="gc-fine">La tarjeta se confirma y se entrega por WhatsApp junto con su compra. El concierge coordina el envío digital al destinatario.</p>
         </div>
       </div>`;
 
     const chips = catShell.querySelectorAll('.gc-chip');
     const custom = document.getElementById('gcCustom');
     const toIn = document.getElementById('gcTo');
+    const fromIn = document.getElementById('gcFrom');
 
     chips.forEach(ch => ch.addEventListener('click', () => {
       chips.forEach(c => c.classList.remove('active'));
@@ -414,6 +437,7 @@
       gcSyncCard();
     });
     if (toIn) toIn.addEventListener('input', () => { gcState.to = toIn.value.trim(); gcSyncCard(); });
+    if (fromIn) fromIn.addEventListener('input', () => { gcState.from = fromIn.value.trim(); gcSyncCard(); });
 
     const addBtn = document.getElementById('gcAdd');
     addBtn && addBtn.addEventListener('click', () => {
@@ -421,7 +445,7 @@
         addBtn.classList.remove('gc-shake'); void addBtn.offsetWidth; addBtn.classList.add('gc-shake');
         return;
       }
-      addGiftCard(gcState.amount, gcState.to, addBtn);
+      addGiftCard(gcState.amount, gcState.to, gcState.from, addBtn);
     });
     const back = document.getElementById('catBack');
     back && back.addEventListener('click', closeCategory);

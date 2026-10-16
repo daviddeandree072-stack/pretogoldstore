@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<!-- Meta Pixel: retirado a propósito. Esta página interna muestra datos de clientes;
+     ningún rastreador de terceros debe cargarse aquí. -->
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Administración · Preto by Dala&Co</title>
+<meta name="robots" content="noindex,nofollow" />
+<link rel="icon" type="image/png" href="assets/preto-logo-gold.png" />
+<meta name="theme-color" content="#0f0f0f" />
+<meta name="color-scheme" content="light" />
+<meta name="supported-color-schemes" content="light" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Pinyon+Script&family=Inter:wght@300;400;500;600&display=swap" />
+<style>
+  :root {
+    --gold: #b68d40; --gold-deep: #8a6b2e; --ink: #111110; --panel: #181715;
+    --line: rgba(255,255,255,0.08); --paper: #f6f4ef; --bone: #e9e5dc;
+    --muted: rgba(233,229,220,0.55); --sans: 'Inter', system-ui, sans-serif; --serif: 'Cormorant Garamond', serif; --script: 'Pinyon Script', cursive;
+    --green: #5fae7e; --amber: #d8a64a; --red: #c97b6e; --blue: #6f9fd8;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ink); color: var(--bone); font-family: var(--sans); font-weight: 300; }
+  a { color: inherit; }
+  button { font-family: var(--sans); cursor: pointer; }
+
+  /* ── Login ── */
+  .login { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+  .login-card { width: 100%; max-width: 380px; text-align: center; }
+  .login-card .mark { font-family: var(--serif); font-size: 40px; letter-spacing: 6px; }
+  .login-card .by { font-family: var(--script); color: var(--gold); font-size: 20px; margin-top: 2px; }
+  .login-card h1 { font-family: var(--serif); font-weight: 300; font-size: 26px; margin: 30px 0 6px; }
+  .login-card p { color: var(--muted); font-size: 13px; margin: 0 0 26px; }
+  .login form { display: grid; gap: 12px; }
+  .login input { background: var(--panel); border: 1px solid var(--line); color: var(--bone); padding: 13px 14px; font-size: 15px; font-family: var(--serif); }
+  .login input:focus { outline: none; border-color: var(--gold); }
+  .login button { background: var(--gold); color: #0a0807; border: 0; padding: 13px; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; }
+  .login button:hover { background: #d9b86a; }
+  .login .err { color: var(--red); font-size: 13px; min-height: 18px; }
+
+  /* ── Shell ── */
+  .shell { display: none; }
+  .topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px clamp(18px,4vw,40px); background: var(--ink); border-bottom: 1px solid var(--line); }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand .mark { font-family: var(--serif); font-size: 22px; letter-spacing: 3px; }
+  .brand .by { font-family: var(--script); color: var(--gold); font-size: 16px; }
+  .brand .tag { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-left: 6px; }
+  .logout { background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 8px 16px; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .logout:hover { color: var(--bone); border-color: var(--gold); }
+
+  .tabs { display: flex; gap: 4px; padding: 0 clamp(18px,4vw,40px); background: var(--ink); border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .tab { background: transparent; border: 0; color: var(--muted); padding: 15px 16px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .tab.active { color: var(--bone); border-bottom-color: var(--gold); }
+  .tab .count { font-size: 10px; color: var(--gold); margin-left: 6px; }
+
+  .wrap { padding: clamp(20px,4vw,36px) clamp(18px,4vw,40px) 80px; max-width: 1180px; margin: 0 auto; }
+
+  /* ── Stat row ── */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 14px; margin-bottom: 30px; }
+  .stat { background: var(--panel); border: 1px solid var(--line); padding: 18px 20px; }
+  .stat .n { font-family: var(--serif); font-size: 34px; line-height: 1; }
+  .stat .l { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+  .stat.amber .n { color: var(--amber); } .stat.green .n { color: var(--green); }
+
+  /* ── Toolbar ── */
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px; }
+  .toolbar input.search { flex: 1; min-width: 180px; background: var(--panel); border: 1px solid var(--line); color: var(--bone); padding: 11px 14px; font-size: 14px; font-family: var(--serif); }
+  .toolbar input.search:focus { outline: none; border-color: var(--gold); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { background: var(--panel); border: 1px solid var(--line); color: var(--muted); padding: 9px 14px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .chip.active { background: var(--gold); color: #0a0807; border-color: var(--gold); }
+
+  /* ── Cards ── */
+  .cards { display: grid; gap: 14px; }
+  .card { background: var(--panel); border: 1px solid var(--line); padding: 18px 20px; }
+  .card-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .card-name { font-family: var(--serif); font-size: 21px; }
+  .card-meta { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; }
+  .card-meta a { color: var(--gold); text-decoration: none; }
+  .card-total { font-family: var(--serif); font-size: 24px; text-align: right; }
+  .card-total small { display: block; font-family: var(--sans); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .card-items { font-size: 13px; color: var(--bone); margin: 14px 0; line-height: 1.6; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .card-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-top: 14px; }
+
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; }
+  .badge { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 11px; border: 1px solid var(--line); }
+  .badge.paid { color: var(--green); border-color: rgba(95,174,126,0.5); }
+  .badge.unpaid { color: var(--amber); border-color: rgba(216,166,74,0.5); }
+  .badge.bold { color: var(--blue); border-color: rgba(111,159,216,0.45); }
+  .badge.alerta { color: #e0857a; border-color: rgba(224,133,122,0.6); background: rgba(224,133,122,0.08); }
+  .badge.st { color: var(--bone); }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 6px; }
+  .act { background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 8px 12px; font-size: 11px; letter-spacing: 0.08em; }
+  .act:hover { color: var(--bone); border-color: var(--gold); }
+  .act.go { color: var(--green); border-color: rgba(95,174,126,0.4); }
+  .act.danger:hover { color: var(--red); border-color: var(--red); }
+  .act.primary { background: var(--gold); color: #0a0807; border-color: var(--gold); }
+
+  .empty { text-align: center; color: var(--muted); padding: 60px 20px; font-family: var(--serif); font-style: italic; font-size: 18px; }
+  .loading { text-align: center; color: var(--muted); padding: 50px; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--gold); color: #0a0807; padding: 12px 24px; font-size: 13px; letter-spacing: 0.04em; opacity: 0; transition: all .3s ease; pointer-events: none; z-index: 50; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* simple table for clientes/newsletter */
+  .tbl { width: 100%; border-collapse: collapse; }
+  .tbl th { text-align: left; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 400; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .tbl td { padding: 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .tbl td .em { font-family: var(--serif); font-size: 16px; }
+  .tbl tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ── Temporadas ── */
+  .tcard .card-name { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+  .tcard .card-name small { font-family: var(--sans); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .tcard .sw { display: inline-flex; gap: 4px; vertical-align: middle; margin-left: 8px; }
+  .tcard .sw i { display: block; width: 12px; height: 12px; border: 1px solid rgba(255,255,255,0.12); }
+  .trow { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px 18px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); align-items: end; }
+  .trow label { display: grid; gap: 8px; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .trow input[type=date] { background: var(--ink); border: 1px solid var(--line); color: var(--bone); padding: 9px 12px; font-size: 13px; font-family: var(--sans); color-scheme: dark; }
+  .trow input[type=date]:focus { outline: none; border-color: var(--gold); }
+  .trow .chip.off { color: var(--muted); }
+  .trow .chip.on { background: var(--green); border-color: var(--green); color: #0a0807; }
+  .tcard.apagada { opacity: 0.55; }
+  .tcard.apagada:hover { opacity: 1; }
+  .tsave { position: sticky; bottom: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-top: 18px; padding: 14px 18px; background: var(--panel); border: 1px solid var(--line); }
+  .tsave .hint { font-size: 12px; color: var(--muted); }
+  .tsave .hint.dirty { color: var(--amber); }
+</style>
+</head>
+<body>
+
+<!-- Config Firebase (mismas claves públicas que la web) -->
+<script>
+  window.PRETO_FIREBASE_CONFIG = {
+    apiKey:            "AIzaSyAuvR7AhwZAPzoUUz2YmJqyliwNecSVcoo",
+    authDomain:        "preto-pedidos.firebaseapp.com",
+    projectId:         "preto-pedidos",
+    storageBucket:     "preto-pedidos.firebasestorage.app",
+    messagingSenderId: "521170629952",
+    appId:             "1:521170629952:web:fbffb7893517d7a30336a5"
+  };
+  // Tu UID de administrador (el mismo de firestore.rules)
+  window.PRETO_ADMIN_UID = 'imIXf4YektUOvT9AdAu5bxXcAnJ2';
+
+  /* App Check (anti-bot). Misma site key reCAPTCHA v3 y app registrada
+     que index.html — así el panel también queda protegido bajo enforcement.
+     Poner = false si alguna vez hubiera que desactivarlo sin romper el panel. */
+  window.PRETO_RECAPTCHA_SITE_KEY = "6Le5ADUtAAAAAEKyOnCcFkXwH-Av6UGw4dbHIvoc";
+  window.PRETO_APPCHECK_ENABLED = true;
+</script>
+
+<!-- ── Login ── -->
+<div class="login" id="loginView">
+  <div class="login-card">
+    <div class="mark">PRETO</div>
+    <div class="by">by Dala&amp;Co</div>
+    <h1>Administración</h1>
+    <p>Acceso exclusivo del propietario.</p>
+    <form id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Correo de administrador" autocomplete="username" required />
+      <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password" required />
+      <button type="submit" id="loginBtn">Ingresar</button>
+      <div class="err" id="loginErr"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ── Panel ── -->
+<div class="shell" id="shell">
+  <div class="topbar">
+    <div class="brand">
+      <span class="mark">PRETO</span><span class="by">by Dala&amp;Co</span><span class="tag">· Panel</span>
+    </div>
+    <button class="logout" id="logoutBtn">Cerrar sesión</button>
+  </div>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="pedidos">Pedidos <span class="count" id="cnt-pedidos"></span></button>
+    <button class="tab" data-tab="cotizaciones">Cotizaciones <span class="count" id="cnt-cotizaciones"></span></button>
+    <button class="tab" data-tab="clientes">Clientes <span class="count" id="cnt-clientes"></span></button>
+    <button class="tab" data-tab="newsletter">Newsletter <span class="count" id="cnt-newsletter"></span></button>
+    <button class="tab" data-tab="inventario">Inventario <span class="count" id="cnt-inventario"></span></button>
+    <button class="tab" data-tab="temporadas">Temporadas <span class="count" id="cnt-temporadas"></span></button>
+  </div>
+  <div class="wrap" id="panel">
+    <div class="loading">Cargando…</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Calendario de campañas: el mismo archivo que usa la portada. Sin
+     <section id="lazo"> en esta página solo expone window.PretoTemporadas
+     (fichas, ventana, resolver) y no toca nada más. -->
+<script src="temporadas.js?v=20260914e"></script>
+
+<script>
+(function () {
+  'use strict';
+  var ADMIN_UID = window.PRETO_ADMIN_UID;
+  var auth = null, db = null;
+  var cache = { orders: null, cotizaciones: null, customers: null, newsletter: null, movimientos: null, temporadas: null };
+  var current = 'pedidos';
+  var orderFilter = 'todos';
+  var searchTerm = '';
+
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function fmtCOP(n){ var v=Number(n); if(!isFinite(v)) return '—'; try{ return '$'+Math.round(v).toLocaleString('es-CO'); }catch(e){ return '$'+Math.round(v); } }
+  function fmtDate(s){ if(!s) return '—'; try{ var d=new Date(s); return d.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return s; } }
+  function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(function(){ t.classList.remove('show'); },2200); }
+
+  var INSURANCE_RATE = 0.08;
+  /* Flujo real de un pedido por encargo: el cliente reconfirma medida y
+     detalles por WhatsApp, la pieza entra al taller, se despacha y se
+     entrega. "confirmado" = reconfirmado por el cliente. */
+  var STATUSES = ['creado','confirmado','taller','enviado','entregado'];
+  var STATUS_LABEL = { creado:'Creado', confirmado:'Reconfirmado', taller:'En el taller', enviado:'Enviado', entregado:'Entregado', cancelado:'Cancelado' };
+  /* Cada cambio de estado deja un movimiento en el historial. Como todo
+     se fabrica por encargo, el inventario no descuenta unidades:
+     registra encargos al proveedor, entradas al taller y salidas. */
+  var MOV_POR_ESTADO = {
+    confirmado: { tipo:'Encargo',  nota:'Encargo al proveedor' },
+    taller:     { tipo:'Entrada',  nota:'Material recibido en el taller' },
+    enviado:    { tipo:'Salida',   nota:'Pieza despachada al cliente' },
+    entregado:  { tipo:'Entrega',  nota:'Entregada al cliente' }
+  };
+
+  function orderTotals(o){
+    var sub=0, any=false;
+    (o.items||[]).forEach(function(i){ if(i.price!=null && i.price!==''){ sub += (+i.price)*(i.qty||1); any=true; } });
+    var seguro = Math.round(sub*INSURANCE_RATE);
+    var desc = +(o.descuento||0) || 0;
+    if (o.total!=null && o.total!=='') return { subtotal: sub, seguro: seguro, descuento: desc, total: +o.total, any: any||(+o.total>0) };
+    var total = sub+seguro-desc; if(total<0) total=0;
+    return { subtotal: sub, seguro: seguro, descuento: desc, total: total, any: any };
+  }
+
+  /* ── Firebase ── */
+  function loadSDK(){
+    var BASE='https://www.gstatic.com/firebasejs/10.12.2/';
+    var files=['firebase-app-compat.js','firebase-app-check-compat.js','firebase-auth-compat.js','firebase-firestore-compat.js'];
+    return files.reduce(function(p,f){
+      return p.then(function(){ return new Promise(function(res,rej){ var s=document.createElement('script'); s.src=BASE+f; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); });
+    }, Promise.resolve());
+  }
+
+  function init(){
+    loadSDK().then(function(){
+      firebase.initializeApp(window.PRETO_FIREBASE_CONFIG);
+      /* App Check ANTES de usar Auth/Firestore (solo en producción). */
+      var PROD_HOSTS = ['pretogold.store', 'www.pretogold.store'];
+      if (window.PRETO_APPCHECK_ENABLED && PROD_HOSTS.indexOf(location.hostname) !== -1 && firebase.appCheck && window.PRETO_RECAPTCHA_SITE_KEY) {
+        try { firebase.appCheck().activate(window.PRETO_RECAPTCHA_SITE_KEY, true); } catch (e) {}
+      }
+      auth = firebase.auth(); db = firebase.firestore();
+      auth.onAuthStateChanged(function(user){
+        if (user && user.uid === ADMIN_UID) { showPanel(); }
+        else if (user) { auth.signOut(); showLogin('Esta cuenta no tiene permisos de administrador.'); }
+        else { showLogin(''); }
+      });
+    }).catch(function(){ showLogin('No se pudo cargar Firebase. Revisa tu conexión.'); });
+  }
+
+  function showLogin(err){ $('shell').style.display='none'; $('loginView').style.display='grid'; $('loginErr').textContent=err||''; }
+  function showPanel(){ $('loginView').style.display='none'; $('shell').style.display='block'; loadAll(); }
+
+  $('loginForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn=$('loginBtn'); btn.disabled=true; btn.textContent='Ingresando…'; $('loginErr').textContent='';
+    auth.signInWithEmailAndPassword($('loginEmail').value.trim(), $('loginPass').value)
+      .catch(function(err){ $('loginErr').textContent = mapAuthErr(err.code); })
+      .finally(function(){ btn.disabled=false; btn.textContent='Ingresar'; });
+  });
+  function mapAuthErr(c){
+    if(c==='auth/invalid-credential'||c==='auth/wrong-password'||c==='auth/user-not-found') return 'Correo o contraseña incorrectos.';
+    if(c==='auth/too-many-requests') return 'Demasiados intentos. Espera un momento.';
+    if(c==='auth/invalid-email') return 'Correo no válido.';
+    return 'No se pudo iniciar sesión.';
+  }
+  $('logoutBtn').addEventListener('click', function(){ auth.signOut(); });
+
+  /* ── Carga de datos ── */
+  function loadAll(){
+    Promise.all([
+      db.collection('orders').get().then(function(s){ cache.orders = s.docs.map(docData); }).catch(function(){ cache.orders=[]; }),
+      db.collection('cotizaciones').get().then(function(s){ cache.cotizaciones = s.docs.map(docData); }).catch(function(){ cache.cotizaciones=[]; }),
+      db.collection('customers').get().then(function(s){ cache.customers = s.docs.map(docData); }).catch(function(){ cache.customers=[]; }),
+      db.collection('newsletter').get().then(function(s){ cache.newsletter = s.docs.map(docData); }).catch(function(){ cache.newsletter=[]; }),
+      db.collection('movimientos').get().then(function(s){ cache.movimientos = s.docs.map(docData); }).catch(function(){ cache.movimientos=[]; }),
+      db.collection('config').doc('temporadas').get().then(function(d){ cache.temporadas = (d.exists && d.data()) || { temporadas: {} }; }).catch(function(){ cache.temporadas = { temporadas: {} }; })
+    ]).then(function(){ updateCounts(); render(); });
+  }
+  function docData(d){ var o=d.data()||{}; o.id=d.id; return o; }
+  function byDateDesc(a,b){ return String(b.createdAt||'').localeCompare(String(a.createdAt||'')); }
+
+  function updateCounts(){
+    $('cnt-pedidos').textContent = cache.orders ? cache.orders.length : '';
+    $('cnt-cotizaciones').textContent = cache.cotizaciones ? cache.cotizaciones.length : '';
+    $('cnt-clientes').textContent = cache.customers ? cache.customers.length : '';
+    $('cnt-inventario').textContent = cache.movimientos ? cache.movimientos.length : '';
+    $('cnt-newsletter').textContent = cache.newsletter ? cache.newsletter.length : '';
+    var viva = (window.PretoTemporadas && cache.temporadas) ? window.PretoTemporadas.resolver(new Date(), cache.temporadas) : null;
+    $('cnt-temporadas').textContent = viva ? '●' : '';
+  }
+
+  /* ── Tabs ── */
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('active'); });
+      t.classList.add('active'); current = t.getAttribute('data-tab'); searchTerm=''; render();
+    });
+  });
+
+  function render(){
+    if (current==='pedidos') return renderPedidos();
+    if (current==='cotizaciones') return renderCotizaciones();
+    if (current==='clientes') return renderClientes();
+    if (current==='newsletter') return renderNewsletter();
+    if (current==='inventario') return renderInventario();
+    if (current==='temporadas') return renderTemporadas();
+  }
+
+  /* ── TEMPORADAS · las nueve campañas de la portada ──────────────
+     Se guarda UN documento, config/temporadas, y solo lo que difiere
+     de los valores por defecto. La portada lo recibe por la función
+     temporadas-config (caché de unos minutos) y lo aplica en la
+     siguiente carga; los visitantes que ya tienen la página abierta
+     lo ven al recargar. */
+  var T_NOMBRES = { mujer:'Día de la Mujer', silencio:'Semana Santa', madre:'Día de la Madre', padre:'Día del Padre', bandera:'Independencia', amor:'Amor y Amistad', penumbra:'Halloween', urgencia:'Black Friday', fuego:'Velitas y Navidad' };
+  var T_FLOTANTES = { plica:'plicas de bronce', mota:'motas de luz', petalo:'pétalos', modulo:'módulos', hilo:'hilos tricolor', corazon:'corazones', pavesa:'pavesas', cifra:'cifras', chispa:'chispas' };
+  var T_PALETA = { mujer:['#2E1F4A','#DCD3C7','#B08A4E'], silencio:['#4B2E52','#E7E2D8','#C0A8C4'], madre:['#D9B8AE','#2A2320','#5E3E31'], padre:['#243447','#E4E2DC','#BFA277'], bandera:['#1B2A4A','#D9A520','#8E2B2B'], amor:['#6E1F2E','#C9A9A0','#B76E79'], penumbra:['#0E0D0F','#3A1F3D','#C77B33'], urgencia:['#000000','#C6A664','#F2F0EB'], fuego:['#12352A','#C9A227','#F0EBE1'] };
+  var tWork = null, tDirty = false;
+
+  function tFechaCO(d){ return d.toLocaleDateString('en-CA', { timeZone:'America/Bogota' }); }
+  function tCorta(d){ return d.toLocaleDateString('es-CO', { day:'numeric', month:'short', timeZone:'America/Bogota' }).replace('.',''); }
+  function tLarga(d){ return d.toLocaleDateString('es-CO', { day:'numeric', month:'long', year:'numeric', timeZone:'America/Bogota' }); }
+  /* El ciclo que se edita: el más próximo cuya ventana no ha cerrado. */
+  function tCiclos(){
+    var M = window.PretoTemporadas; if (!M) return [];
+    var hoy = new Date(), y = hoy.getFullYear();
+    var todas = M.fichas(y).concat(M.fichas(y+1));
+    var porId = {};
+    todas.forEach(function(f){
+      if (f.cierra.getTime() <= hoy.getTime()) return;
+      if (!porId[f.id] || f.abre < porId[f.id].abre) porId[f.id] = f;
+    });
+    return Object.keys(T_NOMBRES).map(function(id){ return porId[id]; }).filter(Boolean).sort(function(a,b){ return a.abre - b.abre; });
+  }
+  function tAjuste(id){ if (!tWork.temporadas[id]) tWork.temporadas[id] = {}; return tWork.temporadas[id]; }
+  function tLimpia(){
+    Object.keys(tWork.temporadas).forEach(function(id){
+      var a = tWork.temporadas[id];
+      Object.keys(a).forEach(function(k){ if (a[k] === undefined || a[k] === null || a[k] === '') delete a[k]; });
+      if (a.activa !== false) delete a.activa;
+      if (a.flotantes !== false) delete a.flotantes;
+      if (a.intensidad === 'media') delete a.intensidad;
+      if (!Object.keys(a).length) delete tWork.temporadas[id];
+    });
+  }
+
+  function renderTemporadas(){
+    var panel=$('panel');
+    if (cache.temporadas===null){ panel.innerHTML='<div class="loading">Cargando…</div>'; return; }
+    if (!window.PretoTemporadas){ panel.innerHTML='<div class="empty">No se pudo cargar el calendario (temporadas.js).</div>'; return; }
+    if (!tWork) tWork = JSON.parse(JSON.stringify({ temporadas: (cache.temporadas.temporadas || {}) }));
+    var M = window.PretoTemporadas, hoy = new Date();
+    var viva = M.resolver(hoy, tWork);
+    var ciclos = tCiclos();
+
+    var h = '<p style="font-size:13px;line-height:1.6;color:rgba(255,255,255,0.55);margin:0 0 22px;max-width:680px">Cada campaña ocupa su mes entero en la portada: cuenta atrás hasta la fecha y, pasado el día, la selección queda abierta hasta fin de mes. Aquí se apaga una campaña, se acortan o alargan sus días y se regulan los flotantes. Lo que no se toque sigue automático año tras año.</p>';
+    h += '<div class="cards">';
+    ciclos.forEach(function(f){
+      var a = tWork.temporadas[f.id] || {};
+      var v = M.ventana(f, tWork);
+      var esViva = viva && viva.id === f.id;
+      var activa = a.activa !== false, flot = a.flotantes !== false, inten = a.intensidad || 'media';
+      var pal = (T_PALETA[f.id]||[]).map(function(c){ return '<i style="background:'+c+'"></i>'; }).join('');
+      var abrio = f.abre.getTime() <= hoy.getTime();
+      h += '<div class="card tcard'+(activa?'':' apagada')+'" data-id="'+f.id+'">'
+        + '<div class="card-top"><div>'
+        +   '<div class="card-name">'+esc(f.nombre)+'<small>'+esc(T_NOMBRES[f.id]||'')+'</small><span class="sw">'+pal+'</span></div>'
+        +   '<div class="card-meta"><span>'+(abrio?'Abrió':'Abre')+' el '+esc(tLarga(f.abre))+'</span><span>·</span><span>Por defecto: '+esc(tCorta(f.desde))+' – '+esc(tCorta(new Date(f.cierra.getTime()-86400000)))+'</span><span>·</span><a href="index.html?temporada='+f.id+'" target="_blank" rel="noopener">Ver en portada</a></div>'
+        + '</div><div class="badges">'+(esViva?'<span class="badge paid">En portada ahora</span>':'')+(activa?'':'<span class="badge unpaid">Apagada</span>')+'</div></div>'
+        + '<div class="trow">'
+        +   '<label>Campaña<button class="chip '+(activa?'on':'off')+'" data-tog="activa">'+(activa?'Encendida':'Apagada')+'</button></label>'
+        +   '<label>Flotantes · '+esc(T_FLOTANTES[f.flotante]||'')+'<button class="chip '+(flot?'on':'off')+'" data-tog="flotantes">'+(flot?'Encendidos':'Apagados')+'</button></label>'
+        +   '<label>Cantidad<div class="chips">'+['suave','media','alta'].map(function(x){ return '<button class="chip'+(inten===x?' active':'')+'" data-int="'+x+'">'+x.charAt(0).toUpperCase()+x.slice(1)+'</button>'; }).join('')+'</div></label>'
+        +   '<label>Desde<input type="date" data-fecha="desde" value="'+tFechaCO(v.desde)+'" /></label>'
+        +   '<label>Hasta<input type="date" data-fecha="hasta" value="'+tFechaCO(new Date(v.cierra.getTime()-86400000))+'" /></label>'
+        +   '<button class="act" data-reset="1"'+(Object.keys(a).length?'':' disabled style="opacity:.4"')+'>Restablecer</button>'
+        + '</div></div>';
+    });
+    h += '</div>';
+    h += '<div class="tsave"><span class="hint'+(tDirty?' dirty':'')+'" id="tHint">'+(tDirty?'Hay cambios sin guardar.':'Los cambios llegan a la portada en unos minutos.')+'</span>'
+      + '<div class="actions"><button class="act" id="tDescartar">Descartar</button><button class="act primary" id="tGuardar">Guardar cambios</button></div></div>';
+    panel.innerHTML = h;
+
+    panel.querySelectorAll('.tcard').forEach(function(card){
+      var id = card.getAttribute('data-id');
+      var f = ciclos.filter(function(x){ return x.id===id; })[0];
+      card.querySelectorAll('[data-tog]').forEach(function(b){ b.addEventListener('click', function(){ var k=b.getAttribute('data-tog'); var a=tAjuste(id); a[k] = (a[k]===false) ? true : false; tMarcar(); }); });
+      card.querySelectorAll('[data-int]').forEach(function(b){ b.addEventListener('click', function(){ tAjuste(id).intensidad = b.getAttribute('data-int'); tMarcar(); }); });
+      card.querySelectorAll('[data-fecha]').forEach(function(inp){ inp.addEventListener('change', function(){
+        var k = inp.getAttribute('data-fecha'), val = inp.value;
+        var def = k==='desde' ? tFechaCO(f.desde) : tFechaCO(new Date(f.cierra.getTime()-86400000));
+        var a = tAjuste(id);
+        if (!val || val === def) delete a[k]; else a[k] = val;
+        tMarcar();
+      }); });
+      var r = card.querySelector('[data-reset]'); if (r) r.addEventListener('click', function(){ delete tWork.temporadas[id]; tMarcar(); });
+    });
+    $('tGuardar').addEventListener('click', tGuardar);
+    $('tDescartar').addEventListener('click', function(){ tWork=null; tDirty=false; renderTemporadas(); });
+  }
+  function tMarcar(){ tLimpia(); tDirty = true; renderTemporadas(); }
+  function tGuardar(){
+    tLimpia();
+    var doc = { temporadas: tWork.temporadas, updatedAt: new Date().toISOString() };
+    var btn=$('tGuardar'); if(btn){ btn.disabled=true; btn.textContent='Guardando…'; }
+    db.collection('config').doc('temporadas').set(doc).then(function(){
+      cache.temporadas = doc; tDirty=false; tWork=null; updateCounts(); renderTemporadas();
+      toast('Temporadas guardadas. La portada lo aplica en unos minutos.');
+    }).catch(function(e){ failPerm(e); if(btn){ btn.disabled=false; btn.textContent='Guardar cambios'; } });
+  }
+
+  /* ── INVENTARIO · historial de movimientos ──────────────────── */
+  var MOV_COLOR = { Pago:'#3E6B4F', Encargo:'#94731A', Entrada:'#8A5A1C', Salida:'#2A5C8A', Entrega:'#3E6B4F' };
+  function renderInventario(){
+    var panel=$('panel');
+    if (cache.movimientos===null){ panel.innerHTML='<div class="loading">Cargando…</div>'; return; }
+    var list = cache.movimientos.slice().sort(function(a,b){
+      return String(b.ts||'').localeCompare(String(a.ts||''));
+    });
+    if (searchTerm){ var q=searchTerm.toLowerCase(); list = list.filter(function(m){ return JSON.stringify(m).toLowerCase().indexOf(q)>=0; }); }
+    var porTipo = {};
+    list.forEach(function(m){ porTipo[m.tipo] = (porTipo[m.tipo]||0)+1; });
+
+    var h = '<div class="stats">'
+      + stat(list.length,'Movimientos','')
+      + stat(porTipo['Encargo']||0,'Encargos al proveedor','')
+      + stat(porTipo['Entrada']||0,'Entradas al taller','')
+      + stat(porTipo['Salida']||0,'Salidas','')
+      + '</div>';
+    h += '<div class="toolbar"><input class="search" id="mSearch" placeholder="Buscar por referencia, pieza, tipo…" value="'+esc(searchTerm)+'" /></div>';
+    h += '<p style="font-size:13px;line-height:1.6;color:rgba(255,255,255,0.55);margin:0 0 18px;max-width:640px">Todas las piezas se fabrican por encargo, así que el inventario no descuenta unidades: deja constancia de qué se encargó, cuándo entró al taller y cuándo salió. Se escribe solo al cambiar el estado de un pedido.</p>';
+
+    if (!list.length){
+      h += '<div class="loading">Sin movimientos todavía. Avanza el estado de un pedido y aparecerá aquí.</div>';
+    } else {
+      h += '<div>';
+      list.forEach(function(m){
+        var col = MOV_COLOR[m.tipo] || 'rgba(255,255,255,0.6)';
+        var fecha = '';
+        try { fecha = new Date(m.ts).toLocaleString('es-CO',{dateStyle:'medium',timeStyle:'short'}); } catch(e){ fecha = m.ts||''; }
+        h += '<div style="display:flex;gap:16px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:flex-start">'
+          +   '<span style="flex:0 0 96px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:'+col+'">'+esc(m.tipo||'—')+'</span>'
+          +   '<div style="flex:1;min-width:0">'
+          +     '<div style="font-size:14px">'+esc(m.nota||'')+'</div>'
+          +     '<div style="font-size:11.5px;color:rgba(255,255,255,0.45);margin-top:3px;word-break:break-all">'+esc(m.ref||m.orderId||'—')+(m.cliente?' · '+esc(m.cliente):'')+'</div>'
+          +   '</div>'
+          +   '<span style="flex:0 0 auto;font-size:11.5px;color:rgba(255,255,255,0.45)">'+esc(fecha)+'</span>'
+          + '</div>';
+      });
+      h += '</div>';
+    }
+    panel.innerHTML = h;
+    var s=$('mSearch');
+    if (s) s.addEventListener('input', function(){ searchTerm=s.value; var p=s.selectionStart; renderInventario(); var n=$('mSearch'); if(n){ n.focus(); try{ n.setSelectionRange(p,p); }catch(e){} } });
+  }
+
+  /* Registra un movimiento (y lo refleja al instante en el panel). */
+  function logMov(orderId, tipo, nota){
+    var o = cache.orders ? cache.orders.find(function(x){ return x.id===orderId; }) : null;
+    var mov = {
+      tipo: tipo,
+      nota: nota + (o && o.items && o.items.length ? ' · ' + String(o.items[0]).slice(0,60) : ''),
+      ref: (o && o.bold_order_id) ? o.bold_order_id : orderId,
+      orderId: orderId,
+      cliente: o ? (o.nombre || '') : '',
+      ts: new Date().toISOString()
+    };
+    if (cache.movimientos) cache.movimientos.unshift(mov);
+    updateCounts();
+    try { db.collection('movimientos').add(mov).catch(function(){}); } catch (e) {}
+  }
+
+  /* ── PEDIDOS ── */
+  function renderPedidos(){
+    var panel=$('panel');
+    if (cache.orders===null){ panel.innerHTML='<div class="loading">Cargando…</div>'; return; }
+    var all = cache.orders.slice().sort(byDateDesc);
+    var pend = all.filter(function(o){ return !o.paid && o.status!=='cancelado'; });
+    var paid = all.filter(function(o){ return o.paid; });
+    var porEnviar = all.filter(function(o){ return o.paid && o.status!=='enviado' && o.status!=='entregado' && o.status!=='cancelado'; });
+
+    var list = all;
+    if (orderFilter==='pendientes') list = pend;
+    else if (orderFilter==='pagados') list = paid;
+    else if (orderFilter==='porenviar') list = porEnviar;
+    if (searchTerm){ var q=searchTerm.toLowerCase(); list = list.filter(function(o){ return (JSON.stringify(o)).toLowerCase().indexOf(q)>=0; }); }
+
+    var revenue = paid.reduce(function(s,o){ return s+orderTotals(o).total; },0);
+
+    var h = '';
+    h += '<div class="stats">'
+      + stat(all.length,'Pedidos totales','')
+      + stat(pend.length,'Pendientes de pago','amber')
+      + stat(porEnviar.length,'Pagados · por enviar','green')
+      + stat(fmtCOP(revenue),'Ingresos confirmados','')
+      + '</div>';
+    h += '<div class="toolbar"><input class="search" id="oSearch" placeholder="Buscar por nombre, correo, referencia…" value="'+esc(searchTerm)+'" />'
+      + '<div class="chips">'
+      + chip('todos','Todos',orderFilter)
+      + chip('pendientes','Pendientes',orderFilter)
+      + chip('pagados','Pagados',orderFilter)
+      + chip('porenviar','Por enviar',orderFilter)
+      + '</div></div>';
+
+    if (!list.length){ h += '<div class="empty">No hay pedidos en esta vista.</div>'; }
+    else { h += '<div class="cards">' + list.map(orderCard).join('') + '</div>'; }
+    panel.innerHTML = h;
+
+    $('oSearch').addEventListener('input', function(){ searchTerm=this.value; var p=this.selectionStart; renderPedidos(); var el=$('oSearch'); if(el){ el.focus(); try{ el.setSelectionRange(p,p);}catch(e){} } });
+    panel.querySelectorAll('.chip').forEach(function(c){ c.addEventListener('click', function(){ orderFilter=c.getAttribute('data-v'); renderPedidos(); }); });
+    bindOrderActions();
+  }
+
+  function orderCard(o){
+    var T = orderTotals(o);
+    var items = (o.items||[]).map(function(i){ return esc(i.name + (i.size?' · '+i.size:'') + (i.qty>1?' ×'+i.qty:'')); }).join('  ·  ')
+      || esc(o.detalle || o.pedido || 'Sin piezas');
+    var paidBadge = o.paid ? '<span class="badge paid">Pagado</span>' : '<span class="badge unpaid">Pago pendiente</span>';
+    /* Interno: el webhook comparó lo pagado en Bold contra el total del
+       pedido y no coincidió. Verificar en Bold antes de fabricar. */
+    var alertaBadge = o.pago_revisar
+      ? '<span class="badge alerta" title="El monto pagado en Bold no coincide con el total del pedido">Revisar monto'
+        + (o.bold_amount ? ' · pagó ' + fmtCOP(o.bold_amount) : '') + '</span>'
+      : '';
+    var boldBadge = (o.metodo_pago && /bold/i.test(o.metodo_pago)) ? '<span class="badge bold">Bold'+(o.bold_order_id?' · '+esc(o.bold_order_id):'')+'</span>' : (o.metodo_pago?'<span class="badge">'+esc(o.metodo_pago)+'</span>':'');
+    var stBadge = '<span class="badge st">'+esc(STATUS_LABEL[o.status]||o.status||'Creado')+'</span>';
+    var idx = STATUSES.indexOf(o.status||'creado');
+    var nextSt = idx>=0 && idx<STATUSES.length-1 ? STATUSES[idx+1] : null;
+
+    var actions = '';
+    if (!o.paid) actions += '<button class="act primary" data-act="pay" data-id="'+o.id+'">Marcar pagado</button>';
+    else actions += '<button class="act" data-act="unpay" data-id="'+o.id+'">Quitar pago</button>';
+    if (nextSt) actions += '<button class="act go" data-act="advance" data-id="'+o.id+'" data-st="'+nextSt+'">→ '+esc(STATUS_LABEL[nextSt])+'</button>';
+    actions += '<button class="act danger" data-act="del" data-id="'+o.id+'">Eliminar</button>';
+
+    var phone = o.telefono ? '<a href="https://wa.me/57'+esc(String(o.telefono).replace(/\D/g,''))+'" target="_blank" rel="noopener">WhatsApp</a>' : '';
+    var mail = o.email ? '<a href="mailto:'+esc(o.email)+'">'+esc(o.email)+'</a>' : '';
+    var place = [o.ciudad,o.departamento].filter(Boolean).map(esc).join(', ');
+
+    return '<div class="card">'
+      + '<div class="card-top"><div><div class="card-name">'+esc(o.nombre||'Cliente')+'</div>'
+      + '<div class="card-meta">'+[mail,phone,place,(o.fecha_entrega_deseada?'Entrega deseada: '+esc(o.fecha_entrega_deseada):''),fmtDate(o.createdAt)].filter(Boolean).join('<span>·</span>')+'</div></div>'
+      + '<div class="card-total">'+fmtCOP(T.total)+'<small>'+(T.descuento?('cortesía −'+fmtCOP(T.descuento)):'total')+'</small></div></div>'
+      + '<div class="card-items">'+items+'</div>'
+      + '<div class="card-row"><div class="badges">'+paidBadge+alertaBadge+boldBadge+stBadge+'</div><div class="actions">'+actions+'</div></div>'
+      + '</div>';
+  }
+
+  function bindOrderActions(){
+    $('panel').querySelectorAll('[data-act]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var id=b.getAttribute('data-id'), act=b.getAttribute('data-act');
+        var ref = db.collection('orders').doc(id);
+        if (act==='pay'){ ref.update({ paid:true, paidAt:new Date().toISOString() }).then(function(){ localUpdate(id,{paid:true}); logMov(id,'Pago','Pago confirmado'); toast('Pedido marcado como pagado.'); }).catch(failPerm); }
+        else if (act==='unpay'){ ref.update({ paid:false, paidAt:null }).then(function(){ localUpdate(id,{paid:false}); toast('Pago retirado.'); }).catch(failPerm); }
+        else if (act==='advance'){ var st=b.getAttribute('data-st'); ref.update({ status:st }).then(function(){ localUpdate(id,{status:st}); var mv=MOV_POR_ESTADO[st]; if(mv) logMov(id,mv.tipo,mv.nota); toast('Estado: '+(STATUS_LABEL[st]||st)); if(st==='entregado'){ notifyDelivered(id); } }).catch(failPerm); }
+        else if (act==='del'){ if(!confirm('¿Eliminar este pedido? No se puede deshacer.')) return; ref.delete().then(function(){ cache.orders=cache.orders.filter(function(o){return o.id!==id;}); updateCounts(); renderPedidos(); toast('Pedido eliminado.'); }).catch(failPerm); }
+      });
+    });
+  }
+  function localUpdate(id,patch){ var o=cache.orders.find(function(x){return x.id===id;}); if(o){ Object.assign(o,patch); } renderPedidos(); }
+  /* Al marcar ENTREGADO: avisa al cliente por correo (Resend vía Netlify). */
+  function notifyDelivered(id){
+    var o=cache.orders.find(function(x){return x.id===id;});
+    if(!o || !o.email){ toast('Entregado. (Sin correo del cliente para avisar.)'); return; }
+    /* El token de tu sesión acompaña la llamada: la función solo envía
+       si quien pide es este panel con tu cuenta de admin. */
+    var u = auth && auth.currentUser;
+    (u ? u.getIdToken() : Promise.resolve('')).then(function(tok){
+      var h = { 'Content-Type':'application/json' };
+      if (tok) h['Authorization'] = 'Bearer ' + tok;
+      return fetch('/.netlify/functions/delivered-email', {
+        method:'POST', headers:h,
+        body: JSON.stringify({ correo:o.email, nombre:o.nombre||'', items:o.items||[], fecha:o.fecha_entrega_deseada||'' })
+      });
+    }).then(function(r){ toast(r.ok ? ('Correo de entrega enviado a '+o.email) : 'No se pudo enviar el correo de entrega.'); })
+      .catch(function(){ toast('No se pudo enviar el correo de entrega.'); });
+  }
+  function failPerm(e){ toast('No se pudo guardar (permisos).'); console.warn(e); }
+
+  /* ── COTIZACIONES ── */
+  function renderCotizaciones(){
+    var panel=$('panel');
+    if (cache.cotizaciones===null){ panel.innerHTML='<div class="loading">Cargando…</div>'; return; }
+    var list = cache.cotizaciones.slice().sort(byDateDesc);
+    if (searchTerm){ var q=searchTerm.toLowerCase(); list=list.filter(function(o){ return JSON.stringify(o).toLowerCase().indexOf(q)>=0; }); }
+    var h = '<div class="toolbar"><input class="search" id="cSearch" placeholder="Buscar cotización…" value="'+esc(searchTerm)+'" /></div>';
+    if(!list.length){ h+='<div class="empty">Aún no hay cotizaciones registradas.</div>'; }
+    else { h+='<div class="cards">'+list.map(function(o){
+      var items = esc(o.cotizacion_detalle || o.detalle || o.pedido || 'Sin detalle');
+      return '<div class="card"><div class="card-top"><div><div class="card-name">'+esc(o.nombre||o.correo||'Visitante')+'</div>'
+        +'<div class="card-meta">'+[o.correo?'<a href="mailto:'+esc(o.correo)+'">'+esc(o.correo)+'</a>':'', o.telefono?esc(o.telefono):'', fmtDate(o.createdAt)].filter(Boolean).join('<span>·</span>')+'</div></div>'
+        +'<div class="actions"><button class="act danger" data-cot-del="'+o.id+'">Eliminar</button></div></div>'
+        +'<div class="card-items" style="white-space:pre-wrap">'+items+'</div></div>';
+    }).join('')+'</div>'; }
+    panel.innerHTML=h;
+    $('cSearch').addEventListener('input', function(){ searchTerm=this.value; var p=this.selectionStart; renderCotizaciones(); var el=$('cSearch'); if(el){ el.focus(); try{el.setSelectionRange(p,p);}catch(e){} } });
+    panel.querySelectorAll('[data-cot-del]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var id=b.getAttribute('data-cot-del');
+        if(!confirm('¿Eliminar esta cotización? No se puede deshacer.')) return;
+        db.collection('cotizaciones').doc(id).delete().then(function(){ cache.cotizaciones=cache.cotizaciones.filter(function(o){return o.id!==id;}); updateCounts(); renderCotizaciones(); toast('Cotización eliminada.'); }).catch(failPerm);
+      });
+    });
+  }
+
+  /* ── CLIENTES ── */
+  function renderClientes(){
+    var panel=$('panel');
+    if (cache.customers===null){ panel.innerHTML='<div class="loading">Cargando…</div>'; return; }
+    var list = cache.customers.slice().sort(function(a,b){ return String(b.createdAt||'').localeCompare(String(a.createdAt||'')); });
+    if (searchTerm){ var q=searchTerm.toLowerCase(); list=list.filter(function(o){ return JSON.stringify(o).toLowerCase().indexOf(q)>=0; }); }
+    var h = '<div class="toolbar"><input class="search" id="clSearch" placeholder="Buscar cliente…" value="'+esc(searchTerm)+'" />'
+      + '<button class="act" id="copyClients">Copiar correos</button></div>';
+    if(!list.length){ h+='<div class="empty">Aún no hay clientes registrados.</div>'; }
+    else {
+      h+='<div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Cliente</th><th>Correo</th><th>Teléfono</th><th>Cortesía</th><th>Registrado</th></tr></thead><tbody>';
+      h+=list.map(function(c){
+        var cort = c.welcomeCode ? (c.welcomeRedeemed ? 'Usada ('+esc(c.welcomeCode)+')' : esc(c.welcomeCode)) : '—';
+        return '<tr><td><span class="em">'+esc(c.name||'—')+'</span></td><td>'+(c.email?'<a style="color:var(--gold);text-decoration:none" href="mailto:'+esc(c.email)+'">'+esc(c.email)+'</a>':'—')+'</td><td>'+esc(c.phone||'—')+'</td><td style="color:var(--muted)">'+cort+'</td><td style="color:var(--muted)">'+fmtDate(c.createdAt)+'</td></tr>';
+      }).join('');
+      h+='</tbody></table></div>';
+    }
+    panel.innerHTML=h;
+    $('clSearch').addEventListener('input', function(){ searchTerm=this.value; var p=this.selectionStart; renderClientes(); var el=$('clSearch'); if(el){ el.focus(); try{el.setSelectionRange(p,p);}catch(e){} } });
+    var cb=$('copyClients'); if(cb) cb.addEventListener('click', function(){ copyEmails(list.map(function(c){return c.email;})); });
+  }
+
+  /* ── NEWSLETTER ── */
+  function renderNewsletter(){
+    var panel=$('panel');
+    if (cache.newsletter===null){ panel.innerHTML='<div class="loading">Cargando…</div>'; return; }
+    var list = cache.newsletter.slice().sort(byDateDesc);
+    if (searchTerm){ var q=searchTerm.toLowerCase(); list=list.filter(function(o){ return JSON.stringify(o).toLowerCase().indexOf(q)>=0; }); }
+    var h = '<div class="toolbar"><input class="search" id="nSearch" placeholder="Buscar correo…" value="'+esc(searchTerm)+'" />'
+      + '<button class="act primary" id="copyNews">Copiar todos los correos</button></div>';
+    if(!list.length){ h+='<div class="empty">Aún no hay suscriptores.</div>'; }
+    else {
+      h+='<div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Correo</th><th>Estado</th><th>Origen</th><th>Fecha</th></tr></thead><tbody>';
+      h+=list.map(function(n){ return '<tr><td><span class="em">'+esc(n.email||'—')+'</span></td><td style="color:var(--green)">'+esc(n.status||'suscrito')+'</td><td style="color:var(--muted)">'+esc(n.source||'web')+'</td><td style="color:var(--muted)">'+fmtDate(n.createdAt)+'</td></tr>'; }).join('');
+      h+='</tbody></table></div>';
+    }
+    panel.innerHTML=h;
+    $('nSearch').addEventListener('input', function(){ searchTerm=this.value; var p=this.selectionStart; renderNewsletter(); var el=$('nSearch'); if(el){ el.focus(); try{el.setSelectionRange(p,p);}catch(e){} } });
+    var nb=$('copyNews'); if(nb) nb.addEventListener('click', function(){ copyEmails(list.map(function(n){return n.email;})); });
+  }
+
+  function copyEmails(arr){
+    var emails = (arr||[]).filter(Boolean).join(', ');
+    if(!emails){ toast('No hay correos para copiar.'); return; }
+    try { navigator.clipboard.writeText(emails).then(function(){ toast('Correos copiados al portapapeles.'); }); }
+    catch(e){ toast('No se pudo copiar.'); }
+  }
+
+  function stat(n,l,cls){ return '<div class="stat '+(cls||'')+'"><div class="n">'+n+'</div><div class="l">'+esc(l)+'</div></div>'; }
+  function chip(v,label,active){ return '<button class="chip'+(active===v?' active':'')+'" data-v="'+v+'">'+esc(label)+'</button>'; }
+
+  init();
+})();
+</script>
+
+</body>
+</html>

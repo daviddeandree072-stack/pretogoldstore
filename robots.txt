@@ -1,4 +1,135 @@
+# ════════════════════════════════════════════════════════════════
+#  Preto by Dala&Co — robots.txt
+#  ----------------------------------------------------------------
+#  1) Google y Bing rastrean la tienda y el catálogo con normalidad.
+#  2) Las páginas con datos personales o herramientas internas quedan
+#     fuera del rastreo (además van con X-Robots-Tag en _headers).
+#  3) Se bloquean los robots que copian sitios completos para
+#     entrenar modelos, revender datos o espiar a la competencia.
+#     Ojo: robots.txt es una norma de buena conducta, no un muro.
+#     Lo que de verdad protege los datos de clientes son las reglas
+#     de Firestore y las cabeceras — esto solo cierra la puerta
+#     principal a los que sí la respetan.
+# ════════════════════════════════════════════════════════════════
+
 User-agent: *
 Allow: /
+Disallow: /admin.html
+Disallow: /admin
+Disallow: /facturacion.html
+Disallow: /facturacion
+Disallow: /gracias.html
+Disallow: /gracias
+Disallow: /diagnostico-correos.html
+Disallow: /reenviar-bienvenida.html
+Disallow: /preview-correo-bienvenida.html
+Disallow: /preview-correo-lazo.html
+Disallow: /temporadas.html
+Disallow: /temporadas
+Disallow: /Plan%20de%20backlinks.html
+Disallow: /Cotizacion-
+Disallow: /.netlify/
+
+# ── Modelos de IA: no copiar el catálogo para ENTRENAR ───────────
+#    Ojo con la distinción, que no es la misma puerta:
+#      · GPTBot / ClaudeBot / CCBot / Google-Extended y compañía se
+#        llevan el contenido para entrenar modelos y no devuelven
+#        visitas. Siguen cerrados.
+#      · OAI-SearchBot y PerplexityBot indexan para las RESPUESTAS de
+#        búsqueda con IA, que citan la fuente con enlace. Abiertos:
+#        cerrarlos era renunciar a ese tráfico.
+#      · ChatGPT-User solo entra cuando un cliente real pide que se
+#        mire esta página. Abierto: es una visita, no un robot.
+User-agent: GPTBot
+Disallow: /
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin.html
+Disallow: /admin
+Disallow: /facturacion.html
+Disallow: /facturacion
+Disallow: /gracias.html
+Disallow: /gracias
+Disallow: /diagnostico-correos.html
+Disallow: /reenviar-bienvenida.html
+Disallow: /preview-correo-bienvenida.html
+Disallow: /preview-correo-lazo.html
+Disallow: /temporadas.html
+Disallow: /temporadas
+Disallow: /Plan%20de%20backlinks.html
+Disallow: /Cotizacion-
+Disallow: /.netlify/
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /admin.html
+Disallow: /admin
+Disallow: /facturacion.html
+Disallow: /facturacion
+Disallow: /gracias.html
+Disallow: /gracias
+Disallow: /diagnostico-correos.html
+Disallow: /reenviar-bienvenida.html
+Disallow: /preview-correo-bienvenida.html
+Disallow: /preview-correo-lazo.html
+Disallow: /temporadas.html
+Disallow: /temporadas
+Disallow: /Plan%20de%20backlinks.html
+Disallow: /Cotizacion-
+Disallow: /.netlify/
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin.html
+Disallow: /admin
+Disallow: /facturacion.html
+Disallow: /facturacion
+Disallow: /gracias.html
+Disallow: /gracias
+Disallow: /diagnostico-correos.html
+Disallow: /reenviar-bienvenida.html
+Disallow: /preview-correo-bienvenida.html
+Disallow: /preview-correo-lazo.html
+Disallow: /temporadas.html
+Disallow: /temporadas
+Disallow: /Plan%20de%20backlinks.html
+Disallow: /Cotizacion-
+Disallow: /.netlify/
+User-agent: ClaudeBot
+Disallow: /
+User-agent: anthropic-ai
+Disallow: /
+User-agent: Google-Extended
+Disallow: /
+User-agent: Applebot-Extended
+Disallow: /
+User-agent: Meta-ExternalAgent
+Disallow: /
+User-agent: FacebookBot
+Disallow: /
+User-agent: CCBot
+Disallow: /
+User-agent: Bytespider
+Disallow: /
+User-agent: Amazonbot
+Disallow: /
+User-agent: Diffbot
+Disallow: /
+User-agent: Omgilibot
+Disallow: /
+
+# ── Robots de SEO/scraping de la competencia ─────────────────────
+User-agent: AhrefsBot
+Disallow: /
+User-agent: SemrushBot
+Disallow: /
+User-agent: MJ12bot
+Disallow: /
+User-agent: DotBot
+Disallow: /
+User-agent: DataForSeoBot
+Disallow: /
+User-agent: BLEXBot
+Disallow: /
+User-agent: PetalBot
+Disallow: /
 
 Sitemap: https://pretogold.store/sitemap.xml

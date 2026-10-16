@@ -1,9 +1,12 @@
 {
   "name": "preto-netlify-resend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
-  "description": "Funciones serverless de Preto by Dala&Co — correo automático de cotizaciones con Resend.",
+  "description": "Funciones serverless de Preto by Dala&Co — correos (Resend) y confirmación de pagos (Bold + Firebase Admin).",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.6.0"
   }
 }

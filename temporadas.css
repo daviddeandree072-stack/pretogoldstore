@@ -1,0 +1,161 @@
+/* ═══════════════════════════════════════════════════════════════
+   PRETO BY DALA&CO · Motor de temporadas
+   ───────────────────────────────────────────────────────────────
+   Una sola sección (#lazo) que cambia de piel con el calendario.
+   Este archivo aporta DOS cosas:
+
+     1. Las paletas. lazo.css ya construye toda la sección sobre
+        cuatro variables (--lz-ground, --lz-deep, --lz-cream,
+        --lz-rose) más --lz-ink / --lz-veil. Cambiar el atributo
+        data-temporada reescribe esas variables y la sección entera
+        se reviste sola. Sin duplicar una sola regla de maquetación.
+
+     2. El gesto firma de cada fecha. Uno por temporada, montado en
+        .lz-gesto por temporadas.js. Nunca hay dos a la vez.
+
+   REGLA: se anima solo transform, opacity y clip-path.
+   Las clases is-armed / is-drawn / is-shown las pone el JS: sin
+   JavaScript nada queda oculto ni a medio animar.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Paletas por temporada ───────────────────────────────────────
+   --lz-rose es el acento de TEXTO y se mide contra --lz-ground (el
+   extremo claro del degradado): 4,5:1 mínimo, porque tiñe el precio
+   del producto a 12 px. --lz-deco es el decorativo y solo lo usa el
+   trazo del nudo de septiembre.
+   --lz-ink y --lz-veil son tripletas RGB, no colores: lazo.css las
+   consume dentro de rgba(var(--lz-ink),.56). Así una temporada clara
+   (mayo) invierte todos los secundarios con una sola declaración. */
+#lazo[data-temporada="mujer"]{--lz-ground:#2E1F4A;--lz-deep:#191132;--lz-cream:#DCD3C7;--lz-rose:#B08A4E;--lz-rose-rgb:176,138,78;--lz-ink:220,211,199}
+#lazo[data-temporada="silencio"]{--lz-ground:#4B2E52;--lz-deep:#1A1714;--lz-cream:#E7E2D8;--lz-rose:#C0A8C4;--lz-rose-rgb:192,168,196;--lz-ink:231,226,216}
+#lazo[data-temporada="madre"]{--lz-ground:#D9B8AE;--lz-deep:#C6ADA4;--lz-cream:#2A2320;--lz-rose:#5E3E31;--lz-rose-rgb:94,62,49;--lz-ink:42,35,32;--lz-veil:255,255,255}
+#lazo[data-temporada="padre"]{--lz-ground:#243447;--lz-deep:#16202C;--lz-cream:#E4E2DC;--lz-rose:#BFA277;--lz-rose-rgb:191,162,119;--lz-ink:228,226,220}
+#lazo[data-temporada="bandera"]{--lz-ground:#1B2A4A;--lz-deep:#101A30;--lz-cream:#EDE8DE;--lz-rose:#D9A520;--lz-rose-rgb:217,165,32;--lz-ink:237,232,222}
+#lazo[data-temporada="amor"]{--lz-ground:#6E1F2E;--lz-deep:#48121F;--lz-cream:#F4EEE7;--lz-rose:#C9A9A0;--lz-rose-rgb:201,169,160;--lz-deco:#B76E79;--lz-ink:244,238,231}
+#lazo[data-temporada="penumbra"]{--lz-ground:#1B1520;--lz-deep:#0E0D0F;--lz-cream:#E3DCD2;--lz-rose:#C77B33;--lz-rose-rgb:199,123,51;--lz-ink:227,220,210}
+#lazo[data-temporada="urgencia"]{--lz-ground:#0A0A0A;--lz-deep:#000;--lz-cream:#F2F0EB;--lz-rose:#C6A664;--lz-rose-rgb:198,166,100;--lz-ink:242,240,235}
+#lazo[data-temporada="fuego"]{--lz-ground:#12352A;--lz-deep:#0A2019;--lz-cream:#F0EBE1;--lz-rose:#C9A227;--lz-rose-rgb:201,162,39;--lz-ink:240,235,225}
+
+/* Mayo es la única temporada de fondo claro. Tinta sobre cuarzo
+   rinde menos que crema sobre burdeos: con el alfa base (.66) se
+   queda en 3.96:1, así que aquí sube a .80 → 5.4:1. El acento
+   también se oscurece (#5E3E31 → 5.0:1); el #7E5A4C del brief daba
+   3.1:1 y el precio del producto se leía a duras penas. */
+#lazo[data-temporada="madre"] .lz-note,#lazo[data-temporada="madre"] .lz-go,#lazo[data-temporada="madre"] .lz-unit span,#lazo[data-temporada="madre"] .lz-fine,#lazo[data-temporada="madre"] .lz-ok-sub,#lazo[data-temporada="madre"] .lz-lede{color:rgba(var(--lz-ink),.8)}
+#lazo[data-temporada="madre"] .lz-form input::placeholder{color:rgba(var(--lz-ink),.7)}
+
+/* ── Capa del gesto ──────────────────────────────────────────── */
+#lazo .lz-gesto{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+#lazo .lz-gesto>*{position:absolute}
+/* Flotantes (flotantes.js): un canvas del tamaño de la sección,
+   encima del gesto y debajo del texto. */
+#lazo .lz-flotantes{inset:0;display:block}
+
+/* ── Gramática común ─────────────────────────────────────────────
+   Dos reveals compartidos por todas las fechas: el titular entra
+   carácter a carácter y las placas se descubren por máscara. Ambos
+   cuelgan de .is-armed, que solo existe si el JS corrió. */
+#lazo.is-armed .lz-ch{display:inline-block;transform:translateY(.4em);opacity:0;transition:transform 720ms var(--lz-seda),opacity 720ms var(--lz-seda)}
+#lazo.is-armed.is-drawn .lz-ch{transform:none;opacity:1}
+#lazo.is-armed .lz-card{opacity:0;clip-path:inset(0 0 102% 0);transition:transform 240ms var(--lz-corte),border-color 240ms var(--lz-corte),background-color 240ms var(--lz-corte),opacity 680ms var(--lz-seda),clip-path 680ms var(--lz-seda)}
+#lazo.is-armed.is-shown .lz-card{opacity:1;clip-path:inset(0 0 0 0)}
+
+/* Profundidad: el gesto se mueve más lento que el texto al hacer
+   scroll. --lz-scroll lo escribe el JS, de -1 a 1. */
+#lazo .lz-knot,#lazo .g-plano,#lazo .g-bandera,#lazo .g-vela{transform:translate3d(0,calc(var(--lz-scroll,0) * var(--lz-plano,14) * 1px),0)}
+#lazo .lz-knot{left:50%;transform:translateX(-50%) translate3d(0,calc(var(--lz-scroll,0) * 18px),0)}
+
+/* ── MARZO · «Voz» ───────────────────────────────────────────────
+   El titular se dibuja y una tirada de plicas de bronce sube desde
+   el pie como una onda de voz. Nada rosa, nada decorativo. */
+#lazo[data-temporada="mujer"] .g-voz{left:0;right:0;bottom:0;height:46%;display:flex;align-items:flex-end;gap:1.1%;padding:0 6%}
+#lazo[data-temporada="mujer"] .g-voz i{flex:1 1 0;min-width:0;background:linear-gradient(to top,rgba(var(--lz-rose-rgb),.5),rgba(var(--lz-rose-rgb),0));transform:scaleY(0);transform-origin:50% 100%;transition:transform 1100ms var(--lz-seda)}
+#lazo[data-temporada="mujer"].is-drawn .g-voz i{transform:scaleY(1)}
+
+/* ── ABRIL · «Silencio» ──────────────────────────────────────────
+   Una sola franja de luz cruza en 1600 ms. Nada más se mueve: el
+   titular de esta fecha entra sin stagger, de una pieza. */
+#lazo[data-temporada="silencio"] .g-luz{top:-25%;bottom:-25%;width:22%;transform:skewX(-13deg) translateX(-240%);background:linear-gradient(90deg,transparent,rgba(231,226,216,.10) 40%,rgba(231,226,216,.20) 52%,transparent)}
+#lazo[data-temporada="silencio"].is-drawn .g-luz{transform:skewX(-13deg) translateX(560%);transition:transform 1600ms var(--lz-telon) 260ms}
+#lazo[data-temporada="silencio"].is-armed .lz-ch{transition-delay:0ms!important}
+
+/* ── MAYO · «Sostener» ───────────────────────────────────────────
+   Tres planos de cuarzo a velocidades distintas y una caligrafía
+   que se traza. Lento a propósito: algo que se carga con cuidado. */
+#lazo[data-temporada="madre"] .g-plano{border-radius:50%;filter:blur(2px);background:radial-gradient(circle at 40% 36%,rgba(255,255,255,.5),rgba(255,255,255,0) 68%)}
+#lazo[data-temporada="madre"] .g-plano--1{left:-8%;top:-18%;width:52%;aspect-ratio:1;--lz-plano:34}
+#lazo[data-temporada="madre"] .g-plano--2{right:-14%;top:8%;width:64%;aspect-ratio:1;--lz-plano:-20;background:radial-gradient(circle at 60% 40%,rgba(185,176,165,.42),rgba(185,176,165,0) 66%)}
+#lazo[data-temporada="madre"] .g-plano--3{left:22%;bottom:-30%;width:46%;aspect-ratio:1;--lz-plano:9}
+#lazo[data-temporada="madre"] .g-firma{left:6%;bottom:9%;width:min(420px,42%)}
+#lazo[data-temporada="madre"] .g-firma path{fill:none;stroke:rgba(var(--lz-rose-rgb),.55);stroke-width:1.4;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+#lazo[data-temporada="madre"].is-drawn .g-firma path{stroke-dashoffset:0;transition:stroke-dashoffset 2200ms var(--lz-seda) 300ms}
+
+/* ── JUNIO · «Estructura» ────────────────────────────────────────
+   La retícula se arma módulo a módulo en diagonal y se aquieta.
+   El delay lo pone el JS por celda (fila+columna). */
+#lazo[data-temporada="padre"] .g-malla{inset:7% 5%;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(6,1fr);gap:3px}
+#lazo[data-temporada="padre"] .g-malla i{background:rgba(var(--lz-ink),.035);outline:1px solid rgba(var(--lz-ink),.06);outline-offset:-1px;opacity:0;transform:scale(.72);transition:opacity 560ms var(--lz-seda),transform 560ms var(--lz-peso,cubic-bezier(.34,1.16,.64,1))}
+#lazo[data-temporada="padre"].is-drawn .g-malla i{opacity:1;transform:none}
+
+/* ── JULIO · «La bandera» ────────────────────────────────────────
+   Tela, no franjas planas: feTurbulence animado sobre los tres
+   colores. Entran por barrido vertical, amarillo primero. La capa
+   vive al 30 % y por debajo del texto — el contraste manda. */
+#lazo[data-temporada="bandera"] .g-bandera{left:-6%;right:-6%;bottom:-4%;width:112%;height:66%;opacity:.19;--lz-plano:22;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 42%);mask-image:linear-gradient(to bottom,transparent,#000 42%)}
+#lazo[data-temporada="bandera"] .g-band{clip-path:inset(0 0 100% 0)}
+#lazo[data-temporada="bandera"].is-drawn .g-band{clip-path:inset(0 0 0 0);transition:clip-path 900ms var(--lz-telon)}
+#lazo[data-temporada="bandera"].is-drawn .g-band--b{transition-delay:150ms}
+#lazo[data-temporada="bandera"].is-drawn .g-band--r{transition-delay:300ms}
+
+/* ── OCTUBRE · «Penumbra elegante» ───────────────────────────────
+   La sección está a oscuras y el cursor es la única luz. Sin
+   puntero (táctil) la luz deriva sola para que la fecha se lea. */
+#lazo[data-temporada="penumbra"] .g-luna{inset:-30%;background:radial-gradient(circle 300px at var(--lz-mx,50%) var(--lz-my,38%),rgba(199,123,51,.30),rgba(199,123,51,.10) 42%,transparent 68%);transition:opacity 600ms var(--lz-seda);opacity:0}
+#lazo[data-temporada="penumbra"].is-drawn .g-luna{opacity:1}
+#lazo[data-temporada="penumbra"] .g-luna--auto{animation:lzDeriva 19s ease-in-out infinite alternate}
+@keyframes lzDeriva{0%{transform:translate3d(-14%,-6%,0)}100%{transform:translate3d(16%,8%,0)}}
+#lazo[data-temporada="penumbra"] .lz-title{text-shadow:0 0 62px rgba(199,123,51,.22)}
+
+/* ── NOVIEMBRE · «Urgencia sin gritar» ───────────────────────────
+   Los dígitos ruedan en cinta vertical en vez de recortarse. Un
+   solo acento metálico; el resto es negro absoluto. */
+#lazo[data-temporada="urgencia"] .lz-unit i{clip-path:none;transition:transform 300ms var(--lz-corte)}
+#lazo[data-temporada="urgencia"] .lz-unit.is-turn i{clip-path:none;transform:translateY(-112%)}
+#lazo[data-temporada="urgencia"] .g-cinta{left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--lz-rose),transparent);transform:scaleX(0);transform-origin:0 50%}
+#lazo[data-temporada="urgencia"].is-drawn .g-cinta{transform:scaleX(1);transition:transform 1400ms var(--lz-telon)}
+
+/* ── DICIEMBRE · «Fuego pequeño» ─────────────────────────────────
+   Una llama viva con turbulencia, y la luz que se propaga en cadena
+   de una placa a la siguiente, como quien enciende velitas. */
+#lazo[data-temporada="fuego"] .g-vela{right:7%;top:6%;width:min(220px,26%);aspect-ratio:1/1.5;opacity:.85;--lz-plano:-12}
+#lazo[data-temporada="fuego"] .g-halo{right:7%;top:6%;width:min(220px,26%);aspect-ratio:1;background:radial-gradient(circle,rgba(201,162,39,.28),transparent 66%);animation:lzLatido 3.6s ease-in-out infinite}
+@keyframes lzLatido{0%,100%{transform:scale(1);opacity:.75}50%{transform:scale(1.09);opacity:1}}
+#lazo[data-temporada="fuego"].is-shown .lz-card{box-shadow:0 0 0 rgba(201,162,39,0);animation:lzPrende 1500ms var(--lz-seda) both}
+#lazo[data-temporada="fuego"].is-shown .lz-card:nth-child(2){animation-delay:420ms}
+#lazo[data-temporada="fuego"].is-shown .lz-card:nth-child(3){animation-delay:840ms}
+@keyframes lzPrende{0%{border-color:rgba(var(--lz-ink),.15)}38%{border-color:rgba(201,162,39,.75)}100%{border-color:rgba(var(--lz-ink),.15)}}
+
+/* ── Responsive · el gesto se simplifica, no se elimina ───────── */
+@media (max-width:640px){
+  #lazo[data-temporada="padre"] .g-malla{grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(5,1fr)}
+  #lazo[data-temporada="mujer"] .g-voz{height:34%;gap:1.6%}
+  #lazo[data-temporada="fuego"] .g-vela,#lazo[data-temporada="fuego"] .g-halo{width:38%;top:3%;right:4%}
+  #lazo[data-temporada="madre"] .g-firma{width:74%;bottom:5%}
+}
+
+/* ── Piso de calidad · movimiento reducido ───────────────────────
+   Cada gesto va directo a su estado final. Ningún bucle queda vivo. */
+@media (prefers-reduced-motion:reduce){
+  #lazo .lz-knot,#lazo .g-plano,#lazo .g-bandera,#lazo .g-vela{transform:none!important}
+  #lazo.is-armed .lz-ch{transform:none;opacity:1;transition:none}
+  #lazo.is-armed .lz-card{opacity:1;clip-path:none;transition:none}
+  #lazo .g-voz i{transform:scaleY(1);transition:none}
+  #lazo .g-luz{display:none}
+  #lazo .g-firma path{stroke-dashoffset:0;transition:none}
+  #lazo .g-malla i{opacity:1;transform:none;transition:none}
+  #lazo .g-band{clip-path:none;transition:none}
+  #lazo .g-luna{opacity:1;animation:none}
+  #lazo .g-halo{animation:none}
+  #lazo .g-cinta{transform:scaleX(1);transition:none}
+  #lazo[data-temporada="fuego"].is-shown .lz-card{animation:none}
+}

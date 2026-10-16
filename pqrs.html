@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<script src="cookies.js?v=20260917a"></script>
+<script src="pixel-events.js?v=20260903a" defer></script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>PQRS · Peticiones, quejas, reclamos y sugerencias · Preto by Dala&Co</title>
+<meta name="description" content="Presente una petición, queja, reclamo o sugerencia a Preto by Dala&Co. Respondemos dentro de los quince (15) días hábiles siguientes." />
+<link rel="canonical" href="https://pretogold.store/pqrs" />
+<meta name="author" content="Preto by Dala&Co" />
+<link rel="icon" type="image/png" href="assets/preto-logo-gold.png" />
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#0f0f0f" />
+<meta name="color-scheme" content="light" />
+<meta name="format-detection" content="telephone=no" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Preto by Dala&Co" />
+<meta property="og:locale" content="es_CO" />
+<meta property="og:title" content="PQRS · Peticiones, quejas, reclamos y sugerencias · Preto by Dala&Co" />
+<meta property="og:description" content="Presente una petición, queja, reclamo o sugerencia a Preto by Dala&Co. Respondemos dentro de los quince (15) días hábiles siguientes." />
+<meta property="og:image" content="https://pretogold.store/assets/preto-og.jpg" />
+<meta property="og:url" content="https://pretogold.store/pqrs" />
+<meta name="robots" content="noindex,follow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Pinyon+Script&family=Inter:wght@200;300;400;500&display=swap" />
+<link rel="stylesheet" href="styles.css?v=20260916a" />
+<link rel="stylesheet" href="paginas.css?v=20260916a" />
+</head>
+<body>
+<div class="legal-bar">
+  <a class="legal-mark" href="index.html">
+    <img src="assets/preto-logo-black.png" alt="Preto" width="500" height="500" loading="lazy" decoding="async" />
+    <span class="by">by Dala&amp;Co</span>
+  </a>
+  <div class="legal-nav"><a class="legal-back" href="index.html">← Volver a la tienda</a></div>
+</div>
+<main class="legal-wrap">
+  <div class="legal-eyebrow">— Atención al cliente</div>
+  <h1 class="legal-title">PQRS<span class="script">.</span></h1>
+  <div class="legal-meta">Peticiones · Quejas · Reclamos · Sugerencias — Preto by Dala&amp;Co</div>
+  <p class="legal-lede">Cuéntenos qué pasó. Toda solicitud queda registrada con fecha y recibe respuesta dentro de los quince (15) días hábiles siguientes.</p>
+
+  <form class="pq-form" id="pqForm" name="pqrs" method="POST" data-netlify="true" netlify-honeypot="bot-field" enctype="multipart/form-data">
+    <input type="hidden" name="form-name" value="pqrs" />
+    <p class="pq-hp" aria-hidden="true"><label>No llenar este campo: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+
+    <div class="pq-field">
+      <label for="tipo">Tipo de solicitud</label>
+      <select id="tipo" name="tipo" required>
+        <option value="Petición">Petición</option>
+        <option value="Queja">Queja</option>
+        <option value="Reclamo">Reclamo</option>
+        <option value="Sugerencia">Sugerencia</option>
+      </select>
+    </div>
+    <div class="pq-field">
+      <label for="nombre">Nombre completo</label>
+      <input type="text" id="nombre" name="nombre" autocomplete="name" required />
+    </div>
+    <div class="pq-field">
+      <label for="correo">Correo electrónico</label>
+      <input type="email" id="correo" name="correo" autocomplete="email" required />
+    </div>
+    <div class="pq-field">
+      <label for="tel">Teléfono</label>
+      <input type="tel" id="tel" name="telefono" autocomplete="tel" inputmode="tel" />
+    </div>
+    <div class="pq-field">
+      <label for="pedido">Número de pedido <span style="text-transform:none;letter-spacing:0">— opcional</span></label>
+      <input type="text" id="pedido" name="pedido" />
+    </div>
+    <div class="pq-field">
+      <label for="mensaje">Su solicitud</label>
+      <textarea id="mensaje" name="mensaje" placeholder="Describa lo que necesita con el mayor detalle posible." required></textarea>
+    </div>
+    <div class="pq-field">
+      <label for="adjunto">Adjunto <span style="text-transform:none;letter-spacing:0">— opcional (foto, comprobante)</span></label>
+      <input type="file" id="adjunto" name="adjunto" accept="image/*,application/pdf" />
+    </div>
+    <div class="pq-consent">
+      <input type="checkbox" id="acepta" name="acepta_politica" value="Sí" required />
+      <label for="acepta">Autorizo el tratamiento de mis datos personales conforme a la <a href="privacidad.html" target="_blank" rel="noopener">Política de Tratamiento de Datos</a> de Preto by Dala&amp;Co.</label>
+    </div>
+    <p class="pq-msg" id="pqMsg" hidden></p>
+    <button type="submit" class="pq-submit" id="pqSubmit">Enviar mi solicitud <span aria-hidden="true">→</span></button>
+  </form>
+
+  <div class="pq-done" id="pqDone">
+    <p><strong>Recibimos su solicitud.</strong> Le responderemos dentro de los quince (15) días hábiles siguientes.</p>
+  </div>
+
+  <p style="margin-top:34px">También puede escribirnos por <a href="https://wa.me/573226955451" target="_blank" rel="noopener">WhatsApp</a> o a <a href="mailto:pretobydalaco@gmail.com">pretobydalaco@gmail.com</a>. Si no queda satisfecho con nuestra respuesta, puede acudir a la <a href="https://www.sic.gov.co" target="_blank" rel="noopener">Superintendencia de Industria y Comercio</a>.</p>
+
+  <div class="legal-ident">
+    <p><strong>Preto by Dala&amp;Co</strong> · Bogotá, Colombia · WhatsApp <a href="https://wa.me/573226955451" target="_blank" rel="noopener">+57 322 695 5451</a> · <a href="mailto:pretobydalaco@gmail.com">pretobydalaco@gmail.com</a><br /><a href="https://www.sic.gov.co" target="_blank" rel="noopener">Superintendencia de Industria y Comercio</a></p>
+  </div>
+</main>
+<script>
+(function(){
+  var form=document.getElementById('pqForm'), done=document.getElementById('pqDone');
+  var msg=document.getElementById('pqMsg'), btn=document.getElementById('pqSubmit');
+  if(!form) return;
+  form.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    if(!form.reportValidity()) return;
+    btn.disabled=true; msg.hidden=true; msg.className='pq-msg';
+    fetch('/', { method:'POST', body:new FormData(form) })
+      .then(function(r){ if(!r.ok) throw new Error('http'); return true; })
+      .then(function(){ form.style.display='none'; done.classList.add('is-in'); })
+      .catch(function(){
+        btn.disabled=false; msg.hidden=false; msg.className='pq-msg err';
+        msg.textContent='No pudimos enviar su solicitud ahora mismo. Escríbanos por WhatsApp al +57 322 695 5451 y la registramos manualmente.';
+      });
+  });
+})();
+</script>
+<footer class="legal-foot">
+  <p>© <span data-yr>2026</span> <span class="script">Preto</span> by Dala&amp;Co · Hecho en Colombia · <a href="terminos.html">Términos</a> · <a href="privacidad.html">Privacidad</a> · <a href="faq.html">Preguntas frecuentes</a> · <a href="#cookies" data-cookie-prefs>Preferencias de cookies</a></p>
+</footer>
+<script>(function(){var y=new Date().getFullYear();document.querySelectorAll('[data-yr]').forEach(function(e){e.textContent=y;});})();</script>
+</body>
+</html>

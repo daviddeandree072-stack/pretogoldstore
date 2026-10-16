@@ -7,8 +7,35 @@
 # ───────────────────────────────────────────────────────────────
 
 [build]
+  # La carpeta que se publica. "." = la raíz del repositorio.
+  # Si tu sitio vive en una subcarpeta, cámbiala aquí (ej. "public").
   publish = "."
   functions = "netlify/functions"
 
+[build.environment]
+  # Node fijado: así el despliegue no cambia de versión sin avisar y
+  # firebase-admin 13 (la versión con los parches al día) corre siempre
+  # sobre un runtime con soporte.
+  NODE_VERSION = "20"
+
 [functions]
+  # Node 20 trae fetch global; no hace falta instalar nada.
   node_bundler = "esbuild"
+
+# ── Minificación y agrupado en el despliegue ───────────────────
+# Netlify comprime CSS/JS al publicar SIN tocar el código fuente:
+# los 779 KB de CSS+JS propios se sirven en torno a 240 KB.
+# El HTML no se minifica a propósito: hay bloques <style> críticos
+# en línea y el editor de la casa necesita leerlo tal cual.
+[build.processing]
+  skip_processing = false
+[build.processing.css]
+  bundle = false
+  minify = true
+[build.processing.js]
+  bundle = false
+  minify = true
+[build.processing.html]
+  pretty_urls = true
+[build.processing.images]
+  compress = true

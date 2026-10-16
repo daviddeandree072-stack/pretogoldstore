@@ -1,57 +1,127 @@
-# ─────────────────────────────────────────────────────────────
-#  CACHÉ
-# ─────────────────────────────────────────────────────────────
+# ════════════════════════════════════════════════════════════════
+#  Preto by Dala&Co — Cabeceras de seguridad y caché
+#  ----------------------------------------------------------------
+#  Formato compatible con Cloudflare Pages Y Netlify (mismo archivo).
+#  Se aplica a TODO el sitio estático. No cambia el diseño ni la
+#  lógica: solo le dice al navegador cómo proteger y cachear.
+# ════════════════════════════════════════════════════════════════
 
-# Imágenes y fuentes: caché de 1 año
+/*
+  # ── Anti-clickjacking: nadie puede meter tu web en un <iframe> ──
+  X-Frame-Options: SAMEORIGIN
+
+  # ── Evita que el navegador "adivine" tipos de archivo (MIME sniff) ──
+  X-Content-Type-Options: nosniff
+
+  # ── Nada de políticas cross-domain heredadas (Flash/PDF antiguos) ──
+  X-Permitted-Cross-Domain-Policies: none
+
+  # ── Cuánta info de referencia se filtra al salir del sitio ──
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # ── Obliga HTTPS durante 2 años (incluye subdominios) ──
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+
+  # ── Apaga APIs del navegador que la web no usa (cámara, micro, etc.) ──
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), interest-cohort=()
+
+  # ── Aísla la ventana: otra pestaña no puede sostener una referencia
+  #    a la nuestra (se permiten los popups de login de Google). ──
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+
+  # ── Content-Security-Policy: limita de dónde puede cargar recursos.
+  #    Construida para NO romper nada del sitio actual:
+  #      · script/style en línea permitidos (la web los usa mucho)
+  #      · Firebase (gstatic), Google Fonts, login de Google: permitidos
+  #      · Firestore / función de correo (Resend): permitidos por https
+  #      · object-src 'none' + base-uri 'self' + form-action 'self':
+  #        bloquea plugins, secuestro de <base> y envío de formularios
+  #        a sitios externos (defensa real contra inyecciones).
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com https://apis.google.com https://cdnjs.cloudflare.com https://*.bold.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://connect.facebook.net https://www.facebook.com https://*.bold.co; worker-src 'self' blob:; frame-src 'self' https://*.firebaseapp.com https://accounts.google.com https://*.google.com https://*.bold.co; object-src 'none'; base-uri 'self'; form-action 'self' https://*.bold.co; frame-ancestors 'self'; upgrade-insecure-requests
+
+# ════════════════════════════════════════════════════════════════
+#  PÁGINAS PRIVADAS — nunca indexadas, nunca guardadas en caché
+#  ----------------------------------------------------------------
+#  Llevan datos personales (nombre, cédula, teléfono, dirección) o son
+#  herramientas internas. "noindex" las saca de Google aunque alguien
+#  las enlace; "no-store" evita que queden en la caché del navegador o
+#  de un proxy compartido (café, oficina, celular prestado).
+# ════════════════════════════════════════════════════════════════
+
+/admin.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, must-revalidate
+/facturacion.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, must-revalidate
+/gracias.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, must-revalidate
+/diagnostico-correos.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, must-revalidate
+/reenviar-bienvenida.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, must-revalidate
+/preview-correo-bienvenida.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, must-revalidate
+/reglas-firestore.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, must-revalidate
+/reindexar.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, must-revalidate
+/diagnostico-correos.js
+  Cache-Control: no-store, must-revalidate
+
+# ── Documentos internos sueltos ──
+# Cotizaciones de taller (precio por gramo y margen), el plan de enlaces y
+# las vistas previas de correo. No se enlazan desde ninguna página, pero
+# una URL adivinada o un enlace compartido bastaba para indexarlos. El
+# patrón cubre las cotizaciones futuras, que sí llevarán datos del cliente.
+/Preto*
+  X-Robots-Tag: noindex, nofollow, noarchive
+/Plan*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, must-revalidate
+/Cotizacion-*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, must-revalidate
+/preview-correo-*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, must-revalidate
+/temporadas.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, must-revalidate
+
+# ── Informes de auditoría ──
+# No deberían llegar al servidor (están excluidos del repositorio en
+# .gitignore). Esto es el cinturón por si alguno se sube por error:
+# describen defensas, claves internas y huecos abiertos a propósito.
+/AUDITORIA-*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, must-revalidate
+
+# ── Sitemap y robots: tipo explícito y sin caché larga, para que Google
+#    lea siempre la versión recién publicada. ──
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+  Cache-Control: public, max-age=0, must-revalidate
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=0, must-revalidate
+
+# ── Caché: imágenes y fuentes no cambian (mismo nombre = misma imagen)
+#    → se guardan 1 año. Visitas repetidas cargan al instante sin red. ──
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-# CSS y JS: revalidar siempre (cambios al instante)
-/styles.css
+# ── CSS y JS: SIEMPRE revalidar contra el servidor antes de usar la copia
+#    en caché. Tras cada publicación el navegador recibe el CSS/JS nuevo de
+#    inmediato (respuesta 304 diminuta si no cambió). Evita el desajuste
+#    "HTML nuevo + CSS viejo" que rompía el diseño después de subir cambios. ──
+/*.css
   Cache-Control: public, max-age=0, must-revalidate
-/app.js
+/*.js
   Cache-Control: public, max-age=0, must-revalidate
-/precios.js
-  Cache-Control: public, max-age=0, must-revalidate
-/finder.js
-  Cache-Control: public, max-age=0, must-revalidate
-/cuenta.js
-  Cache-Control: public, max-age=0, must-revalidate
-/chatbot-preto.js
-  Cache-Control: public, max-age=0, must-revalidate
-/punto12.js
-  Cache-Control: public, max-age=0, must-revalidate
-/punto13.js
-  Cache-Control: public, max-age=0, must-revalidate
-/joyeria/pdp-precio.js
-  Cache-Control: public, max-age=0, must-revalidate
-
-# HTML: siempre revalidar
-/*.html
-  Cache-Control: public, max-age=0, must-revalidate
-
-# ─────────────────────────────────────────────────────────────
-#  SEGURIDAD · blindaje para todo el sitio
-# ─────────────────────────────────────────────────────────────
-/*
-  # Obliga a usar siempre HTTPS (conexión cifrada) durante 2 años
-  Strict-Transport-Security: max-age=63072000; includeSubDomains
-
-  # Define exactamente de dónde puede cargar recursos el sitio.
-  # Bloquea scripts, imágenes o estilos inyectados por un atacante.
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://firebaseinstallations.googleapis.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com wss://*.firebaseio.com; frame-src https://preto-pedidos.firebaseapp.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
-
-  # Impide que otra web "incruste" tu tienda en un iframe (robo de clics / clickjacking)
-  X-Frame-Options: DENY
-
-  # Evita que el navegador "adivine" tipos de archivo (bloquea trucos de subida maliciosa)
-  X-Content-Type-Options: nosniff
-
-  # No filtra la dirección completa de tus páginas a sitios externos
-  Referrer-Policy: strict-origin-when-cross-origin
-
-  # Desactiva funciones del navegador que tu tienda no usa (cámara, micrófono, ubicación, pagos)
-  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
-
-  # Aísla tu página de otras ventanas/pestañas para mayor protección
-  Cross-Origin-Opener-Policy: same-origin

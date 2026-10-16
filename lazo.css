@@ -1,0 +1,151 @@
+/* ═══════════════════════════════════════════════════════════════
+   PRETO BY DALA&CO · Campaña «El lazo» — Amor y Amistad 2026
+   ───────────────────────────────────────────────────────────────
+   Campaña estacional: se publica en septiembre y se retira después.
+   PARA RETIRARLA: borra la <section id="lazo"> de index.html y las
+   dos líneas que cargan lazo.css y lazo.js. Nada más depende de esto.
+
+   Todo el color vive en variables --lz-* declaradas EN la sección, no
+   en :root. El sitio tiene temas (data-maison, data-gold, claro/oscuro)
+   que reescriben --gold y --bone; la campaña no los usa, así que no
+   cambia de aspecto cuando el visitante cambia el tema.
+
+   Paleta (del brief): burdeos de fondo, crema para la tipografía y
+   oro rosa SOLO en el trazo del nudo — el acento se queda por debajo
+   del 10 % de la superficie.
+
+   DOS acentos, no uno, y la diferencia importa:
+     --lz-deco  tiñe el trazo del nudo. Decorativo, 1,15 px de grosor,
+                sin requisito de contraste. Es el oro rosa #B76E79.
+     --lz-rose  tiñe TEXTO de 10-12 px: antetítulo, precio, numeral,
+                enlaces. Tiene que medir 4,5:1 contra --lz-ground, que
+                es el extremo CLARO del degradado y justo donde se
+                apoya el antetítulo. Es el rosa antiguo #C9A9A0.
+   Si los vuelve a fundir en uno, el precio del producto cae a 2,9:1.
+
+   --lz-ink y --lz-veil son TRIPLETAS RGB, no colores: se consumen
+   como rgba(var(--lz-ink),.56). temporadas.css cambia esa tripleta
+   y todos los secundarios se invierten de golpe, que es lo que
+   necesita una temporada de fondo claro (mayo). No las conviertas
+   en colores sueltos.
+
+   Los alfas de los secundarios NO son estéticos, son de contraste:
+   a 10-12 px sobre estos fondos, por debajo de .62 se cae de 4.5:1.
+   Si los baja, mídalos antes.
+   ═══════════════════════════════════════════════════════════════ */
+
+#lazo{--lz-ground:#6E1F2E;--lz-deep:#48121F;--lz-cream:#F4EEE7;--lz-rose:#C9A9A0;--lz-rose-rgb:201,169,160;--lz-deco:#B76E79;--lz-ink:244,238,231;--lz-veil:0,0,0;--lz-seda:cubic-bezier(.22,1,.36,1);--lz-telon:cubic-bezier(.83,0,.17,1);--lz-peso:cubic-bezier(.34,1.16,.64,1);--lz-corte:cubic-bezier(.65,0,.35,1);position:relative;overflow:hidden;isolation:isolate;padding:clamp(88px,13vh,150px) var(--pad-x) clamp(80px,11vh,132px);background:radial-gradient(120% 90% at 50% 0%,var(--lz-ground) 0%,var(--lz-deep) 78%);color:var(--lz-cream)}
+
+/* ── Gesto firma · dos trazos que se anudan ──────────────────────
+   Un SVG de fondo, detrás del texto. Los dos caminos llevan
+   pathLength="1", así el dibujado es dashoffset 1 → 0 sin importar
+   la longitud real del trazado. */
+#lazo .lz-knot{position:absolute;z-index:0;left:50%;top:clamp(40px,9vh,96px);width:min(1240px,142%);transform:translateX(-50%);pointer-events:none;opacity:.9}
+#lazo .lz-knot-g{transform-box:fill-box;transform-origin:50% 50%;transition:transform 620ms var(--lz-seda)}
+#lazo.is-tight .lz-knot-g{transform:scale(.988)}
+#lazo .lz-stroke{fill:none;stroke:var(--lz-deco,var(--lz-rose));stroke-width:1.15;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:.62}
+#lazo.is-drawn .lz-stroke{stroke-dashoffset:0;transition:stroke-dashoffset 1500ms var(--lz-seda)}
+#lazo.is-drawn .lz-stroke--r{transition-delay:120ms}
+
+#lazo .lz-inner{position:relative;z-index:1;max-width:1080px;margin:0 auto}
+
+/* ── Cabecera ────────────────────────────────────────────────── */
+#lazo .lz-eyebrow{margin:0 0 clamp(20px,4vh,34px);font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:.26em;text-transform:uppercase;color:var(--lz-rose)}
+#lazo .lz-title{margin:0;font-family:var(--serif);font-weight:300;font-size:clamp(58px,13vw,152px);line-height:.9;letter-spacing:-.02em;color:var(--lz-cream)}
+#lazo .lz-script{font-family:var(--script);font-size:.92em;line-height:1;color:var(--lz-rose)}
+#lazo .lz-lede{max-width:34em;margin:clamp(22px,4vh,32px) 0 0;font-family:var(--sans);font-weight:300;font-size:clamp(14px,1.5vw,16px);line-height:1.75;color:rgba(var(--lz-ink),.76);text-wrap:pretty}
+
+/* ── Cuenta atrás ────────────────────────────────────────────────
+   Los dígitos casi no se mueven: el movimiento de esta campaña es el
+   nudo, no el contador. Solo los segundos cambian por máscara. */
+#lazo .lz-count{display:flex;flex-wrap:wrap;align-items:flex-start;gap:clamp(20px,4vw,52px);margin:clamp(38px,7vh,64px) 0 0;padding:0;list-style:none}
+#lazo .lz-unit{display:block}
+#lazo .lz-unit b{display:block;overflow:hidden;font-family:var(--serif);font-weight:300;font-size:clamp(42px,6.4vw,80px);line-height:1;letter-spacing:-.01em;font-variant-numeric:tabular-nums;color:var(--lz-cream)}
+#lazo .lz-unit span{display:block;margin-top:10px;font-family:var(--sans);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(var(--lz-ink),.66)}
+#lazo .lz-unit i{display:block;font-style:normal;clip-path:inset(0 0 0 0);transition:clip-path 260ms var(--lz-corte)}
+#lazo .lz-unit.is-turn i{clip-path:inset(0 0 100% 0)}
+#lazo .lz-open{margin:clamp(38px,7vh,64px) 0 0;font-family:var(--serif);font-size:clamp(28px,4vw,46px);font-weight:300;line-height:1.2;color:var(--lz-cream)}
+#lazo .lz-open[hidden]{display:none}
+/* El enlace del estado abierto necesita su propio color: sin esto
+   hereda el oro del tema del sitio y se pierde sobre el burdeos. */
+#lazo .lz-open a{color:var(--lz-rose);text-decoration:none;border-bottom:1px solid rgba(var(--lz-rose-rgb),.5);transition:color 200ms var(--lz-corte),border-color 200ms var(--lz-corte)}
+#lazo .lz-open a:hover{color:var(--lz-cream);border-color:var(--lz-cream)}
+#lazo .lz-count[hidden],#lazo .lz-wait[hidden]{display:none}
+
+/* ── Las tres piezas · placas tipográficas ───────────────────────
+   Sin fotografía a propósito. Las tres fotos disponibles están
+   tomadas en registros distintos (blanco de estudio, recorte sobre
+   transparente, lifestyle en negro) y ninguna se hizo para esta
+   campaña: juntas en una fila se leían como un collage. Y siendo esto
+   una cuenta atrás, mostrar ya las piezas deja sin nada que abrir el
+   19. Se nombran; se ven al entrar a la ficha.
+   Las tarjetas se atraen entre vecinas al pasar el cursor (lazo.js). */
+#lazo .lz-duo{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,1.6vw,20px);margin:clamp(46px,8vh,76px) 0 0}
+#lazo .lz-card{position:relative;display:flex;flex-direction:column;min-height:clamp(210px,24vw,268px);padding:clamp(22px,2.6vw,32px);text-decoration:none;color:inherit;border:1px solid rgba(var(--lz-ink),.15);background:rgba(var(--lz-veil),.10);transition:transform 240ms var(--lz-corte),border-color 240ms var(--lz-corte),background-color 240ms var(--lz-corte)}
+#lazo .lz-card:hover,#lazo .lz-card:focus-visible{border-color:rgba(var(--lz-rose-rgb),.62);background:rgba(var(--lz-veil),.2)}
+#lazo .lz-card:focus-visible{outline:none}
+#lazo .lz-num{margin:0 0 auto;font-family:var(--sans);font-size:10px;letter-spacing:.24em;color:var(--lz-rose)}
+#lazo .lz-name{margin:clamp(32px,5vw,52px) 0 0;font-family:var(--serif);font-size:clamp(20px,2.3vw,27px);font-weight:400;line-height:1.2;color:var(--lz-cream)}
+#lazo .lz-note{margin:8px 0 0;font-family:var(--sans);font-weight:300;font-size:12.5px;line-height:1.65;color:rgba(var(--lz-ink),.66);text-wrap:pretty}
+#lazo .lz-price{margin:14px 0 0;font-family:var(--sans);font-size:12px;letter-spacing:.06em;color:var(--lz-rose)}
+#lazo .lz-go{margin:16px 0 0;font-family:var(--sans);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(var(--lz-ink),.62);transition:color 200ms var(--lz-corte)}
+#lazo .lz-card:hover .lz-go,#lazo .lz-card:focus-visible .lz-go{color:var(--lz-cream)}
+
+/* ── Lista de espera ─────────────────────────────────────────── */
+#lazo .lz-wait{position:relative;margin:clamp(46px,8vh,74px) 0 0;max-width:520px}
+#lazo .lz-form{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch}
+/* Imprescindible: una regla de autor con display:flex le gana al
+   [hidden] del navegador, así que form.hidden=true no ocultaba nada y
+   la confirmación salía DEBAJO del formulario todavía en pantalla.
+   Lo mismo vale para .lz-count y .lz-wait, más abajo. */
+#lazo .lz-form[hidden]{display:none}
+#lazo .lz-form input{flex:1 1 240px;min-width:0;padding:15px 16px;font-family:var(--sans);font-weight:300;font-size:14px;color:var(--lz-cream);background:transparent;border:1px solid rgba(var(--lz-ink),.28);border-radius:0}
+#lazo .lz-form input::placeholder{color:rgba(var(--lz-ink),.55)}
+#lazo .lz-form input:focus{outline:none;border-color:var(--lz-rose)}
+#lazo .lz-form button{flex:0 0 auto;padding:15px 26px;font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--lz-deep);background:var(--lz-cream);border:1px solid var(--lz-cream);border-radius:0;cursor:pointer;transition:background 200ms var(--lz-corte),color 200ms var(--lz-corte)}
+#lazo .lz-form button:hover{background:var(--lz-rose);border-color:var(--lz-rose);color:var(--lz-cream)}
+#lazo .lz-form button:disabled{opacity:.55;cursor:default}
+#lazo .lz-form button:focus-visible,#lazo .lz-fine a:focus-visible{outline:1px solid var(--lz-rose);outline-offset:4px}
+#lazo .lz-err{margin:12px 0 0;font-family:var(--sans);font-size:12.5px;line-height:1.6;color:var(--lz-rose)}
+#lazo .lz-err[hidden]{display:none}
+#lazo .lz-ok{margin:0;font-family:var(--serif);font-size:clamp(19px,2.2vw,25px);font-weight:400;line-height:1.35;color:var(--lz-cream);clip-path:inset(0 0 100% 0);transition:clip-path 620ms var(--lz-seda)}
+#lazo .lz-ok[hidden]{display:none}
+#lazo .lz-wait.is-done .lz-ok{clip-path:inset(0 0 0 0)}
+#lazo .lz-ok-sub{display:block;margin-top:12px;font-family:var(--sans);font-weight:300;font-size:13px;line-height:1.7;color:rgba(var(--lz-ink),.74)}
+#lazo .lz-fine{max-width:44em;margin:clamp(26px,5vh,38px) 0 0;font-family:var(--sans);font-weight:300;font-size:12px;line-height:1.75;color:rgba(var(--lz-ink),.66);text-wrap:pretty}
+#lazo .lz-fine a{color:rgba(var(--lz-ink),.8);text-decoration:underline;text-underline-offset:3px}
+#lazo .lz-fine a:hover{color:var(--lz-rose)}
+
+/* ── Responsive · el gesto firma se simplifica, no desaparece ── */
+@media (max-width:900px){
+  #lazo .lz-duo{grid-template-columns:1fr 1fr;gap:12px}
+  #lazo .lz-card--gift{grid-column:1 / -1}
+  #lazo .lz-card--gift{min-height:0}
+  #lazo .lz-card--gift .lz-name{margin-top:clamp(20px,4vw,28px)}
+}
+@media (max-width:520px){
+  #lazo{padding-top:clamp(64px,10vh,96px)}
+  #lazo .lz-knot{width:184%;opacity:.72}
+  #lazo .lz-count{gap:18px 26px}
+  #lazo .lz-duo{grid-template-columns:1fr}
+  #lazo .lz-card{min-height:0}
+  #lazo .lz-name{margin-top:clamp(20px,6vw,28px)}
+  #lazo .lz-form button{flex:1 1 100%}
+}
+
+/* ── Piso de calidad · movimiento reducido ───────────────────────
+   El nudo aparece dibujado, sin trazo animado; nada se aprieta,
+   nada se atrae, y las máscaras se resuelven en un fundido corto. */
+@media (prefers-reduced-motion:reduce){
+  #lazo .lz-stroke{stroke-dashoffset:0}
+  #lazo.is-drawn .lz-stroke{transition:none}
+  #lazo .lz-knot-g,#lazo.is-tight .lz-knot-g{transform:none;transition:none}
+  #lazo .lz-card,#lazo .lz-unit i{transition:none!important}
+  #lazo .lz-ok{clip-path:inset(0 0 0 0);opacity:0;transition:opacity 200ms linear}
+  #lazo .lz-wait.is-done .lz-ok{opacity:1}
+}
+
+/* Fecha escrita: viene en el HTML inicial para que se lea sin JS.
+   lazo.js la cambia por la cuenta atrás en el primer tick. */
+.lz-date{font-family:var(--lz-sans,Inter,system-ui,sans-serif);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--lz-crema,#F0E4D2);opacity:.9;margin:28px 0 0}
+.lz-date[hidden]{display:none}

@@ -16,7 +16,7 @@
   if (typeof catShell === 'undefined' || !catShell || !catOverlay) return;
 
   // Piezas concretas del catálogo (sin las familias-padre).
-  const FINDER_ITEMS = COLLECTIONS.filter(function (p) { return !p.variants; });
+  const FINDER_ITEMS = COLLECTIONS.filter(function (p) { return !p.variants && !/-PH\d/.test(p.id); });
 
   function finderTags(p) {
     const parts = p.id.split('-');
@@ -34,8 +34,8 @@
       if (sub === 'REL') oca.push('devocion');
     }
     if (code === 'EA') {
-      if (sub === 'TOP' || sub === 'ARG') oca.push('diario');
-      if (sub === 'CAN' || sub === 'COL') oca.push('noche');
+      if (sub === 'TOP' || sub === 'ARG' || sub === 'TRE') oca.push('diario');
+      if (sub === 'CAN') oca.push('noche');
     }
     if (code === 'RO') oca.push('devocion');
     if (code === 'PN' || code === 'BA' || code === 'GE' || code === 'IN') oca.push('formal');
@@ -53,7 +53,7 @@
     { key: 'p2',  label: '$1M – $2M',       test: function (n) { return n != null && n > 1000000 && n <= 2000000; } },
     { key: 'p3',  label: '$2M – $3M',       test: function (n) { return n != null && n > 2000000 && n <= 3000000; } },
     { key: 'p4',  label: 'Desde $3M',       test: function (n) { return n != null && n > 3000000; } },
-    { key: 'cot', label: 'Bajo cotización', test: function (n) { return n == null; } },
+    { key: 'cot', label: 'Consultar precio', test: function (n) { return n == null; } },
   ];
 
   const ROWS = [
@@ -68,7 +68,10 @@
     });
   }
 
-  const state = { para: 'all', mat: 'all', oca: 'all', pre: 'all' };
+  const state = { para: 'all', mat: 'all', oca: 'all', pre: 'all', sort: 'all' };
+
+  // Orden por precio (solo cuando hay precios publicados).
+  const SORT_OPTS = [['all', 'Sugerido'], ['asc', 'Menor precio'], ['desc', 'Mayor precio']];
 
   function matches(x) {
     if (state.para !== 'all' && !(x.t.para === state.para || x.t.para === 'ambos')) return false;
@@ -82,7 +85,8 @@
   }
 
   function priceLine(x) {
-    return x.price != null ? 'Desde ' + fmtCOP(x.price) : 'Bajo cotización';
+    if (x.price == null) return (typeof waPriceBtn === 'function') ? waPriceBtn(x.p.id, x.p.name) : 'Consultar precio';
+    return (typeof isExactPriceId === 'function' && isExactPriceId(x.p.id)) ? fmtCOP(x.price) : 'Desde ' + fmtCOP(x.price);
   }
 
   function cardMarkup(x) {
@@ -113,7 +117,7 @@
           '<p class="var-price">' + priceLine(x) + '</p>' +
           optionsMarkup +
           '<button class="var-add" data-id="' + p.id + '">' +
-            '<span>Añadir a cotización</span>' +
+            '<span>Añadir al carrito</span>' +
             '<span class="arrow"></span>' +
           '</button>' +
         '</div>' +
@@ -131,7 +135,19 @@
     const grid = document.getElementById('finderGrid');
     const count = document.getElementById('finderCount');
     if (!grid) return;
-    const res = TAGGED.filter(matches);
+    /* Sin foto no se exhibe: una tarjeta vacía no ayuda a decidir. */
+    let res = TAGGED.filter(matches).filter(function (x) {
+      return !!(x.p && (x.p.image || (x.p.images && x.p.images.length)));
+    });
+    if (state.sort === 'asc' || state.sort === 'desc') {
+      const dir = state.sort === 'asc' ? 1 : -1;
+      res = res.slice().sort(function (a, b) {
+        if (a.price == null && b.price == null) return 0;
+        if (a.price == null) return 1;   // "Consultar precio" siempre al final
+        if (b.price == null) return -1;
+        return (a.price - b.price) * dir;
+      });
+    }
     if (count) {
       count.textContent = res.length
         ? String(res.length).padStart(2, '0') + (res.length === 1 ? ' pieza encontrada' : ' piezas encontradas')
@@ -188,7 +204,7 @@
           '<span class="eyebrow eyebrow-bone">' + TAGGED.length + ' piezas en catálogo</span>' +
         '</div>' +
         '<h2 class="cat-title">Encuentre su <span class="script">pieza.</span></h2>' +
-        '<p class="cat-sub">Filtre por destinatario, material' + (HAS_PRICES ? ', ocasión y presupuesto' : ' y ocasión') + '. El concierge confirma cada cotización por WhatsApp.</p>' +
+        '<p class="cat-sub">Filtre por destinatario, material' + (HAS_PRICES ? ', ocasión y presupuesto' : ' y ocasión') + '. El concierge confirma cada compra por WhatsApp.</p>' +
       '</header>' +
       '<div class="finder-bar">' +
         ROWS.map(function (r) {
@@ -203,6 +219,16 @@
             '</div>'
           );
         }).join('') +
+        (HAS_PRICES ? (
+          '<div class="f-row f-row-sort">' +
+            '<span class="f-label">Ordenar</span>' +
+            '<div class="f-chips">' +
+              SORT_OPTS.map(function (o) {
+                return '<button class="f-chip' + (state.sort === o[0] ? ' active' : '') + '" data-key="sort" data-val="' + o[0] + '">' + o[1] + '</button>';
+              }).join('') +
+            '</div>' +
+          '</div>'
+        ) : '') +
       '</div>' +
       '<p class="finder-count" id="finderCount"></p>' +
       '<div class="cat-grid" id="finderGrid"></div>';

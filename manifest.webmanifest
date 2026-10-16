@@ -1,0 +1,19 @@
+{
+  "name": "Preto by Dala&Co — Joyería de Autor",
+  "short_name": "Preto",
+  "description": "Casa de alta joyería entre Chocó y Bogotá. Cadenas, anillos, rosarios y pulseras en oro 18k y oro chocoano trazable.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#0f0f0f",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

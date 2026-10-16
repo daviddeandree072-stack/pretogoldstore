@@ -1,0 +1,79 @@
+# ── Sistema operativo ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editores ──
+.vscode/
+.idea/
+*.swp
+
+# ── Node / dependencias ──
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# ── Netlify ──
+.netlify/
+
+# ── Variables de entorno (NUNCA subir claves) ──
+.env
+.env.*
+!.env.example
+
+# ── Logs ──
+*.log
+
+# ── Archivos de trabajo / borradores (no forman parte del sitio) ──
+uploads/
+screenshots/
+scraps/
+CLAUDE.md
+.thumbnail
+
+# Prototipos de diseño — sirven para revisar el flujo, no se publican
+Prototipo*.html
+proto-*.jsx
+
+# Páginas de apoyo interno (no se publican)
+reglas-firestore.html
+reindexar.html
+diagnostico-correos.html
+reenviar-bienvenida.html
+temporadas.html
+
+# Vistas previas de las plantillas de correo. Sirven para revisar cómo se ve
+# un comprobante antes de enviarlo; llevan datos de ejemplo y no son parte
+# del sitio. Netlify no debe publicarlas.
+preview-correo-*.html
+
+# Archivos de trabajo del asistente (índices de escaneo, inventarios)
+.scan*.json
+.f-*.json
+.u[0-9].json
+.files.json
+.usados.json
+.huerfanos.json
+.img-huerfanas.json
+.cruce*.json
+
+# Documentos internos: una cotización de taller y el plan de enlaces.
+# No los enlaza ninguna página; publicarlos era regalar el precio por gramo,
+# el margen y la estrategia a quien adivinara la URL. El patrón cubre las
+# cotizaciones futuras, que sí llevarán los datos de quien las pide.
+Plan de backlinks.html
+Cotizacion-*.html
+
+# Informes de auditoría: describen las defensas, las claves internas y lo que
+# sigue abierto a propósito. Publicarlos sería servir el mapa de ataque en el
+# propio dominio. Se leen en local, no en pretogold.store.
+AUDITORIA-*.html
+
+# Documentación interna — describe defensas y configuración: NO debe quedar
+# pública en pretogold.store/ARCHIVO.md
+*.md
+!README.md
+firestore.rules
+
+# Nota: las claves de Bold y Resend viven en las Variables de entorno de
+# Netlify (process.env.*), no en el código. No hay secretos en el repo.

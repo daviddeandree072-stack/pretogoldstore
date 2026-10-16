@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>La Fundición · Dala Fundição — Preto by Dala&Co</title>
+<meta name="description" content="Componga su aleación grano a grano en la casa de fundición de Preto. Vierta oro de Chocó, oro 18k, platino y plata en el crisol, funda y descubra ley, peso y valor del metal." />
+<meta name="theme-color" content="#0A0A0A" />
+<meta name="color-scheme" content="dark" />
+<meta name="supported-color-schemes" content="dark" />
+<link rel="icon" type="image/png" href="assets/preto-logo-gold.png" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="La Fundición · Dala Fundição — Preto by Dala&Co" />
+<meta property="og:description" content="Grano, fuego y un molde de acero. Componga su aleación y descubra en qué se convierte." />
+<meta property="og:image" content="https://pretogold.store/assets/preto-og.jpg" />
+<link rel="canonical" href="https://pretogold.store/fundicion" />
+<!-- ════════════════════════════════════════════════════════════════
+     PRETO BY DALA&CO · pretogold.store
+     Diseño, código, textos y fotografías © 2026 Preto by Dala&Co.
+     Obra protegida por la Ley 23 de 1982, la Decisión Andina 351 de
+     1993 y la Ley 1915 de 2018 (Colombia). Todos los derechos
+     reservados.
+
+     Código de origen: PRETO-FC66-0177-F0AD-2026
+
+     Este identificador es único de esta obra. Si aparece en otro
+     dominio, ese sitio es una copia literal de éste y así se acredita
+     ante Google, el proveedor de alojamiento y la autoridad.
+     Reproducir el sitio, total o parcialmente, sin autorización
+     escrita constituye infracción (arts. 270-272 del Código Penal).
+     Autorizaciones: pretobydalaco@gmail.com
+     ════════════════════════════════════════════════════════════════ -->
+<meta name="author" content="Preto by Dala&Co" />
+<meta name="copyright" content="© 2026 Preto by Dala&Co · pretogold.store · Todos los derechos reservados" />
+<meta name="preto-origen" content="PRETO-FC66-0177-F0AD-2026" />
+<link rel="license" href="https://pretogold.store/propiedad" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Pinyon+Script&family=Inter:wght@200;300;400;500&display=swap" />
+<link rel="stylesheet" href="fundicion.css?v=20260917a" />
+<script src="cookies.js?v=20260917a"></script>
+</head>
+<body>
+
+<!-- ── Atmósfera de fundición (vignette + grano, no interactiva) ── -->
+<div class="fnd-atmos" aria-hidden="true">
+  <div class="fnd-vignette"></div>
+  <div class="fnd-ember"></div>
+  <div class="fnd-grain"></div>
+</div>
+
+<!-- ── Defs compartidos de los frascos (vidrio, borde, sombra, clip) ── -->
+<svg class="fnd-jar-defs" aria-hidden="true" width="0" height="0">
+  <defs>
+    <linearGradient id="jarRim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E6CB6E"></stop><stop offset="0.5" stop-color="#C0971C"></stop><stop offset="1" stop-color="#8F6E17"></stop></linearGradient>
+    <filter id="jarBlur" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter>
+    <clipPath id="jarInterior"><path d="M 30 40 C 24 56 24 78 31 92 Q 35 101 46 101 L 82 101 Q 93 101 97 92 C 104 78 104 56 98 40 Z"></path></clipPath>
+  </defs>
+</svg>
+
+<!-- ── TOPBAR ─────────────────────────────────────────────────── -->
+<header class="fnd-topbar" data-screen-label="Fundición · Topbar">
+  <div class="fnd-nav-left">
+  <a class="fnd-back" href="index.html">
+    <span class="fnd-back-arrow" aria-hidden="true">←</span>
+    <span data-i18n="sec.store">Volver a la tienda</span>
+  </a>
+  <span class="lang-switch" role="group" aria-label="Idioma" data-i18n-attr="aria-label:aria.lang"><button type="button" class="lang-opt" data-lang="es" aria-pressed="true">ES</button><span class="lang-sep" aria-hidden="true">/</span><button type="button" class="lang-opt" data-lang="en" aria-pressed="false">EN</button></span>
+  </div>
+  <a class="fnd-mark" href="index.html" aria-label="Preto by Dala&Co">
+    <img loading="lazy" src="assets/preto-wordmark-white.png" alt="Preto by Dala&Co" width="422" height="181" decoding="async" />
+  </a>
+  <span class="fnd-seal">
+    <span class="fnd-seal-k">Dala <span class="fnd-seal-amp">Fundição</span></span>
+    <span class="fnd-seal-l">Casa de fundición</span>
+  </span>
+</header>
+
+<!-- ── INTRO ──────────────────────────────────────────────────── -->
+<section class="fnd-intro" data-screen-label="Fundición · Intro">
+  <div class="fnd-intro-eyebrow">— Preto by Dala&Co · Dala Fundição</div>
+  <h1 class="fnd-title" data-i18n-html="home.explora.fundicion">
+    La <span class="script">Fundición</span>
+  </h1>
+  <p class="fnd-lede">
+    Cada joya de Preto empieza así: grano de oro en bruto, fuego y un molde
+    de acero. Componga su aleación, viértala en el crisol y descubra en qué
+    se convierte — ley, peso y el valor de su metal.
+  </p>
+  <p class="fnd-master">
+    Bajo el sello de <em>Dala Fundição</em> · vierta limpio, la casa observa.
+  </p>
+  <a class="fnd-scroll" href="#fnd-taller" aria-label="Bajar al taller">
+    <span></span>
+  </a>
+</section>
+
+<!-- ── TALLER (workspace) ─────────────────────────────────────── -->
+<section class="fnd-taller" id="fnd-taller" data-screen-label="Fundición · Taller">
+
+  <!-- Col 1 · El granero (raw stock) -->
+  <div class="fnd-col fnd-col-stock">
+    <div class="fnd-col-head">
+      <span class="fnd-num">01</span>
+      <h2>El granero</h2>
+      <p>Mantenga pulsado un tarro para verter · toque para una pizca.</p>
+      <p class="fnd-mix-hint">Combine <b>oro fino 24k</b> con cobre, plata o platino para bajar el quilataje y virar el tono — 22k, 18k, 14k, 10k.</p>
+    </div>
+    <div class="fnd-vessels" id="fndVessels"><!-- tarros inyectados por JS --></div>
+  </div>
+
+  <!-- Col 2 · La balanza (crucible on scale) -->
+  <div class="fnd-col fnd-col-scale">
+    <div class="fnd-col-head center">
+      <span class="fnd-num">02</span>
+      <h2>En la balanza</h2>
+      <p class="fnd-maestro-line">Cada colada se pesa <em>con precisión</em> antes de continuar.</p>
+    </div>
+
+    <div class="fnd-crucible-wrap">
+      <div class="fnd-hearth" aria-hidden="true"></div>
+      <div class="fnd-crucible" id="fndCrucible" data-empty="true">
+        <div class="fnd-crucible-inner">
+          <div class="fnd-fill" id="fndFill">
+            <span class="fnd-fill-surface"></span>
+          </div>
+          <div class="fnd-grains" id="fndGrains" aria-hidden="true"></div>
+          <div class="fnd-crucible-empty" id="fndEmpty">
+            <span class="fnd-empty-ic" aria-hidden="true"></span>
+            El crisol está vacío
+          </div>
+        </div>
+        <div class="fnd-crucible-glow" aria-hidden="true"></div>
+      </div>
+      <div class="fnd-crucible-lip" aria-hidden="true"></div>
+    </div>
+
+    <!-- Balanza de aguja / lectura -->
+    <div class="fnd-scale" role="group" aria-label="Lectura de la balanza">
+      <div class="fnd-gauge">
+        <svg class="fnd-gauge-svg" viewBox="0 0 240 150" aria-hidden="true">
+          <defs>
+            <linearGradient id="gzBrass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E6CB6E"></stop><stop offset="0.55" stop-color="#C0971C"></stop><stop offset="1" stop-color="#8F6E17"></stop></linearGradient>
+            <radialGradient id="gzFace" cx="0.5" cy="0.9" r="0.9"><stop offset="0" stop-color="#181209"></stop><stop offset="0.6" stop-color="#100C07"></stop><stop offset="1" stop-color="#0B0805"></stop></radialGradient>
+          </defs>
+          <path class="gz-face" d="M 14 128 A 106 106 0 0 1 226 128 Z"></path>
+          <path class="gz-bezel" d="M 16 128 A 104 104 0 0 1 224 128"></path>
+          <path class="gz-ring" d="M 58 128 A 62 62 0 0 1 182 128"></path>
+          <g id="fndGaugeTicks"></g>
+          <text class="gz-brand" x="120" y="88" text-anchor="middle">DALA FUNDIÇÃO</text>
+          <text class="gz-unit" x="120" y="100" text-anchor="middle">GRAMOS · TALLER</text>
+          <g id="fndNeedle" class="gz-needle">
+            <path class="gz-needle-arm" d="M 30 128 L 116 124.6 L 128 128 L 116 131.4 Z"></path>
+            <circle class="gz-tail" cx="135" cy="128" r="4.5"></circle>
+          </g>
+          <circle class="gz-hub" cx="120" cy="128" r="7.5"></circle>
+          <circle class="gz-hubdot" cx="120" cy="128" r="2.4"></circle>
+        </svg>
+        <div class="fnd-gauge-read"><b id="fndWeight">0</b><span>g</span></div>
+      </div>
+      <div class="fnd-weight-max">
+        <span id="fndWeightMaxTxt">0 g · tope 150 g</span>
+      </div>
+      <div class="fnd-melt">
+        <span class="fnd-melt-v" id="fndMeltValue">$0</span>
+        <span class="fnd-melt-l">valor de la pieza · <span id="fndSpotSrc">estimación spot</span></span>
+        <span class="fnd-melt-g"><b id="fndMeltG">$0</b> por gramo</span>
+      </div>
+    </div>
+
+    <div class="fnd-actions">
+      <button class="fnd-smelt" id="fndSmelt" type="button" disabled>
+        <span class="fnd-smelt-flame" aria-hidden="true"></span>
+        <span class="fnd-smelt-txt">Fundir</span>
+      </button>
+      <button class="fnd-clear" id="fndClear" type="button">Vaciar el crisol</button>
+    </div>
+  </div>
+
+  <!-- Col 3 · Registro de ensayo (assay) -->
+  <div class="fnd-col fnd-col-assay">
+    <div class="fnd-col-head">
+      <span class="fnd-num">03</span>
+      <h2>Registro de ensayo</h2>
+      <p>La composición de su aleación, grano a grano.</p>
+    </div>
+
+    <div class="fnd-assay" id="fndAssay">
+      <div class="fnd-comp" id="fndComp">
+        <div class="fnd-comp-empty" id="fndCompEmpty">Aún no ha vertido ningún metal.</div>
+      </div>
+
+      <div class="fnd-verdict" id="fndVerdict" hidden>
+        <span class="fnd-verdict-k">Resultado</span>
+        <span class="fnd-verdict-title" id="fndVerdictTitle">—</span>
+        <span class="fnd-verdict-karat" id="fndVerdictKarat"></span>
+      </div>
+      <div class="fnd-assay-lines">
+        <div class="fnd-assay-row">
+          <span class="fnd-assay-k">Quilataje</span>
+          <span class="fnd-assay-v" id="fndKarat">—</span>
+        </div>
+        <div class="fnd-assay-row">
+          <span class="fnd-assay-k">Ley media</span>
+          <span class="fnd-assay-v" id="fndLey">—</span>
+        </div>
+        <div class="fnd-assay-row">
+          <span class="fnd-assay-k">Metal fino</span>
+          <span class="fnd-assay-v" id="fndFine">—</span>
+        </div>
+        <div class="fnd-assay-row fnd-assay-hallmarks" id="fndHallmarks" hidden></div>
+      </div>
+
+      <div class="fnd-perg">
+        <div class="fnd-perg-top">
+          <span class="fnd-perg-l">Precio por gramo</span>
+          <span class="fnd-perg-v" id="fndPerG">—</span>
+        </div>
+        <div class="fnd-perg-rows">
+          <div class="fnd-perg-row"><span>Metal</span><b id="fndPerGMetal">—</b></div>
+          <div class="fnd-perg-row"><span>Hechura del taller</span><b id="fndPerGHechura">—</b></div>
+          <div class="fnd-perg-row"><span>Casa <em id="fndPerGPct">—</em></span><b id="fndPerGMargen">—</b></div>
+        </div>
+      </div>
+
+      <div class="fnd-value">
+        <span class="fnd-value-l">Valor estimado de la pieza</span>
+        <span class="fnd-value-v" id="fndValue">$0 COP</span>
+        <span class="fnd-value-note" id="fndValueNote">
+          Metal de referencia con la hechura del taller y la ganancia de la casa ya incluidas.
+          El diseño y el engaste se cotizan aparte con su asesor.
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── RECETAS DE LA CASA (presets) ───────────────────────────── -->
+<section class="fnd-recetas" data-screen-label="Fundición · Recetas">
+  <div class="fnd-recetas-head">
+    <span class="fnd-num">—</span>
+    <h2>O cargue una <span class="script">receta</span> de la casa</h2>
+    <p>Puntos de partida tomados de piezas reales de Preto. Ajuste a su gusto.</p>
+  </div>
+  <div class="fnd-receta-rail" id="fndRecetas"><!-- inyectadas por JS --></div>
+</section>
+
+<!-- ── FORJA · animación de fundición (se reproduce al pulsar Fundir) ── -->
+<div class="fnd-forge" id="fndForge" aria-hidden="true" data-play="false">
+  <div class="fnd-forge-heat" aria-hidden="true"></div>
+  <div class="fnd-forge-scene" aria-hidden="true">
+    <div class="fnd-forge-embers" id="fndForgeEmbers"></div>
+
+    <!-- Crisol / tarro que se inclina para verter -->
+    <div class="fnd-forge-crucible">
+      <div class="fnd-forge-crucible-body">
+        <span class="fnd-forge-crucible-melt"></span>
+        <span class="fnd-forge-crucible-lip"></span>
+      </div>
+    </div>
+
+    <!-- Chorro de oro fundido -->
+    <div class="fnd-forge-stream"></div>
+    <div class="fnd-forge-splash"></div>
+
+    <!-- Lingotera + lingote que se llena y enfría -->
+    <div class="fnd-forge-mold">
+      <span class="fnd-forge-ingot"><i></i></span>
+    </div>
+    <div class="fnd-forge-pool"></div>
+  </div>
+  <p class="fnd-forge-cap" id="fndForgeCap">Encendiendo el horno…</p>
+</div>
+
+<!-- ── EL RESULTADO (reveal, overlay) ─────────────────────────── -->
+<div class="fnd-result" id="fndResult" aria-hidden="true">
+  <div class="fnd-result-veil" data-result-close></div>
+  <div class="fnd-result-shell" role="dialog" aria-modal="true" aria-labelledby="fndResultTitle">
+    <button class="fnd-result-close" id="fndResultClose" aria-label="Cerrar">Cerrar ×</button>
+    <div class="fnd-result-eyebrow">— Dala Fundição · Ensayo terminado</div>
+    <h3 class="fnd-result-title" id="fndResultTitle">El <span class="script">resultado</span></h3>
+
+    <div class="fnd-ingot-stage">
+      <div class="fnd-ingot" id="fndIngot">
+        <span class="fnd-ingot-hall" id="fndIngotHall">Au 750</span>
+        <span class="fnd-ingot-w" id="fndIngotW">0 g</span>
+      </div>
+      <div class="fnd-ingot-shadow" aria-hidden="true"></div>
+    </div>
+
+    <div class="fnd-result-lines">
+      <div class="fnd-result-line">
+        <span class="k">Peso total</span>
+        <span class="v" id="fndResWeight">0 g</span>
+      </div>
+      <div class="fnd-result-line">
+        <span class="k">Composición</span>
+        <span class="v" id="fndResComp">—</span>
+      </div>
+      <div class="fnd-result-line">
+        <span class="k">Ley / quilataje</span>
+        <span class="v" id="fndResLey">—</span>
+      </div>
+      <div class="fnd-result-line">
+        <span class="k">Precio por gramo</span>
+        <span class="v" id="fndResPerG">—</span>
+      </div>
+      <div class="fnd-result-line total">
+        <span class="k">Valor de la pieza <em id="fndResSrc">· estimación spot</em></span>
+        <span class="v" id="fndResValue">$0 COP</span>
+      </div>
+    </div>
+
+    <div class="fnd-conv-block">
+      <div class="fnd-conv-head">
+        <span class="fnd-conv-title">¿En qué la <span class="script">conviertes?</span></span>
+        <span class="fnd-conv-hint">Elige una o combina varias</span>
+      </div>
+      <div class="fnd-conv-grid" id="fndConvGrid"><!-- inyectado por JS --></div>
+      <p class="fnd-conv-summary" id="fndConvSummary">Elige una pieza o combina varias — manilla + cadena, rosario + anillo…</p>
+    </div>
+
+    <p class="fnd-result-fine">
+      Valor de la aleación con la hechura del taller y la ganancia de la casa incluidas. Las piezas
+      elaboradas suman diseño y engaste — su asesor le confirma la cotización completa.
+    </p>
+
+    <button class="fnd-certchip" id="fndCertOpen" type="button">
+      <span class="fnd-certchip-seal" aria-hidden="true"><span>DF</span></span>
+      <span class="fnd-certchip-tx">
+        <b>Resumen de su simulación</b>
+        <i>Folio <span id="fndChipFolio">DF——</span></i>
+      </span>
+      <span class="fnd-certchip-a" aria-hidden="true">→</span>
+    </button>
+
+    <div class="fnd-result-cta">
+      <button class="fnd-btn-gold" id="fndPay" type="button">Cotizar esta pieza con un asesor <span aria-hidden="true">→</span></button>
+    </div>
+    <div class="fnd-result-cta2">
+      <button class="fnd-linkbtn muted" id="fndAgain" type="button">Fundir otra</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CIERRE ─────────────────────────────────────────────────── -->
+<!-- ── RESUMEN DE LA SIMULACIÓN (overlay imprimible) ────────── -->
+<div class="fnd-cert" id="fndCert" aria-hidden="true">
+  <div class="fnd-cert-veil" data-cert-close></div>
+  <div class="fnd-cert-scroll">
+    <article class="fnd-cert-card" id="fndCertCard" role="dialog" aria-modal="true" aria-label="Resumen de su simulación">
+      <div class="fnd-cert-wm" aria-hidden="true"><span>DF</span></div>
+      <div class="fnd-cert-tex" aria-hidden="true"></div>
+      <div class="fnd-cert-border">
+        <header class="fnd-cert-head">
+          <div class="fnd-cert-house">
+            <img loading="lazy" decoding="async" src="assets/preto-logo-black.png" alt="" class="fnd-cert-logo" width="120" height="120" />
+            <span class="fnd-cert-house-name">Preto <span class="amp">by Dala&amp;Co</span></span>
+          </div>
+          <div class="fnd-cert-eyebrow">Resumen de su simulación · Dala Fundição</div>
+        </header>
+
+        <div class="fnd-cert-titleblock">
+          <span class="fnd-cert-kicker">La aleación compuesta</span>
+          <h2 class="fnd-cert-title" id="fndCertTitle">Oro · 18k</h2>
+          <div class="fnd-cert-karat" id="fndCertKarat">18 qt</div>
+        </div>
+
+        <div class="fnd-cert-rule" aria-hidden="true"><span></span><i></i><span></span></div>
+
+        <div class="fnd-cert-grid">
+          <section class="fnd-cert-comp">
+            <h3 class="fnd-cert-sub">Composición</h3>
+            <table class="fnd-cert-table" id="fndCertComp"></table>
+          </section>
+          <section class="fnd-cert-facts">
+            <h3 class="fnd-cert-sub">Ensayo</h3>
+            <dl class="fnd-cert-dl">
+              <div><dt>Peso total</dt><dd id="fndCertWeight">—</dd></div>
+              <div><dt>Metal fino</dt><dd id="fndCertFine">—</dd></div>
+              <div><dt>Ley media</dt><dd id="fndCertLey">—</dd></div>
+              <div><dt>Sellos</dt><dd id="fndCertHalls">—</dd></div>
+              <div><dt>Precio por gramo</dt><dd id="fndCertPerG">—</dd></div>
+            </dl>
+            <div class="fnd-cert-value">
+              <span class="fnd-cert-value-l">Valor estimado de la pieza</span>
+              <span class="fnd-cert-value-v" id="fndCertValue">—</span>
+            </div>
+          </section>
+        </div>
+
+        <footer class="fnd-cert-foot">
+          <div class="fnd-cert-meta">
+            <span class="fnd-cert-stampbox">Folio <b id="fndCertFolio">DF——</b></span>
+            <span>Emitido <b id="fndCertDate">—</b></span>
+          </div>
+        </footer>
+
+        <p class="fnd-cert-fine">
+          Este resumen recoge la aleación compuesta por el cliente en La Fundición de Preto by Dala&amp;Co.
+          El valor es una estimación de referencia del metal con la hechura del taller incluida, y no constituye
+          avalúo ni factura. La pieza final suma diseño y engaste, cotizados por su asesor.
+        </p>
+      </div>
+    </article>
+  </div>
+  <div class="fnd-cert-bar">
+    <button class="fnd-btn-gold" id="fndCertPrint" type="button">Descargar / Imprimir <span aria-hidden="true">↓</span></button>
+    <button class="fnd-btn-ghost" id="fndCertClose" type="button">Cerrar</button>
+  </div>
+</div>
+
+<section class="fnd-cierre" data-screen-label="Fundición · Cierre">
+  <div class="fnd-cierre-inner">
+    <div class="fnd-cierre-eyebrow">— De la selva al taller</div>
+    <h2 class="fnd-cierre-title">
+      ¿Le gustó lo que <span class="script">fundió?</span>
+    </h2>
+    <p class="fnd-cierre-body">
+      Cada cadena, anillo y rosario que hacemos empieza exactamente así: grano
+      de oro, llama y un molde de acero. Elija su metal de verdad y la casa lo
+      convierte en su pieza, con la cotización del oro del día.
+    </p>
+    <div class="fnd-cierre-cta">
+      <a class="fnd-btn-gold" href="index.html#collections">Descubrir la colección <span aria-hidden="true">→</span></a>
+      <a class="fnd-btn-ghost" href="index.html#atelier">Reservar en el atelier</a>
+    </div>
+  </div>
+</section>
+
+<footer class="fnd-foot">
+  <span>© <span data-yr>2026</span> Preto by Dala&Co · <span class="fnd-gold">Dala Fundição</span></span>
+  <span class="fnd-foot-note">Puntos de fusión, leyes y sellos reflejan metalurgia real de taller · Hecho en Colombia</span>
+</footer>
+
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" fill="#0A0A0A"/>
+    <circle cx="50" cy="52" r="26" fill="none" stroke="#C0971C" stroke-width="2"/>
+    <path d="M38 54 q12 10 24 0" fill="none" stroke="#E6CB6E" stroke-width="2.4" stroke-linecap="round"/>
+    <text x="50" y="30" font-family="Georgia, serif" font-size="15" fill="#E6CB6E" text-anchor="middle">Au</text>
+  </svg>
+</template>
+
+<script src="i18n.js?v=20260824b" defer></script>
+<script src="pixel-events.js?v=20260903a" defer></script>
+<script src="fundicion.js?v=20260916a" defer></script>
+</body>
+</html>

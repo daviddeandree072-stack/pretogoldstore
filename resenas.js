@@ -3,21 +3,24 @@
    ═══════════════════════════════════════════════════════════════
 
    ┌────────────────────────────────────────────────────────────┐
-   │  ✏️  ESTE ES EL ÚNICO ARCHIVO QUE EDITAS PARA LAS RESEÑAS.   │
+   │  Las reseñas de GOOGLE ya aparecen SOLAS (automático, ver    │
+   │  ACTIVAR-RESEÑAS-GOOGLE.md). Este archivo es solo para       │
+   │  testimonios reales de OTROS canales (ej. WhatsApp, con      │
+   │  permiso del cliente) que quieras sumar a los de Google.     │
    └────────────────────────────────────────────────────────────┘
 
    ► Cómo funciona
-     · La sección "La voz de quienes ya la llevan" en la portada
-       aparece SOLA cuando hay al menos 1 reseña en la lista de abajo.
-     · Mientras la lista esté vacía, la sección queda OCULTA — el sitio
-       NUNCA muestra reseñas inventadas (es lo correcto y lo legal).
-     · La calificación promedio (las estrellas) y el número de clientes
-       se calculan solos a partir de las reseñas que pongas.
-     · Las estrellas también pueden aparecer en Google: se genera el
-       dato estructurado (Review + AggregateRating) automáticamente,
-       pero SOLO con reseñas reales.
+     · La sección "La voz de quienes ya la llevan" aparece SOLA cuando
+       hay al menos 1 reseña real — de Google o de esta lista.
+     · Mientras Google no esté conectado y esta lista esté vacía, la
+       sección queda OCULTA — el sitio NUNCA muestra reseñas inventadas.
+     · La calificación promedio y el número de clientes se recalculan
+       solos combinando Google + esta lista (sin duplicar si copiaste
+       la misma reseña en ambos lados).
+     · Se genera el dato estructurado (Review + AggregateRating) para
+       Google automáticamente, con reseñas reales únicamente.
 
-   ► Cómo AÑADIR una reseña (a medida que vendas)
+   ► Cómo AÑADIR una reseña de otro canal (no Google)
      1. Copia el bloque de PLANTILLA de abajo.
      2. Quita las // del inicio de cada línea.
      3. Reemplaza el texto con la reseña real (pídele permiso al cliente).
@@ -46,8 +49,6 @@ window.PRETO_REVIEWS = [
    Sube las fotos a la carpeta  assets/  y pon aquí sus rutas.
    Si lo dejas vacío, la franja de Instagram simplemente no aparece.   */
 
-window.PRETO_UGC = [
-  // 'assets/ugc-cliente-1.jpg',
-  // 'assets/ugc-cliente-2.jpg',
-  // 'assets/ugc-cliente-3.jpg',
-];
+/* Fotos reales de clientas. Vacío = la sección no se dibuja.
+   Para activarla: añade rutas de assets/ que existan de verdad. */
+window.PRETO_UGC = [];

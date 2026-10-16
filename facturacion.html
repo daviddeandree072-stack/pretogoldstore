@@ -1,16 +1,79 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<script src="cookies.js?v=20260917a"></script>
+<script src="pixel-events.js?v=20260903a" defer></script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>Datos de Facturación · Preto by Dala&Co</title>
 <meta name="description" content="Envíe sus datos de facturación a Preto by Dala&Co de forma segura." />
+<link rel="canonical" href="https://pretogold.store/facturacion" />
+<meta name="robots" content="noindex,nofollow,noarchive" />
 <link rel="icon" type="image/png" href="assets/preto-logo-gold.png" />
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#0f0f0f" />
+<meta name="color-scheme" content="light" />
+<meta name="supported-color-schemes" content="light" />
+<meta name="application-name" content="Preto" />
+<meta name="apple-mobile-web-app-title" content="Preto" />
+<meta name="format-detection" content="telephone=no" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Pinyon+Script&family=Inter:wght@200;300;400;500&display=swap" />
-<link rel="stylesheet" href="styles.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="styles.css?v=20260916a" />
+<!-- jsPDF solo se usa al enviar; Bold solo al pulsar “Pagar”. Con defer
+     no bloquean el primer render del formulario en el celular. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="https://checkout.bold.co/library/boldPaymentButton.js" defer></script>
+<script>
+  /* ── Guardar el pedido en Firebase (colección orders) ──────────
+     Así aparece en el panel de administrador y en "Mis pedidos" del
+     cliente. La regla de Firestore permite create abierto. */
+  window.PRETO_FIREBASE_CONFIG = {
+    apiKey:            "AIzaSyAuvR7AhwZAPzoUUz2YmJqyliwNecSVcoo",
+    authDomain:        "preto-pedidos.firebaseapp.com",
+    projectId:         "preto-pedidos",
+    storageBucket:     "preto-pedidos.firebasestorage.app",
+    messagingSenderId: "521170629952",
+    appId:             "1:521170629952:web:fbffb7893517d7a30336a5"
+  };
+  /* App Check (anti-bot). Misma site key reCAPTCHA v3 y app registrada
+     que index.html — protege el guardado de pedidos bajo enforcement.
+     Poner = false si alguna vez hubiera que desactivarlo sin romper la página. */
+  window.PRETO_RECAPTCHA_SITE_KEY = "6Le5ADUtAAAAAEKyOnCcFkXwH-Av6UGw4dbHIvoc";
+  window.PRETO_APPCHECK_ENABLED = true;
+  window.PretoOrders = (function () {
+    var BASE = 'https://www.gstatic.com/firebasejs/10.12.2/';
+    var loaded = null;
+    function load() {
+      if (loaded) return loaded;
+      var files = ['firebase-app-compat.js', 'firebase-app-check-compat.js', 'firebase-firestore-compat.js'];
+      loaded = files.reduce(function (p, f) {
+        return p.then(function () { return new Promise(function (res, rej) { var s = document.createElement('script'); s.src = BASE + f; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); });
+      }, Promise.resolve()).then(function () {
+        if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(window.PRETO_FIREBASE_CONFIG);
+        var PROD_HOSTS = ['pretogold.store', 'www.pretogold.store'];
+        if (window.PRETO_APPCHECK_ENABLED && PROD_HOSTS.indexOf(location.hostname) !== -1 && firebase.appCheck && window.PRETO_RECAPTCHA_SITE_KEY) {
+          try { firebase.appCheck().activate(window.PRETO_RECAPTCHA_SITE_KEY, true); } catch (e) {}
+        }
+        return firebase.firestore();
+      });
+      return loaded;
+    }
+    return {
+      // order = objeto del pedido; id opcional (para Bold = boldOrderId)
+      save: function (order, id) {
+        try {
+          return load().then(function (db) {
+            var ref = id ? db.collection('orders').doc(id) : db.collection('orders').doc();
+            return ref.set(order, { merge: true });
+          }).catch(function (e) { console.warn('[Preto] guardar pedido:', e); });
+        } catch (e) { return Promise.resolve(); }
+      }
+    };
+  })();
+</script>
 <style>
   body { background: var(--paper); color: var(--bone); }
   .legal-bar {
@@ -46,6 +109,23 @@
   .field select { appearance: none; cursor: pointer; }
   .field input::placeholder, .field textarea::placeholder { color: rgba(17,17,17,0.3); font-style: italic; }
 
+  .cortesia { background: rgba(150,116,52,0.05); border: 1px solid rgba(150,116,52,0.22); padding: 18px 20px 20px; }
+  .cortesia .cortesia-hint { font-family: var(--serif); font-style: italic; text-transform: none; letter-spacing: 0; font-size: 13px; color: rgba(17,17,17,0.45); }
+  .cortesia-row { display: flex; gap: 12px; align-items: stretch; margin-top: 4px; }
+  .cortesia-row input { flex: 1; text-transform: uppercase; letter-spacing: 0.08em; }
+  .cortesia-apply {
+    border: 1px solid var(--bone); background: transparent; cursor: pointer;
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--bone); padding: 0 22px; transition: background .25s ease, color .25s ease;
+  }
+  .cortesia-apply:hover { background: var(--bone); color: var(--paper); }
+  .cortesia.is-ok .cortesia-apply { border-color: #1f7a44; color: #1f7a44; }
+  .cortesia.is-ok .cortesia-apply:hover { background: #1f7a44; color: #fff; }
+  .cortesia-msg { font-family: var(--sans); font-size: 12.5px; line-height: 1.5; margin: 12px 0 0; }
+  .cortesia-msg.ok  { color: #1f7a44; }
+  .cortesia-msg.err { color: #9a2a2a; }
+  .cot-tot-row.descuento span:last-child { color: #1f7a44; }
+
   .consent { grid-column: 1 / -1; display: flex; align-items: flex-start; gap: 12px; margin-top: 4px; }
   .consent input { width: 17px; height: 17px; margin-top: 3px; accent-color: var(--gold); flex-shrink: 0; }
   .consent label { font-family: var(--sans); font-weight: 300; font-size: 13px; line-height: 1.6; letter-spacing: 0.01em; color: rgba(17,17,17,0.7); text-transform: none; }
@@ -59,8 +139,32 @@
     font-family: var(--sans); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase;
     color: #0a0807; background: var(--gold); transition: background .25s ease, transform .25s ease;
   }
-  .fact-submit:hover { background: #d9b86a; transform: translateY(-1px); }
+  .fact-submit:hover { background: var(--gold-glow); transform: translateY(-1px); }
   .fact-submit[disabled] { opacity: 0.55; cursor: default; transform: none; }
+
+  /* Bold es la opción principal: va primero y el asesor queda como alternativa */
+  .fact-submit.is-secondary { background: transparent; border: 1px solid rgba(17,17,17,0.28); color: #141210; margin-top: 18px; }
+  .fact-submit.is-secondary:hover { background: #141210; border-color: #141210; color: var(--paper); }
+  .pay-methods { grid-column: 1 / -1; font-family: var(--sans); font-weight: 300; font-size: 12.5px; line-height: 1.7; color: rgba(17,17,17,0.6); margin: 22px 0 0; padding-top: 18px; border-top: 1px solid rgba(17,17,17,0.12); max-width: 560px; }
+  .pay-methods b { font-weight: 500; color: rgba(17,17,17,0.8); }
+  .pay-online { grid-column: 1 / -1; margin-top: 22px; }
+  .pay-or { display: block; font-family: var(--sans); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(17,17,17,0.45); margin-bottom: 14px; }
+  .pay-bold {
+    display: inline-flex; flex-direction: column; align-items: flex-start; gap: 6px;
+    min-width: 240px;
+    padding: 18px 32px; border: 1px solid var(--gold-deep);
+    background: var(--maison-grad, #141210); cursor: pointer;
+    border-radius: 3px;
+    color: var(--champagne); transition: border-color .35s ease, transform .35s ease, box-shadow .35s ease;
+    box-shadow: 0 12px 34px -16px rgba(0,0,0,0.55);
+  }
+  .pay-bold:hover { transform: translateY(-2px); border-color: var(--gold); box-shadow: 0 18px 44px -16px rgba(0,0,0,0.6); }
+  .pay-bold[disabled] { opacity: 0.5; cursor: default; transform: none; }
+  .pay-bold > :first-child { font-family: var(--sans); font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; font-weight: 300; color: rgba(243,236,221,0.72); }
+  .pay-bold b { font-family: var(--sans); font-size: 19px; letter-spacing: 0.08em; font-weight: 700; color: var(--gold); margin-left: 2px; }
+  .pay-bold-sub { font-family: var(--sans); font-size: 10px; letter-spacing: 0.18em; color: rgba(243,236,221,0.5); text-transform: uppercase; margin-top: 2px; }
+  .pay-bold-note { font-family: var(--sans); font-size: 12px; line-height: 1.5; color: rgba(17,17,17,0.5); margin: 12px 0 0; }
+  .pay-bold-err { color: #9a2a2a !important; }
 
   .hp { position: absolute; left: -9999px; opacity: 0; }
   .fact-status { grid-column: 1 / -1; font-family: var(--sans); font-size: 14px; line-height: 1.6; margin-top: 4px; }
@@ -102,40 +206,93 @@
   .cot-tot-note { font-family: var(--sans); font-size: 11px; color: rgba(17,17,17,0.5); margin-top: 8px; }
   .done-pay { margin: 6px auto 24px; max-width: 470px; text-align: left; background: #F5F5F0; border: 1px solid rgba(17,17,17,0.08); padding: 20px 22px; }
   .done-pay-title { font-family: var(--sans); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-deep); }
-  .done-pay-grid { display: grid; gap: 14px; margin-top: 14px; }
-  .done-pay-grid > div { display:flex; flex-direction:column; }
-  .done-pay-grid b { font-family: var(--sans); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(17,17,17,0.55); font-weight: 500; }
-  .done-pay-grid span { font-family: var(--serif); font-size: 19px; color: var(--bone); margin-top: 2px; }
-  .done-pay-grid small { font-family: var(--sans); font-size: 11px; color: rgba(17,17,17,0.5); margin-top: 2px; }
+  .done-pay-text { font-family: var(--sans); font-weight: 300; font-size: 13.5px !important; line-height: 1.7; color: rgba(17,17,17,0.72) !important; margin: 12px 0 0 !important; max-width: none !important; }
+  .done-pay-text b { font-weight: 500; color: #141210; }
   .done-pay-note { font-family: var(--sans); font-size: 11px; color: rgba(17,17,17,0.5); margin-top: 14px; }
 
+  /* ── Móvil · formulario cómodo de llenar en el celular ───────── */
   @media (max-width: 600px) {
+    .legal-bar { padding: 14px 18px; }
+    .legal-bar .legal-mark img { height: 26px; }
+    .legal-bar .legal-mark .by { font-size: 18px; }
+    .legal-back { font-size: 9px; letter-spacing: 0.18em; }
+
+    .fact-wrap { padding: 40px 20px 88px; }
+    .fact-lede { margin-bottom: 40px; }
+
+    .cot-resumen { padding: 18px 18px 6px; margin-bottom: 36px; }
+    .cot-list li { gap: 12px; }
+    .cot-piece { font-size: 16px; }
+
     .fact-form { grid-template-columns: 1fr; gap: 22px; }
+    /* 16px+ evita el zoom automático de iOS al enfocar un campo */
+    .field input, .field select, .field textarea { font-size: 16px; padding: 11px 2px; }
+    .field input, .field select { min-height: 30px; }
+
+    /* Botones a todo el ancho y con altura de toque cómoda (≥52px) */
+    .fact-submit {
+      width: 100%; justify-content: center; justify-self: stretch;
+      padding: 18px 24px; font-size: 12px;
+    }
+    .pay-bold { width: 100%; min-width: 0; box-sizing: border-box; align-items: center; text-align: center; padding: 18px 22px; }
+    .cortesia-apply { padding: 0 18px; min-height: 48px; }
+  }
+
+  /* Pantallas muy angostas · el código de cortesía se apila */
+  @media (max-width: 380px) {
+    .fact-title { font-size: 34px; }
+    .cortesia-row { flex-direction: column; }
+    .cortesia-apply { padding: 14px; }
+    .done-pay { padding: 18px 16px; }
   }
 </style>
+<script>
+  /* Maison · aplica la dirección de arte guardada (igual que la portada) */
+  (function () {
+    var TX = { none: 0, papel: 0.05, terciopelo: 0.085 };
+    function apply(s) {
+      var de = document.documentElement;
+      if (s.maison && s.maison !== 'marfil') de.setAttribute('data-maison', s.maison);
+      else de.removeAttribute('data-maison');
+      if (s.gold && s.gold !== 'auto') de.setAttribute('data-gold', s.gold);
+      else de.removeAttribute('data-gold');
+      de.style.setProperty('--lux-vignette', String((Number(s.lighting) || 0) / 100));
+      de.style.setProperty('--lux-texture-opacity', String(TX[s.texture] != null ? TX[s.texture] : 0));
+    }
+    var def = { maison: 'burgundy', gold: 'auto', texture: 'papel', lighting: 12 };
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem('preto-maison-tweaks') || 'null'); } catch (e) {}
+    apply(Object.assign({}, def, saved || {}));
+  })();
+</script>
 </head>
 <body>
 
+<div class="lux-overlay" aria-hidden="true">
+  <div class="lux-vignette"></div>
+  <div class="lux-texture"></div>
+</div>
+
 <div class="legal-bar">
   <a class="legal-mark" href="index.html">
-    <img src="assets/preto-logo-black.png" alt="Preto" />
+    <img src="assets/preto-logo-black.png" alt="Preto" width="500" height="500" loading="lazy" decoding="async" />
     <span class="by">by Dala&amp;Co</span>
   </a>
-  <a class="legal-back" href="index.html">← Volver a la tienda</a>
+  <div class="legal-nav"><a class="legal-back" href="index.html" data-i18n="sec.back">← Volver a la tienda</a><span class="lang-switch" role="group" aria-label="Idioma" data-i18n-attr="aria-label:aria.lang"><button type="button" class="lang-opt" data-lang="es" aria-pressed="true">ES</button><span class="lang-sep" aria-hidden="true">/</span><button type="button" class="lang-opt" data-lang="en" aria-pressed="false">EN</button></span></div>
 </div>
 
 <main class="fact-wrap">
-  <div class="fact-eyebrow">— Enviar cotización</div>
+  <div class="fact-eyebrow">— Finalizar compra</div>
   <h1 class="fact-title">Sus <span class="script">datos.</span></h1>
   <p class="fact-lede">
-    Último paso para enviar su cotización. Su información llega directamente a
+    Último paso para finalizar su compra. Su información llega directamente a
     nuestro equipo y abriremos WhatsApp para atenderle. Se trata conforme a nuestra
     política de privacidad.
   </p>
 
   <section class="cot-resumen" id="cotResumen" hidden>
     <div class="cot-resumen-head">
-      <span class="cot-eyebrow">Su cotización</span>
+      <span class="cot-eyebrow">Su compra</span>
       <a class="cot-edit" href="index.html">Editar piezas →</a>
     </div>
     <ul class="cot-list" id="cotList"></ul>
@@ -145,7 +302,15 @@
   <form class="fact-form" name="facturacion" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="factForm">
     <input type="hidden" name="form-name" value="facturacion" />
     <input type="hidden" name="cotizacion_detalle" id="cotDetalle" />
-    <p class="hp"><label>No llenar este campo: <input name="bot-field" /></label></p>
+    <input type="hidden" name="codigo_cortesia" id="codigoCortesiaHidden" />
+    <input type="hidden" name="cortesia_aplicada" id="cortesiaAplicadaHidden" />
+    <input type="hidden" name="metodo_pago" id="metodoPagoHidden" value="Por definir" />
+    <input type="hidden" name="bold_order_id" id="boldOrderHidden" />
+    <input type="hidden" name="subtotal" id="subtotalHidden" />
+    <input type="hidden" name="seguro" id="seguroHidden" />
+    <input type="hidden" name="descuento" id="descuentoHidden" />
+    <input type="hidden" name="total" id="totalHidden" />
+    <p class="hp" aria-hidden="true"><label>No llenar este campo: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
 
     <div class="field full">
       <label for="nombre">Nombre o razón social <span class="req">*</span></label>
@@ -164,12 +329,12 @@
 
     <div class="field">
       <label for="numdoc">Número de documento <span class="req">*</span></label>
-      <input type="text" id="numdoc" name="numero_documento" placeholder="Sin puntos ni guiones" required />
+      <input type="text" id="numdoc" name="numero_documento" inputmode="numeric" placeholder="Sin puntos ni guiones" required />
     </div>
 
     <div class="field">
       <label for="tel">Teléfono / WhatsApp <span class="req">*</span></label>
-      <input type="tel" id="tel" name="telefono" placeholder="+57 ___ ___ ____" required />
+      <input type="tel" id="tel" name="telefono" inputmode="numeric" placeholder="3XX XXX XXXX" required />
     </div>
 
     <div class="field">
@@ -178,13 +343,28 @@
     </div>
 
     <div class="field">
-      <label for="ciudad">Ciudad</label>
-      <input type="text" id="ciudad" name="ciudad" placeholder="Ciudad" />
+      <label for="departamento">Departamento <span class="req">*</span></label>
+      <select id="departamento" name="departamento" required>
+        <option value="" disabled selected>Seleccione un departamento</option>
+      </select>
     </div>
 
     <div class="field">
+      <label for="ciudad">Ciudad / Municipio <span class="req">*</span></label>
+      <select id="ciudad" name="ciudad" required disabled>
+        <option value="" disabled selected>Elija primero el departamento</option>
+      </select>
+    </div>
+
+    <div class="field full">
       <label for="direccion">Dirección</label>
       <input type="text" id="direccion" name="direccion" placeholder="Dirección de envío / facturación" />
+    </div>
+
+    <div class="field full">
+      <label for="fechaEntrega">Fecha deseada de entrega <span class="cortesia-hint">— opcional</span></label>
+      <input type="date" id="fechaEntrega" name="fecha_entrega_deseada" />
+      <p style="font-size:12px;color:#8a7f6d;margin:8px 0 0;line-height:1.6;">Entrega estimada: <strong>3 a 8 días hábiles</strong> a ciudades principales, una vez confirmado el pago. Si eliges una fecha, haremos lo posible por coordinarla contigo.</p>
     </div>
 
     <div class="field full">
@@ -197,6 +377,15 @@
       <textarea id="notas" name="notas" placeholder="Cualquier información extra que debamos tener en cuenta."></textarea>
     </div>
 
+    <div class="field full cortesia" id="cortesiaBlock">
+      <label for="codigoCortesia">Código de cortesía <span class="cortesia-hint">— si recibiste uno de bienvenida</span></label>
+      <div class="cortesia-row">
+        <input type="text" id="codigoCortesia" autocomplete="off" spellcheck="false" placeholder="Ej. MAISONVALENTINA" />
+        <button type="button" class="cortesia-apply" id="cortesiaApply">Aplicar</button>
+      </div>
+      <p class="cortesia-msg" id="cortesiaMsg" hidden></p>
+    </div>
+
     <div class="consent">
       <input type="checkbox" id="acepta" name="acepta_politica" value="Sí" required />
       <label for="acepta">Autorizo el tratamiento de mis datos personales conforme a la
@@ -205,31 +394,44 @@
 
     <div class="fact-status" id="factStatus" hidden></div>
 
-    <button type="submit" class="fact-submit" id="factSubmit">Enviar cotización <span aria-hidden="true">→</span></button>
+    <div class="pay-online" id="payOnline">
+      <span class="pay-or">Pague ahora en línea</span>
+      <button type="button" class="pay-bold" id="payBold">
+        Pagar con <b>Bold</b>
+        <span class="pay-bold-sub">Tarjetas · PSE · Nequi</span>
+      </button>
+      <p class="pay-bold-note">Pago seguro. Al confirmarse, tu pedido queda pagado automáticamente.</p>
+    </div>
+
+    <button type="submit" class="fact-submit is-secondary" id="factSubmit">Finalizar con un asesor <span aria-hidden="true">→</span></button>
+
+    <p class="pay-methods"><b>Métodos de pago:</b> tarjetas débito y crédito y PSE (en línea con Bold), Nequi, Llave · Nu y transferencia Bancolombia. Los datos para transferencia se comparten únicamente desde el WhatsApp oficial de la casa.</p>
   </form>
 
   <div class="fact-done" id="factDone">
     <div class="glyph">Preto</div>
-    <h2>Cotización enviada.</h2>
-    <p>Gracias. Hemos recibido sus datos y su cotización. Abrimos WhatsApp para finalizar la conversación con un asesor; si no se abrió, escríbanos al +57 322 695 5451.</p>
+    <h2>Compra registrada.</h2>
+    <p>Gracias. Hemos recibido sus datos y su compra. Abrimos WhatsApp para finalizar la conversación con un asesor; si no se abrió, escríbanos al +57 322 695 5451.</p>
     <div class="done-pay">
-      <span class="done-pay-title">Datos para tu pago</span>
-      <div class="done-pay-grid">
-        <div><b>Bancolombia · Ahorros</b><span>912-395939-71</span><small>David Andrés Lozano Mena</small></div>
-        <div><b>Nequi</b><span>322 695 5451</span><small>David Andrés Lozano Mena</small></div>
-        <div><b>Nu · Llave</b><span>@DLM777</span><small>Transferencia con llave</small></div>
-      </div>
+      <span class="done-pay-title">¿Cómo pago?</span>
+      <p class="done-pay-text">Si eligió pagar en línea, su pedido queda confirmado automáticamente con Bold.</p>
+      <p class="done-pay-text">Si prefiere transferencia, un asesor le compartirá los datos de pago <b>solo</b> desde el WhatsApp oficial de la casa, +57 322 695 5451. Desconfíe de cualquier otro número o cuenta.</p>
       <p class="done-pay-note">Envío nacional sin costo · Solo se cobra el seguro del producto.</p>
     </div>
-    <a href="#" id="pdfRedownload" class="fact-pdf-link" hidden>↓ Descargar mi cotización en PDF</a>
+    <a href="#" id="pdfRedownload" class="fact-pdf-link" hidden>↓ Descargar mi compra en PDF</a>
     <a href="index.html">← Volver a la tienda</a>
   </div>
 </main>
 
 <footer class="legal-foot">
-  <p><span class="script">Preto</span> by Dala&amp;Co · Hecho en Colombia · <a href="privacidad.html">Política de privacidad</a></p>
+  <p>© <span data-yr>2026</span> <span class="script">Preto</span> by Dala&amp;Co · Hecho en Colombia · <a href="privacidad.html">Política de privacidad</a></p>
 </footer>
 
+<script src="colombia-ubicaciones.js?v=20260823a"></script>
+<!-- Lista viva de precios: el carrito guarda el precio del día en que se
+     añadió la pieza, así que aquí lo volvemos a leer de esta lista — la
+     misma que usa el servidor para firmar el cobro en Bold. -->
+<script src="precios.js?v=20260810a"></script>
 <script>
   (function () {
     var WA_NUMBER = '573226955451';
@@ -238,27 +440,113 @@
     var quote = [];
     try { quote = JSON.parse(localStorage.getItem(QKEY) || '[]'); } catch (e) { quote = []; }
 
-    /* ── Precios, seguro y datos bancarios ───────────────── */
-    var INSURANCE_RATE = 0.02; // ← mismo % que en app.js. 0.02 = 2 %
-    var BANK = [
-      { name:'Bancolombia · Ahorros', num:'912-395939-71', sub:'David Andrés Lozano Mena' },
-      { name:'Nequi',                 num:'322 695 5451',  sub:'David Andrés Lozano Mena' },
-      { name:'Nu · Llave',            num:'@DLM777',       sub:'Transferencia con llave' }
-    ];
+    /* ════════ PRECIOS AL DÍA ══════════════════════════════
+       El carrito congela el precio de cada pieza cuando se añade. Si la
+       lista cambió desde entonces, el total en pantalla ya no sería el
+       que cobra el servidor. Antes de sumar nada, volvemos a leer cada
+       precio de precios.js (misma lista que firma el cobro). */
+    function precioVivo(it) {
+      var id = String(it && it.id || '').trim();
+      if (it && (it.kind === 'giftcard' || id === 'GIFT-CARD'))
+        return (it.price != null ? it.price : null);   // vale lo que eligió el cliente
+      var P = window.PRETO_PRICES, SP = window.PRETO_SIZE_PRICES;
+      var size = it && it.size ? String(it.size).trim() : '';
+      if (SP && SP[id] && size && SP[id][size] != null) return SP[id][size];
+      if (P && P[id] != null) return P[id];
+      return null;                                     // bajo cotización
+    }
+    (function reprecificar() {
+      if (!window.PRETO_PRICES) return;   // sin lista viva, respetamos lo guardado
+      var cambio = false;
+      quote.forEach(function (it) {
+        var nuevo = precioVivo(it);
+        var viejo = (it.price != null ? it.price : null);
+        if (nuevo !== viejo) { it.price = nuevo; cambio = true; }
+      });
+      if (cambio) { try { localStorage.setItem(QKEY, JSON.stringify(quote)); } catch (e) {} }
+    })();
+
+    /* ════════ CORTESÍA DE BIENVENIDA (código MAISON…) ════════════
+       El control real (quién la usó, vigencia) vive en la cuenta del
+       cliente (Firebase, vía cuenta.js → localStorage 'preto.profile'). */
+    var CORTESIA = {
+      amount: 150000,      // valor de la cortesía
+      min:    2300000,     // compra mínima (subtotal) para aplicarla
+      days:   30           // vigencia en días desde la creación de la cuenta
+    };
+    var cortesiaState = { applied: false, code: '', amount: 0 };
+    var profile = null;
+    try { profile = JSON.parse(localStorage.getItem('preto.profile') || 'null'); } catch (e) { profile = null; }
+
+    /* ── Precios y seguro ─────────────────────────────────
+       Los datos de transferencia NO viven en el sitio: los comparte un
+       asesor desde el WhatsApp oficial de la casa. */
+    var INSURANCE_RATE = 0.08; // ← mismo % que en app.js. 0.08 = 8 %
     function fmtCOP(n){ try { return '$' + Math.round(n).toLocaleString('es-CO'); } catch(e){ return '$' + Math.round(n); } }
     function computeTotals(){
-      var subtotal = 0, allPriced = true, anyPriced = false;
-      quote.forEach(function(it){ if (it.price != null){ subtotal += it.price*(it.qty||1); anyPriced = true; } else { allPriced = false; } });
-      var seguro = Math.round(subtotal * INSURANCE_RATE);
-      return { subtotal:subtotal, seguro:seguro, total:subtotal+seguro, allPriced:allPriced, anyPriced:anyPriced };
+      var subtotal = 0, insurable = 0, allPriced = true, anyPriced = false;
+      quote.forEach(function(it){
+        if (it.price != null){
+          var lt = it.price*(it.qty||1);
+          subtotal += lt; anyPriced = true;
+          // La tarjeta de regalo es digital: no se asegura ni se envía.
+          if (it.kind !== 'giftcard') insurable += lt;
+        } else { allPriced = false; }
+      });
+      var seguro = Math.round(insurable * INSURANCE_RATE);
+      var descuento = cortesiaState.applied ? cortesiaState.amount : 0;
+      var total = subtotal + seguro - descuento;
+      if (total < 0) total = 0;
+      return { subtotal:subtotal, seguro:seguro, descuento:descuento, total:total, allPriced:allPriced, anyPriced:anyPriced };
     }
 
     function pad2(n){ return String(n).padStart(2,'0'); }
     function val(id){ var el=document.getElementById(id); return el ? el.value.trim() : ''; }
+
+    /* Los totales viajan con el formulario para que el correo del
+       cliente sea un comprobante de verdad: subtotal, seguro, la
+       cortesía aplicada y el total. Sin esto, el correo mostraba las
+       piezas pero no lo que se paga. */
+    function setTotalsHidden(){
+      var T = computeTotals();
+      function put(id, v){ var el = document.getElementById(id); if (el) el.value = v; }
+      put('subtotalHidden',  T.anyPriced ? String(T.subtotal) : '');
+      put('seguroHidden',    T.anyPriced ? String(T.seguro)   : '');
+      put('descuentoHidden', T.descuento ? String(T.descuento) : '');
+      put('totalHidden',     T.anyPriced ? String(T.total)    : '');
+    }
+
+    /* Arma el objeto del pedido para Firebase (panel + Mis pedidos) */
+    function buildOrder(metodo, boldOrderId){
+      var T = computeTotals();
+      return {
+        nombre: val('nombre'),
+        email: val('correo'),
+        telefono: val('tel'),
+        tipo_documento: val('tipodoc'),
+        numero_documento: val('numdoc'),
+        departamento: val('departamento'),
+        ciudad: val('ciudad'),
+        direccion: val('direccion'),
+        fecha_entrega_deseada: val('fechaEntrega'),
+        notas: val('notas'),
+        items: quote.map(function(it){ return { id: it.id, name: it.name, col: it.col||'', size: it.size||null, qty: it.qty||1, price: (it.price!=null?it.price:null) }; }),
+        subtotal: T.subtotal,
+        seguro: T.seguro,
+        descuento: T.descuento || 0,
+        total: T.total,
+        codigo_cortesia: cortesiaState.applied ? cortesiaState.code : '',
+        metodo_pago: metodo || 'Por definir',
+        bold_order_id: boldOrderId || '',
+        status: 'creado',
+        paid: false,
+        createdAt: new Date().toISOString()
+      };
+    }
     function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
     function pieceLine(it,i){
       var size = it.size ? ' · ' + it.size : '';
-      var price = (it.price != null) ? ' — ' + fmtCOP(it.price*(it.qty||1)) : ' — Bajo cotización';
+      var price = (it.price != null) ? ' — ' + fmtCOP(it.price*(it.qty||1)) : ' — Consultar precio';
       var l = pad2(i+1)+'. '+it.name+size+' (Ref. '+it.id+') · ×'+(it.qty||1)+price;
       if (it.note) l += '\n    ↳ ' + it.note;
       return l;
@@ -273,44 +561,66 @@
       var html = '';
       quote.forEach(function (it) {
         var size = it.size ? ' · ' + it.size : '';
-        var priceHtml = (it.price != null) ? fmtCOP(it.price*(it.qty||1)) : 'Bajo cotización';
-        html += '<li><span class="cot-piece">' + escapeHtml(it.name) + size +
+        var priceHtml = (it.price != null) ? fmtCOP(it.price*(it.qty||1)) : 'Consultar precio';
+        var thumb = it.image
+          ? '<span class="cot-thumb" style="background-image:url(\'' + it.image + '\')"></span>'
+          : '<span class="cot-thumb cot-thumb-empty">Preto</span>';
+        html += '<li>' + thumb + '<span class="cot-piece">' + escapeHtml(it.name) + size +
                 '<span class="ref">Ref. ' + escapeHtml(it.id) + ' · ' + escapeHtml(it.col||'') + '</span></span>' +
                 '<span class="cot-qty">×' + (it.qty||1) + '<span class="cot-price">' + priceHtml + '</span></span></li>';
       });
       listEl.innerHTML = html;
       resumen.hidden = false;
-      (function(){
-        var T = computeTotals();
-        if (!T.anyPriced) return;
-        var box = document.createElement('div');
-        box.className = 'cot-tot';
-        box.innerHTML =
-          '<div class="cot-tot-row"><span>Subtotal</span><span>'+fmtCOP(T.subtotal)+'</span></div>' +
-          '<div class="cot-tot-row"><span>Seguro ('+Math.round(INSURANCE_RATE*100)+'%)</span><span>'+fmtCOP(T.seguro)+'</span></div>' +
-          '<div class="cot-tot-row grand"><span>Total</span><span>'+fmtCOP(T.total)+'</span></div>' +
-          '<div class="cot-tot-note">Envío nacional sin costo · Solo se cobra el seguro.'+(T.allPriced?'':' Algunas piezas bajo cotización.')+'</div>';
-        resumen.appendChild(box);
-      })();
+      renderTotals();
       var detalleText = quote.map(pieceLine).join('\n');
       if (detalle) detalle.value = detalleText;
       if (pedido && !pedido.value.trim()) pedido.value = detalleText;
     }
 
+    /* Dibuja (o redibuja) el bloque de totales, incluida la cortesía */
+    function renderTotals(){
+      if (!resumen) return;
+      var T = computeTotals();
+      var box = document.getElementById('cotTotBox');
+      if (!T.anyPriced) { if (box) box.remove(); return; }
+      if (!box) {
+        box = document.createElement('div');
+        box.className = 'cot-tot';
+        box.id = 'cotTotBox';
+        resumen.appendChild(box);
+      }
+      box.innerHTML =
+        '<div class="cot-tot-row"><span>Subtotal</span><span>'+fmtCOP(T.subtotal)+'</span></div>' +
+        (T.seguro > 0 ? '<div class="cot-tot-row"><span>Seguro ('+Math.round(INSURANCE_RATE*100)+'%)</span><span>'+fmtCOP(T.seguro)+'</span></div>' : '') +
+        (T.descuento ? '<div class="cot-tot-row descuento"><span>Cortesía '+escapeHtml(cortesiaState.code)+'</span><span>−'+fmtCOP(T.descuento)+'</span></div>' : '') +
+        '<div class="cot-tot-row grand"><span>Total</span><span>'+fmtCOP(T.total)+'</span></div>' +
+        '<div class="cot-tot-note">Envío nacional sin costo · Solo se cobra el seguro.'+(T.allPriced?'':' Algunas piezas con precio a consultar.')+'</div>';
+    }
+
     /* ── WhatsApp summary text ─────────────────────────── */
     function buildWa(){
-      var L = ['Hola, quiero enviar mi cotización de Preto by Dala&Co.', ''];
+      var L = ['Hola, quiero finalizar mi compra de Preto by Dala&Co.', ''];
       if (quote.length) {
         L.push('PIEZAS:'); quote.forEach(function(it,i){ L.push(pieceLine(it,i)); }); L.push('');
         var T = computeTotals();
         if (T.anyPriced) {
           L.push('Subtotal: ' + fmtCOP(T.subtotal));
-          L.push('Seguro (' + Math.round(INSURANCE_RATE*100) + '%): ' + fmtCOP(T.seguro));
-          L.push('TOTAL: ' + fmtCOP(T.total) + (T.allPriced ? '' : ' (algunas piezas bajo cotización)'));
+          if (T.seguro > 0) L.push('Seguro (' + Math.round(INSURANCE_RATE*100) + '%): ' + fmtCOP(T.seguro));
+          if (T.descuento) L.push('Cortesía ' + cortesiaState.code + ': −' + fmtCOP(T.descuento));
+          L.push('TOTAL: ' + fmtCOP(T.total) + (T.allPriced ? '' : ' (algunas piezas con precio a consultar)'));
           L.push('Envío nacional sin costo.');
           L.push('');
         }
       }
+      try {
+        var shipC = localStorage.getItem('preto.shipCountry');
+        if (shipC && shipC !== 'Colombia') {
+          L.push('DESTINO DE ENVÍO: ' + shipC + ' (internacional)');
+          L.push('Los aranceles e impuestos de importación del país de destino no están incluidos en el envío y corren por cuenta del destinatario al momento de la entrega.');
+          L.push('Para compras internacionales, coordine su pedido con el Atelier Privado por este mismo WhatsApp: le enviaremos las instrucciones de pago y envío.');
+          L.push('');
+        }
+      } catch(e){}
       L.push('MIS DATOS:');
       L.push('• Nombre: ' + val('nombre'));
       L.push('• Documento: ' + val('tipodoc') + ' ' + val('numdoc'));
@@ -320,7 +630,7 @@
       if (val('direccion')) L.push('• Dirección: ' + val('direccion'));
       if (val('notas'))     { L.push(''); L.push('Notas: ' + val('notas')); }
       L.push('');
-      L.push('Adjunto mi cotización en PDF. Quedo atento(a) a su atención. Gracias.');
+      L.push('Adjunto mi compra en PDF. Quedo atento(a) a su atención. Gracias.');
       return L.join('\n');
     }
 
@@ -349,11 +659,11 @@
       var folio = 'N.º ' + now.getFullYear() + '-' + String(now.getTime()).slice(-6);
       y += 40;
       doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(gold[0],gold[1],gold[2]);
-      doc.text('COTIZACIÓN', x, y);
+      doc.text('COMPRA', x, y);
       doc.setTextColor(mut[0],mut[1],mut[2]); doc.text(fecha, W-M, y, {align:'right'});
       y += 26;
       doc.setFont('times','normal'); doc.setFontSize(24); doc.setTextColor(ink[0],ink[1],ink[2]);
-      doc.text('Su cotización', x, y);
+      doc.text('Su compra', x, y);
       doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(mut[0],mut[1],mut[2]);
       doc.text(folio, W-M, y, {align:'right'});
 
@@ -367,7 +677,7 @@
           var lineTotal = (it.price != null) ? it.price*(it.qty||1) : null;
           doc.setFont('times','normal'); doc.setFontSize(13); doc.setTextColor(ink[0],ink[1],ink[2]);
           doc.text(pad2(i+1)+'.  '+it.name + (it.size?'   ·   '+it.size:''), x, y);
-          doc.text(lineTotal!=null ? fmtCOP(lineTotal) : 'Bajo cotización', W-M, y, {align:'right'});
+          doc.text(lineTotal!=null ? fmtCOP(lineTotal) : 'Consultar precio', W-M, y, {align:'right'});
           y += 14;
           doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(mut[0],mut[1],mut[2]);
           doc.text('Ref. '+it.id+'    ·    '+(it.col||'')+'    ·    ×'+(it.qty||1), x, y);
@@ -390,14 +700,21 @@
         doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(mut[0],mut[1],mut[2]);
         doc.text('SEGURO ('+Math.round(INSURANCE_RATE*100)+'%)', W-M-180, y);
         doc.setFont('times','normal'); doc.setFontSize(12); doc.setTextColor(ink[0],ink[1],ink[2]);
-        doc.text(fmtCOP(T.seguro), W-M, y, {align:'right'}); y += 10;
+        doc.text(fmtCOP(T.seguro), W-M, y, {align:'right'}); y += 18;
+        if (T.descuento) {
+          doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(mut[0],mut[1],mut[2]);
+          doc.text('CORTESÍA '+cortesiaState.code, W-M-180, y);
+          doc.setFont('times','normal'); doc.setFontSize(12); doc.setTextColor(31,122,68);
+          doc.text('−'+fmtCOP(T.descuento), W-M, y, {align:'right'}); y += 18;
+        }
+        y -= 8;
         doc.setDrawColor(ink[0],ink[1],ink[2]); doc.setLineWidth(1); doc.line(W-M-180, y, W-M, y); y += 20;
         doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(ink[0],ink[1],ink[2]);
         doc.text('TOTAL', W-M-180, y);
         doc.setFont('times','bold'); doc.setFontSize(17); doc.setTextColor(ink[0],ink[1],ink[2]);
         doc.text(fmtCOP(T.total), W-M, y, {align:'right'}); y += 15;
         doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(mut[0],mut[1],mut[2]);
-        doc.text('Envío nacional sin costo · Solo se cobra el seguro.'+(T.allPriced?'':' Algunas piezas bajo cotización.'), W-M, y, {align:'right'}); y += 22;
+        doc.text('Envío nacional sin costo · Solo se cobra el seguro.'+(T.allPriced?'':' Algunas piezas con precio a consultar.'), W-M, y, {align:'right'}); y += 22;
       }
 
       y += 8; need(160);
@@ -429,21 +746,12 @@
         doc.text(wrapped, x, y); y += wrapped.length*15;
       }
 
-      need(150); y += 14;
+      need(120); y += 14;
       doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(gold[0],gold[1],gold[2]);
-      doc.text('DATOS PARA TU PAGO', x, y); y += 10; rule(y); y += 20;
+      doc.text('¿CÓMO PAGO?', x, y); y += 10; rule(y); y += 20;
       doc.setFont('times','italic'); doc.setFontSize(10.5); doc.setTextColor(ink[0],ink[1],ink[2]);
-      doc.text('Realiza tu pago a una de estas cuentas y envíanos el comprobante por WhatsApp.', x, y); y += 24;
-      BANK.forEach(function(b){
-        need(40);
-        doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(gold[0],gold[1],gold[2]);
-        doc.text(b.name.toUpperCase(), x, y);
-        doc.setFont('times','normal'); doc.setFontSize(13); doc.setTextColor(ink[0],ink[1],ink[2]);
-        doc.text(b.num, x+160, y);
-        doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(mut[0],mut[1],mut[2]);
-        doc.text(b.sub, W-M, y, {align:'right'});
-        y += 22;
-      });
+      var comoPago = doc.splitTextToSize('Si eligió pagar en línea, su pedido queda confirmado automáticamente con Bold. Si prefiere transferencia, un asesor le compartirá los datos de pago solo desde el WhatsApp oficial de la casa, +57 322 695 5451. Desconfíe de cualquier otro número o cuenta.', W-2*M);
+      doc.text(comoPago, x, y); y += comoPago.length*15;
 
       var fy = H-58;
       doc.setDrawColor(hair[0],hair[1],hair[2]); doc.setLineWidth(0.8); doc.line(M,fy-16,W-M,fy-16);
@@ -460,7 +768,7 @@
     function safeFile(){
       var n = (val('nombre')||'cliente').toLowerCase().normalize('NFD')
         .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40);
-      return 'Cotizacion-Preto-' + (n||'cliente') + '.pdf';
+      return 'Compra-Preto-' + (n||'cliente') + '.pdf';
     }
     var lastPdfUrl=null, lastPdfName=null;
     function makeAndDownloadPdf(){
@@ -477,6 +785,56 @@
       } catch(e){ try { doc.save(lastPdfName); return true; } catch(e2){ return false; } }
     }
 
+    /* ── Cortesía de bienvenida: validar y aplicar el código ──── */
+    (function(){
+      var input = document.getElementById('codigoCortesia');
+      var btn   = document.getElementById('cortesiaApply');
+      var msg   = document.getElementById('cortesiaMsg');
+      var block = document.getElementById('cortesiaBlock');
+      if (!input || !btn) return;
+
+      function showMsg(text, ok){
+        msg.hidden = false; msg.textContent = text;
+        msg.className = 'cortesia-msg ' + (ok ? 'ok' : 'err');
+      }
+      function normalize(s){ return String(s||'').trim().toUpperCase().replace(/\s+/g,''); }
+
+      function validar(code){
+        code = normalize(code);
+        if (!code) return { ok:false, msg:'Escribe tu código de cortesía.' };
+        if (!profile || !profile.welcomeCode)
+          return { ok:false, msg:'Inicia sesión con la cuenta donde recibiste el código y vuelve a esta página.' };
+        if (code !== normalize(profile.welcomeCode))
+          return { ok:false, msg:'Este código no corresponde a tu cuenta.' };
+        if (profile.welcomeRedeemed)
+          return { ok:false, msg:'Esta cortesía ya fue utilizada.' };
+        if (profile.welcomeCreatedAt){
+          var created = new Date(profile.welcomeCreatedAt).getTime();
+          if (!isNaN(created) && (Date.now()-created)/86400000 > CORTESIA.days)
+            return { ok:false, msg:'Tu cortesía venció (vigencia de '+CORTESIA.days+' días).' };
+        }
+        var T = computeTotals();
+        if (T.subtotal < CORTESIA.min)
+          return { ok:false, msg:'La cortesía aplica en adquisiciones desde '+fmtCOP(CORTESIA.min)+'.' };
+        return { ok:true, code:code };
+      }
+
+      btn.addEventListener('click', function(){
+        if (cortesiaState.applied){
+          cortesiaState = { applied:false, code:'', amount:0 };
+          block.classList.remove('is-ok'); btn.textContent = 'Aplicar';
+          input.disabled = false; msg.hidden = true; renderTotals(); return;
+        }
+        var r = validar(input.value);
+        if (!r.ok){ showMsg(r.msg, false); block.classList.remove('is-ok'); return; }
+        cortesiaState = { applied:true, code:r.code, amount:CORTESIA.amount };
+        block.classList.add('is-ok'); btn.textContent = 'Quitar';
+        input.value = r.code; input.disabled = true;
+        showMsg('Cortesía aplicada: −'+fmtCOP(CORTESIA.amount)+' en tu total.', true);
+        renderTotals();
+      });
+    })();
+
     /* ── Submit: PDF + WhatsApp + Netlify record ──────────── */
     var form = document.getElementById('factForm');
     var status = document.getElementById('factStatus');
@@ -488,6 +846,13 @@
       e.preventDefault();
       if (!form.reportValidity()) return;
 
+      // Pasar la cortesía al envío (para el correo y el panel)
+      var codigoHidden = document.getElementById('codigoCortesiaHidden');
+      var cortHidden = document.getElementById('cortesiaAplicadaHidden');
+      if (codigoHidden) codigoHidden.value = cortesiaState.applied ? cortesiaState.code : '';
+      if (cortHidden)   cortHidden.value   = cortesiaState.applied ? ('−'+fmtCOP(cortesiaState.amount)) : '';
+      setTotalsHidden();
+
       // WhatsApp first (synchronous, inside the click gesture → not blocked)
       window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(buildWa()), '_blank', 'noopener');
       var pdfOk = makeAndDownloadPdf();
@@ -498,18 +863,272 @@
 
       var finish = function () {
         try { localStorage.removeItem(QKEY); } catch (e) {}
+        // Marcar la cortesía como USADA (se cancela automáticamente).
+        if (cortesiaState.applied && profile) {
+          profile.welcomeRedeemed = true;
+          try {
+            localStorage.setItem('preto.profile', JSON.stringify(profile));
+            if (profile.uid) localStorage.setItem('preto.redeem.' + profile.uid, new Date().toISOString());
+          } catch (e) {}
+        }
         if (pdfOk && redownload && lastPdfUrl) {
           redownload.hidden = false;
           redownload.href = lastPdfUrl;
-          redownload.setAttribute('download', lastPdfName || 'Cotizacion-Preto.pdf');
+          redownload.setAttribute('download', lastPdfName || 'Compra-Preto.pdf');
         }
         document.body.classList.add('sent');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       };
-      finish();
+
+      // Registrar el envío en Netlify Forms → dispara la función
+      // submission-created.js, que manda los correos con Resend.
+      // (Antes faltaba este POST: por eso no llegaba el correo del pedido.)
+      var payload = new URLSearchParams(new FormData(form)).toString();
+      // Guardar el pedido en Firebase (panel admin + Mis pedidos)
+      try { if (window.PretoOrders) window.PretoOrders.save(buildOrder('Por definir', '')); } catch (e) {}
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: payload
+      })
+        .then(function () { finish(); })
+        .catch(function () {
+          // El cliente ya tiene su PDF y WhatsApp abiertos; no lo bloqueamos.
+          finish();
+        });
     });
+
+    /* ── Pagar con Bold (opción A · pago en línea) ─────────── */
+    (function () {
+      var payBtn  = document.getElementById('payBold');
+      var payNote = document.querySelector('.pay-bold-note');
+      var payWrap = document.getElementById('payOnline');
+      if (!payBtn) return;
+
+      // Si no hay un total cobrable, ocultamos el pago en línea.
+      var T0 = computeTotals();
+      if (!T0.anyPriced) { if (payWrap) payWrap.style.display = 'none'; return; }
+
+      function note(msg, err) {
+        if (!payNote) return;
+        payNote.textContent = msg;
+        payNote.classList.toggle('pay-bold-err', !!err);
+      }
+
+      function newOrderId() {
+        // Sufijo siempre de 4 caracteres: Math.random() a veces devuelve
+        // pocos dígitos (0.5 → "5") y el servidor rechazaría la referencia.
+        var suf = (Math.random().toString(36).slice(2) + '0000').slice(0, 4).toUpperCase();
+        return 'PRETO-' + Date.now() + '-' + suf;
+      }
+
+      /* ── Candado anti cobro doble ───────────────────────────
+         Antes cada clic generaba una referencia NUEVA y volvía a
+         registrar el pedido: un doble toque creaba dos pedidos y dos
+         cobros. Ahora la misma compra reutiliza SIEMPRE la misma
+         referencia y solo se registra una vez. Si el total cambia
+         (añadió o quitó una pieza) sí corresponde una referencia nueva.
+         · busy       → ignora clics mientras se abre la pasarela
+         · registered → no repite el correo ni el registro en Firebase */
+      var payState = { orderId: null, amount: null, registered: false, busy: false };
+
+      payBtn.addEventListener('click', function () {
+        if (payState.busy) { note('Ya estamos abriendo tu pago… no vuelvas a pulsar.'); return; }
+        if (!form.reportValidity()) return;
+
+        var T = computeTotals();
+        if (!T.anyPriced || T.total < 1000) {
+          note('Tu compra no tiene un total para cobrar en línea. Usa “Finalizar con un asesor”.', true);
+          return;
+        }
+        if (!window.BoldCheckout) {
+          note('No se pudo cargar la pasarela de Bold. Revisa tu conexión e inténtalo de nuevo.', true);
+          return;
+        }
+
+        var amount  = String(Math.round(T.total));   // entero COP, sin decimales
+
+        // Misma compra → misma referencia. Solo se emite una nueva si el
+        // total cambió, porque entonces es otro pedido.
+        if (!payState.orderId || payState.amount !== amount) {
+          payState.orderId  = newOrderId();
+          payState.amount   = amount;
+          payState.registered = false;
+        }
+        var orderId  = payState.orderId;
+        var yaRegistrado = payState.registered;
+        payState.busy = true;
+
+        // Meta Pixel · inicio de pago con Bold (InitiateCheckout).
+        // Solo la primera vez: reintentar el mismo pedido no es un
+        // checkout nuevo y ensuciaría los datos de anuncios.
+        if (!yaRegistrado && typeof fbq === 'function') {
+          fbq('track', 'InitiateCheckout', {
+            currency: 'COP',
+            value: Math.round(T.total),
+            num_items: (typeof quote !== 'undefined' && quote && quote.length) ? quote.length : undefined
+          });
+        }
+
+        // Guardar el total para el evento Purchase en gracias.html.
+        // Bold NO devuelve el monto en la URL de retorno (solo bold-order-id
+        // y bold-tx-status), así que lo dejamos aquí y allí lo leemos.
+        try {
+          localStorage.setItem('preto.pendingPurchase', JSON.stringify({
+            orderId: orderId,
+            value: Math.round(T.total),
+            currency: 'COP',
+            num_items: (typeof quote !== 'undefined' && quote && quote.length) ? quote.length : undefined,
+            ts: Date.now()
+          }));
+        } catch (e) {}
+
+        /* Resumen para la reconfirmación por WhatsApp en gracias.html:
+           al volver de Bold aprobado, esa página arma el mensaje con
+           estos datos. Clave aparte de pendingPurchase, que el píxel
+           borra al contar la compra. */
+        try {
+          var nombreEl = document.getElementById('nombre');
+          localStorage.setItem('preto.pendingOrder', JSON.stringify({
+            orderId: orderId,
+            nombre: nombreEl ? String(nombreEl.value || '').trim() : '',
+            total: Math.round(T.total),
+            items: (typeof quote !== 'undefined' && quote && quote.length) ? quote.map(pieceLine) : [],
+            ts: Date.now()
+          }));
+        } catch (e) {}
+
+        // Campos para el registro del pedido (correo + panel)
+        document.getElementById('metodoPagoHidden').value = 'Bold (en línea)';
+        document.getElementById('boldOrderHidden').value  = orderId;
+        var codigoHidden = document.getElementById('codigoCortesiaHidden');
+        var cortHidden   = document.getElementById('cortesiaAplicadaHidden');
+        if (codigoHidden) codigoHidden.value = cortesiaState.applied ? cortesiaState.code : '';
+        if (cortHidden)   cortHidden.value   = cortesiaState.applied ? ('−' + fmtCOP(cortesiaState.amount)) : '';
+        setTotalsHidden();
+        var detalle = document.getElementById('cotDetalle');
+        if (detalle && !detalle.value) detalle.value = quote.map(pieceLine).join('\n');
+
+        // 1) Registrar el pedido en Netlify (envía correos con los datos).
+        //    Solo una vez por referencia: si el cliente reintenta el pago
+        //    no debe llegar un segundo correo ni duplicarse en el panel.
+        if (!yaRegistrado) {
+          try {
+            fetch('/', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: new URLSearchParams(new FormData(form)).toString()
+            }).catch(function () {});
+          } catch (e) {}
+
+          // 1b) Guardar el pedido en Firebase con la referencia de Bold,
+          //     para que el webhook lo marque pagado y salga en el panel.
+          try { if (window.PretoOrders) window.PretoOrders.save(buildOrder('Bold (en línea)', orderId), orderId); } catch (e) {}
+          payState.registered = true;
+        }
+
+        // 2) La cortesía NO se marca usada aquí. Antes se quemaba al
+        //    pulsar “Pagar”: si el cliente cerraba la pasarela sin pagar,
+        //    su código ya no volvía a aplicarse en este navegador. Ahora
+        //    la cancela el webhook de Bold cuando el pago se confirma
+        //    (en la cuenta, no en el navegador).
+
+        // 3) Pedir la firma de integridad al servidor y abrir Bold.
+        //    Mandamos las PIEZAS, no el precio: el servidor recalcula el
+        //    total con su lista y firma ESE monto. Así nadie puede pedir
+        //    una firma por $1.000 desde la consola del navegador.
+        payBtn.disabled = true;
+        note('Abriendo la pasarela de Bold…');
+        fetch('/.netlify/functions/bold-hash', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: orderId,
+            currency: 'COP',
+            amount: amount,               // solo para comparar con el del servidor
+            cortesia: cortesiaState.applied ? cortesiaState.code : '',
+            // El correo permite comprobar la cortesía contra la cuenta real,
+            // no contra este navegador.
+            email: (document.getElementById('correo') || {}).value || '',
+            items: quote.filter(function (it) { return it.price != null; }).map(function (it) {
+              return {
+                id:   it.id,
+                size: it.size || '',
+                qty:  it.qty || 1,
+                // El precio solo viaja para la tarjeta de regalo, que vale
+                // lo que el cliente eligió. Las joyas las cotiza el servidor.
+                price: (it.kind === 'giftcard') ? it.price : undefined
+              };
+            })
+          })
+        })
+          .then(function (r) {
+            return r.json().catch(function () { return {}; })
+              .then(function (j) { return { ok: r.ok, status: r.status, data: j }; });
+          })
+          .then(function (res) {
+            // La cortesía no era válida (ya usada, de otra cuenta, o no llega
+            // al mínimo): la quitamos, mostramos el total real y basta con
+            // volver a pulsar. Sin recargar, para no perder el formulario.
+            if (res.status === 409 && res.data && res.data.cortesia_invalida) {
+              cortesiaState = { applied: false, code: '', amount: 0 };
+              // Ojo: NO se marca la cortesía como usada. El servidor la
+              // rechazó (no llega al mínimo, o no es de esta cuenta), y
+              // quemarla aquí le quitaba al cliente un código válido.
+              var cb = document.getElementById('cortesiaBlock');
+              var ci = document.getElementById('codigoCortesia');
+              var cbtn = document.getElementById('cortesiaApply');
+              var cmsg = document.getElementById('cortesiaMsg');
+              if (cb) cb.classList.remove('is-ok');
+              if (ci) ci.disabled = false;
+              if (cbtn) cbtn.textContent = 'Aplicar';
+              if (cmsg) { cmsg.hidden = false; cmsg.className = 'cortesia-msg err'; cmsg.textContent = res.data.error || 'La cortesía no se pudo aplicar.'; }
+              renderTotals();
+              payState.orderId = null;
+              payBtn.disabled = false;
+              payState.busy = false;
+              note('Ajustamos el total sin la cortesía. Pulsa “Pagar con Bold” de nuevo.', true);
+              return;
+            }
+            // El servidor calculó otro total (precios en caché o manipulación):
+            // no se cobra nada y recargamos para mostrar el valor correcto.
+            if (res.status === 409) {
+              payBtn.disabled = false;
+              payState.busy = false;
+              payState.orderId = null;
+              note('El total no coincide con nuestra lista de precios. Recargamos la página para mostrarte el valor correcto…', true);
+              setTimeout(function () { location.reload(); }, 2800);
+              return;
+            }
+            if (!res.ok || !res.data || !res.data.hash || !res.data.apiKey || !res.data.amount) {
+              throw new Error((res.data && res.data.error) || 'sin firma');
+            }
+            var checkout = new window.BoldCheckout({
+              orderId: orderId,
+              currency: 'COP',
+              amount: res.data.amount,      // el monto que firmó el servidor
+              apiKey: res.data.apiKey,
+              integritySignature: res.data.hash,
+              description: 'Pedido Preto by Dala&Co ' + orderId,
+              redirectionUrl: location.origin + '/gracias.html'
+            });
+            checkout.open();
+            payBtn.disabled = false;
+            payState.busy = false;
+            note('Pago seguro. Al confirmarse, tu pedido queda pagado automáticamente.');
+          })
+          .catch(function (err) {
+            payBtn.disabled = false;
+            payState.busy = false;
+            note((err && err.message && err.message !== 'sin firma')
+              ? err.message
+              : 'No se pudo iniciar el pago. Inténtalo de nuevo o escríbenos por WhatsApp.', true);
+          });
+      });
+    })();
   })();
 </script>
 
+<script src="i18n.js?v=20260824b"></script>
 </body>
 </html>

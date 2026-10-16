@@ -39,17 +39,10 @@
       try { localStorage.setItem(K_UPDATED, String(Date.now())); } catch (e) {}
     };
   }
-  // saveQuote es declarada con `function` en app.js → existe en el scope global
-  // pero la referencia anterior puede no capturarla; envolvemos también la global.
-  try {
-    if (typeof saveQuote === 'function' && saveQuote !== window.saveQuote) {
-      var _sq2 = saveQuote;
-      saveQuote = function () {
-        _sq2.apply(this, arguments);
-        try { localStorage.setItem(K_UPDATED, String(Date.now())); } catch (e) {}
-      };
-    }
-  } catch (e) {}
+  // app.js declara saveQuote con `function` en el nivel superior, así que
+  // saveQuote y window.saveQuote son la MISMA referencia: envolver una envuelve
+  // las dos. (Aquí había una segunda envoltura de respaldo; su condición
+  // nunca podía ser cierta y solo arriesgaba contar el cambio dos veces.)
 
   /* ── Firma de la cotización (para re-armar si cambia) ─────── */
   function quoteSig(q) {
@@ -116,11 +109,11 @@
     var wrap = document.createElement('div');
     wrap.className = 'recover-toast';
     wrap.setAttribute('role', 'region');
-    wrap.setAttribute('aria-label', 'Su cotización guardada');
+    wrap.setAttribute('aria-label', 'Su carrito guardado');
     wrap.innerHTML =
       '<button class="recover-x" aria-label="Descartar">&times;</button>' +
       '<span class="recover-eyebrow">Su selección le espera</span>' +
-      '<p class="recover-text">Dejó <b>' + nail + ' ' + pieceWord + '</b> en su cotización' +
+      '<p class="recover-text">Dejó <b>' + nail + ' ' + pieceWord + '</b> en su carrito' +
         (firstName ? ' — <i>' + escapeHtml(firstName) + escapeHtml(extra) + '</i>' : '') + '.</p>' +
       '<div class="recover-foot">' +
         '<span class="recover-sub">' + priceLine + '</span>' +
@@ -189,11 +182,11 @@
   function start() {
     handleAccountHash();
     setTimeout(evaluate, RECOVER.firstDelayMs);
-    // registra la visita al salir, para detectar el próximo retorno
+    /* Registra la visita al salir, para detectar el próximo retorno.
+       SOLO 'pagehide': un listener de 'beforeunload' impide que el navegador
+       guarde la página en la caché atrás/adelante, así que al pulsar "atrás"
+       se recargaba todo el sitio en vez de restaurarse al instante. */
     window.addEventListener('pagehide', function () {
-      try { localStorage.setItem(K_LASTVISIT, String(Date.now())); } catch (e) {}
-    });
-    window.addEventListener('beforeunload', function () {
       try { localStorage.setItem(K_LASTVISIT, String(Date.now())); } catch (e) {}
     });
   }

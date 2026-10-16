@@ -10,8 +10,8 @@
      Edite estos valores con sus reglas reales.                    */
   const WELCOME = {
     bonusPoints: 500,                 // puntos de regalo al crear la cuenta
-    giftLabel: 'Regalo de bienvenida',
-    giftDesc: '10% en su primera pieza',   // ← cambie su % o regalo real
+    giftLabel: 'Cortesía de bienvenida',
+    giftDesc: '$150.000 en su primera adquisición (desde $2.300.000)',
   };
   // Puntos: 1 punto por cada $1.000 COP en pedidos entregados.
   const POINTS_PER_COP = 1 / 1000;
@@ -54,7 +54,7 @@
     'Programa de puntos y niveles de la casa',
     'Atención prioritaria por WhatsApp',
   ];
-  const INSURANCE_RATE = 0.02;
+  const INSURANCE_RATE = 0.08;
 
   const STATUSES = [
     { key: 'creado',     label: 'Creado' },
@@ -145,7 +145,7 @@
       c.innerHTML = `
         <div class="drawer-empty">
           <div class="glyph">Preto</div>
-          <p>Aún no ha guardado piezas. Toque el corazón sobre cualquier joya para conservarla aquí.</p>
+          <p>Todavía no ha guardado ninguna pieza. Toque el corazón sobre la joya que le hable y vivirá aquí, esperándole.</p>
         </div>`;
       if (foot) foot.style.display = 'none';
       return;
@@ -166,7 +166,7 @@
             <h6>${esc(name)}</h6>
             <div class="ref">Ref. ${esc(id)}${col ? ' · ' + esc(col) : ''}</div>
             <div class="wish-acts">
-              <button class="wish-add" data-add="${esc(id)}">Añadir a cotización</button>
+              <button class="wish-add" data-add="${esc(id)}">Añadir al carrito</button>
               <button class="wish-rm" data-rm="${esc(id)}">Retirar</button>
             </div>
           </div>
@@ -190,6 +190,11 @@
      Veil propio para no interferir con el de cotización.          */
   const panelVeil = $('panelVeil');
   function openPanel(drawer) {
+    // Cerrar la cotización y su velo para no dejar un velo huérfano encima
+    // del menú (causaba que los iconos "no respondieran" al primer clic).
+    const cartDrawer = $('drawer'), cartVeil = $('veil');
+    if (cartDrawer) { cartDrawer.classList.remove('open'); cartDrawer.setAttribute('aria-hidden', 'true'); }
+    if (cartVeil) cartVeil.classList.remove('open');
     document.querySelectorAll('.drawer').forEach((d) => { if (d !== drawer) d.classList.remove('open'); });
     drawer.classList.add('open');
     drawer.setAttribute('aria-hidden', 'false');
@@ -199,10 +204,39 @@
     if ($('wishDrawer')) { $('wishDrawer').classList.remove('open'); $('wishDrawer').setAttribute('aria-hidden', 'true'); }
     if ($('acctDrawer')) { $('acctDrawer').classList.remove('open'); $('acctDrawer').setAttribute('aria-hidden', 'true'); }
     if (panelVeil) panelVeil.classList.remove('open');
+    // Limpia también un eventual velo de la cotización que haya quedado abierto
+    if ($('veil')) $('veil').classList.remove('open');
   }
   function openWish() { renderWishDrawer(); openPanel($('wishDrawer')); }
   function closeWish() { closePanels(); }
   function openAcct() { ensureFirebase(); openPanel($('acctDrawer')); }
+
+  /* Abre la cuenta directamente en "Crear cuenta" con el correo ya
+     escrito. Lo usa el popup de bienvenida: ahí es donde nace de verdad
+     la cortesía de $150.000 (welcomeCode + correo de bienvenida), así que
+     el popup entrega al cliente aquí en vez de dejarlo en el aire.
+     La intención se guarda en signupIntent porque ensureFirebase() vuelve
+     a renderizar el formulario en diferido: si solo rellenáramos el que
+     hay ahora, ese re-render lo pisaría y devolvería al modo login con el
+     correo perdido. La consume el wiring del formulario (más abajo). */
+  let signupIntent = null;
+  function fillSignup(email) {
+    const em = $('auEmail');
+    if (!em) return false;
+    const tab = document.querySelector('.auth-tab[data-tab="up"]');
+    if (tab) tab.click();                 // ya está enlazado a setMode('up')
+    em.value = email || '';
+    const nm = $('auName');
+    if (nm) { try { nm.focus(); } catch (e) {} }
+    return true;
+  }
+  function openSignup(email) {
+    signupIntent = { email: String(email || '').trim().toLowerCase() };
+    openAcct();
+    // Si el formulario ya está en pantalla, se rellena de una; si no, el
+    // render que viene lo hará al consumir signupIntent.
+    if (fillSignup(signupIntent.email)) signupIntent = null;
+  }
 
   if (panelVeil) panelVeil.addEventListener('click', closePanels);
   if ($('closeWish')) $('closeWish').addEventListener('click', closePanels);
@@ -252,6 +286,8 @@
         try { auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); } catch (e) {}
         fbReady = true;
         auth.onAuthStateChanged(onAuthChange);
+        // Completa el inicio de sesión si se usó el respaldo por redirección.
+        try { auth.getRedirectResult().catch(() => {}); } catch (e) {}
         return true;
       } catch (e) {
         console.warn('[Preto] Firebase no disponible:', e);
@@ -273,12 +309,25 @@
     updateAcctDot();
     if (user) {
       ensureCustomerDoc(user).then(() => {
+        // item 09 · deja los datos del cliente listos para la cotización
+        try {
+          localStorage.setItem('preto.profile', JSON.stringify({
+            uid:   user.uid,
+            name:  (custDoc && custDoc.name)  || user.displayName || '',
+            email: (custDoc && custDoc.email) || user.email || '',
+            phone: (custDoc && custDoc.phone) || user.phoneNumber || '',
+            welcomeCode:      (custDoc && custDoc.welcomeCode) || '',
+            welcomeRedeemed:  !!(custDoc && custDoc.welcomeRedeemed),
+            welcomeCreatedAt: (custDoc && custDoc.createdAt) || ''
+          }));
+        } catch (e) {}
         mergeCloudWishlist();
         loadOrders();
         renderAcct();
       });
     } else {
       custDoc = null; ordersCache = null;
+      try { localStorage.removeItem('preto.profile'); } catch (e) {}
       renderAcct();
     }
   }
@@ -288,11 +337,37 @@
     if (dot) dot.classList.toggle('on', !!currentUser);
   }
 
-  function makeWelcomeCode() {
+  /* Código de cortesía legible, derivado del nombre del cliente:
+     MAISON + NOMBRE  (ej. MAISONVALENTINA). Se le añade un sufijo corto
+     para evitar choques entre dos clientes con el mismo nombre. El
+     control real (quién lo usó, vigencia) va por cuenta + correo. */
+  function makeWelcomeCode(name) {
+    const base = String(name || '').trim().split(/\s+/)[0] || '';
+    const clean = base.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase().replace(/[^A-Z]/g, '');
     const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let s = '';
-    for (let i = 0; i < 5; i++) s += c[Math.floor(Math.random() * c.length)];
-    return 'PRETO-' + s;
+    let sfx = '';
+    for (let i = 0; i < 3; i++) sfx += c[Math.floor(Math.random() * c.length)];
+    return clean ? ('MAISON' + clean + sfx) : ('MAISON' + sfx + sfx);
+  }
+
+  /* Envía el correo de bienvenida + regalo 10% vía la función serverless
+     de Netlify (welcome-email). Se llama una sola vez, al crear la cuenta.
+     Si la función no existe (vista previa) falla en silencio: la tarjeta
+     igual queda visible en el panel de la cuenta. */
+  function sendWelcomeEmail(email, name, code, ref) {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) return;
+    try {
+      fetch('/.netlify/functions/welcome-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ correo: email, nombre: name || '', codigo: code || '' })
+      }).then((r) => {
+        if (r && r.ok && ref) {
+          ref.set({ welcomeEmailSent: new Date().toISOString() }, { merge: true }).catch(() => {});
+        }
+      }).catch(() => {});
+    } catch (e) {}
   }
 
   async function ensureCustomerDoc(user) {
@@ -307,20 +382,28 @@
           phone: user.phoneNumber || '',
           createdAt: new Date().toISOString(),
           welcomeBonus: WELCOME.bonusPoints,
-          welcomeCode: makeWelcomeCode(),
+          welcomeCode: makeWelcomeCode(user.displayName),
           welcomeRedeemed: false,
           wishlist: wish.slice(),
           lastActivity: new Date().toISOString(),
         };
         await ref.set(data, { merge: true });
         custDoc = data;
+        // Correo de bienvenida con la cortesía de $150.000 (solo al crear la cuenta).
+        sendWelcomeEmail(data.email, data.name, data.welcomeCode, ref);
       } else {
         custDoc = snap.data() || {};
         // completa campos faltantes en cuentas antiguas
         const patch = {};
         if (custDoc.welcomeBonus == null) patch.welcomeBonus = WELCOME.bonusPoints;
-        if (!custDoc.welcomeCode) patch.welcomeCode = makeWelcomeCode();
+        // Genera el código si falta o si es de formato antiguo (PRETO-…)
+        if (!custDoc.welcomeCode || /^PRETO-/.test(custDoc.welcomeCode)) patch.welcomeCode = makeWelcomeCode(custDoc.name || user.displayName);
         if (!custDoc.email && user.email) patch.email = user.email;
+        // Aplica un canje hecho en la cotización (preto.redeem.<uid>) a Firebase
+        try {
+          const flag = localStorage.getItem('preto.redeem.' + user.uid);
+          if (flag && !custDoc.welcomeRedeemed) { patch.welcomeRedeemed = true; patch.welcomeRedeemedAt = flag; }
+        } catch (e) {}
         if (Object.keys(patch).length) { await ref.set(patch, { merge: true }); Object.assign(custDoc, patch); }
       }
     } catch (e) { console.warn('[Preto] customer doc:', e); }
@@ -360,7 +443,7 @@
       .set({ quoteSentAt: new Date().toISOString(), reminderSentAt: null }, { merge: true })
       .catch(() => {});
   }
-  window.PretoAccount = { markQuoteSent };
+  window.PretoAccount = { markQuoteSent, openSignup };
 
   /* ── Pedidos del cliente ──────────────────────────────────── */
   async function loadOrders() {
@@ -407,12 +490,28 @@
 
   function renderAuth(body) {
     const offline = !fbReady;
+    /* La cabecera del cajón repetiría el título del héroe: se oculta
+       mientras el visitante no ha entrado (el botón Cerrar se queda). */
+    const hd = $('acctTtl'); if (hd) hd.style.visibility = 'hidden';
+    /* El invitado ve una tarjeta flotante (no el cajón lateral): foto,
+       marca, promesa y formulario, centrada sobre el velo. */
+    const dr = $('acctDrawer'); if (dr) dr.classList.add('is-card');
     body.innerHTML = `
       <div class="auth">
-        <p class="auth-lede">
-          Cree su cuenta para guardar sus piezas favoritas, recibir su
-          <span class="gold">regalo de bienvenida</span> y seguir el estado de sus pedidos.
-        </p>
+        <div class="auth-hero">
+          <div class="auth-hero-art" aria-hidden="true"></div>
+          <button class="auth-x" id="authX" type="button" aria-label="Cerrar">×</button>
+          <img class="auth-hero-mark" src="assets/preto-logo-gold.png" width="466" height="245" alt="Preto by Dala&Co" decoding="async" />
+          <h3 class="auth-title" id="authTitle">Cree su <span class="script">cuenta.</span></h3>
+          <p class="auth-lede">
+            Entre al Círculo Preto: guarde las piezas que ama, reciba su
+            <span class="gold">regalo de bienvenida</span> y siga cada pedido de
+            cerca, como se acompaña a alguien de la casa.
+          </p>
+          <ul class="auth-benefits">
+            ${BENEFITS.map((b) => `<li>${esc(b)}</li>`).join('')}
+          </ul>
+        </div>
 
         <div class="auth-tabs" role="tablist">
           <button class="auth-tab is-active" data-tab="in" type="button">Iniciar sesión</button>
@@ -444,10 +543,6 @@
         </form>
 
         ${offline ? `<p class="auth-note">La conexión con el servidor de cuentas no está disponible en esta vista previa. En su sitio publicado funcionará con normalidad.</p>` : ''}
-
-        <ul class="auth-benefits">
-          ${BENEFITS.map((b) => `<li>${esc(b)}</li>`).join('')}
-        </ul>
       </div>`;
 
     let mode = 'in';
@@ -455,8 +550,10 @@
     const signupFields = body.querySelectorAll('.signup-only');
     const submit = $('authSubmit');
     const forgot = $('forgotBtn');
+    const title = $('authTitle');
     const setMode = (m) => {
       mode = m;
+      if (title) title.innerHTML = (m === 'up' ? 'Cree su ' : 'Su ') + '<span class="script">cuenta.</span>';
       tabs.forEach((t) => t.classList.toggle('is-active', t.dataset.tab === m));
       signupFields.forEach((f) => { f.style.display = m === 'up' ? '' : 'none'; });
       submit.innerHTML = (m === 'up' ? 'Crear mi cuenta' : 'Iniciar sesión') + ' <span aria-hidden="true" style="margin-left:2px;">→</span>';
@@ -465,6 +562,7 @@
       setErr('');
     };
     tabs.forEach((t) => t.addEventListener('click', () => setMode(t.dataset.tab)));
+    if ($('authX')) $('authX').addEventListener('click', closePanels);
 
     const setErr = (msg) => { const e = $('authErr'); if (e) e.textContent = msg || ''; };
 
@@ -474,6 +572,10 @@
       const pwd = $('auPwd').value;
       const name = ($('auName') && $('auName').value.trim()) || '';
       if (!email || !pwd) { setErr('Complete su correo y contraseña.'); return; }
+      if (mode === 'up') {
+        const flojo = passwordFloja(pwd);
+        if (flojo) { setErr(flojo); return; }
+      }
       submit.disabled = true;
       setErr('Conectando…');
       const done = () => { submit.disabled = false; };
@@ -495,12 +597,26 @@
 
     const gbtn = $('googleBtn');
     if (gbtn) gbtn.addEventListener('click', () => {
+      const startPopup = () => {
+        setErr('');
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        auth.signInWithPopup(provider).catch((e) => {
+          // Si el navegador bloquea el popup, caemos a redirección (no pierde el gesto).
+          if (e && (e.code === 'auth/popup-blocked' || e.code === 'auth/cancelled-popup-request')) {
+            try { auth.signInWithRedirect(provider); return; } catch (_) {}
+          }
+          setErr(authError(e.code));
+        });
+      };
+      // Si Firebase ya está listo (abrir el panel lo precarga), llamamos al
+      // popup de forma SÍNCRONA dentro del clic para que el navegador no lo
+      // bloquee. Así inicia sesión al PRIMER clic, no al segundo.
+      if (fbReady && auth) { startPopup(); return; }
       setErr('Conectando…');
       ensureFirebase().then((ok) => {
         if (!ok || !fbReady) { setErr('No se pudo conectar al servicio de cuentas. Revise su conexión.'); return; }
-        setErr('');
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider).catch((e) => setErr(authError(e.code)));
+        startPopup();
       });
     });
 
@@ -516,15 +632,28 @@
       });
     });
 
-    setMode('in');
+    /* Si el cliente llegó desde el popup de bienvenida, aterriza en
+       "Crear cuenta" con su correo ya escrito, no en un login vacío. */
+    if (signupIntent) {
+      const mail = signupIntent.email || '';
+      signupIntent = null;
+      setMode('up');
+      const em = $('auEmail'); if (em) em.value = mail;
+      const nm = $('auName'); if (nm) { try { nm.focus(); } catch (e) {} }
+    } else {
+      setMode('in');
+    }
   }
 
   function renderMember(body) {
+    const hd = $('acctTtl'); if (hd) hd.style.visibility = '';
+    const dr = $('acctDrawer'); if (dr) dr.classList.remove('is-card');
     const name = (custDoc && custDoc.name) || (currentUser.displayName) || (currentUser.email || '').split('@')[0];
     const pts = totalPoints();
     const tier = tierFor(pts);
     const nt = nextTier(pts);
     const code = (custDoc && custDoc.welcomeCode) || '';
+    const redeemed = !!(custDoc && custDoc.welcomeRedeemed);
     const greeting = name ? name.split(' ')[0] : 'Bienvenido';
 
     body.innerHTML = `
@@ -553,14 +682,14 @@
         </div>
 
         ${code ? `
-        <div class="gift-card">
+        <div class="gift-card${redeemed ? ' is-used' : ''}">
           <span class="gift-eyebrow">${esc(WELCOME.giftLabel)}</span>
           <p class="gift-desc">${esc(WELCOME.giftDesc)}</p>
           <div class="gift-code">
             <code id="giftCode">${esc(code)}</code>
-            <button class="gift-copy" id="giftCopy" type="button">Copiar</button>
+            ${redeemed ? '<span class="gift-used-tag">Utilizada</span>' : '<button class="gift-copy" id="giftCopy" type="button">Copiar</button>'}
           </div>
-          <p class="gift-note">Presente este código a su asesor por WhatsApp al realizar su pedido.</p>
+          <p class="gift-note">${redeemed ? 'Esta cortesía ya fue utilizada en un pedido.' : 'Escribe este código en el campo “Código de cortesía” al finalizar tu compra y se aplicarán $150.000 (compras desde $2.300.000).'}</p>
         </div>` : ''}
 
         <div class="member-orders">
@@ -599,7 +728,7 @@
       return;
     }
     if (!ordersCache.length) {
-      box.innerHTML = `<p class="mo-empty">Aún no tiene pedidos registrados. Cuando realice su primera cotización, podrá seguir su estado aquí.</p>`;
+      box.innerHTML = `<p class="mo-empty">Aún no tiene pedidos registrados. Cuando realice su primera compra, podrá seguir su estado aquí.</p>`;
       return;
     }
     box.innerHTML = ordersCache.map((o) => {
@@ -622,11 +751,28 @@
           <p class="oc-items">${items}</p>
           <div class="track">${steps}</div>
           <div class="oc-foot">
-            <span>${T.any ? fmtCOP(T.total) : 'Bajo cotización'}</span>
+            <span>${T.any ? fmtCOP(T.total) : 'Consultar precio'}</span>
             <span>${esc(o.ciudad || '')}</span>
           </div>
         </div>`;
     }).join('');
+  }
+
+  /* Contraseñas: mínimo 10 caracteres y fuera las que aparecen en todas
+     las filtraciones. Firebase acepta 6 por defecto; con 6 una cuenta de
+     cliente se abre en minutos. Esta es la primera barrera; la segunda es
+     activar la protección contra contraseñas filtradas en Firebase
+     Console → Authentication → Settings. */
+  var PWD_COMUNES = ['123456','12345678','123456789','1234567890','password','contrasena','contrasena1','qwerty','qwertyuiop','111111','000000','abc123','password1','iloveyou','admin','colombia','preto','pretogold','joyeria','oro18k','letmein','welcome','monkey','dragon','football','princess','sunshine','shadow','master','hola123','micasa'];
+  function passwordFloja(pwd) {
+    var p = String(pwd || '');
+    if (p.length < 10) return 'Use al menos 10 caracteres. Es su cuenta y sus pedidos.';
+    var plano = p.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (PWD_COMUNES.indexOf(plano) !== -1) return 'Esa contraseña aparece en listas filtradas. Elija otra.';
+    if (/^(.)\1+$/.test(p)) return 'No repita el mismo carácter. Elija otra.';
+    if (/^(0123456789|1234567890|abcdefghij)/.test(plano)) return 'Evite secuencias seguidas. Elija otra.';
+    if (!/[a-zA-Z]/.test(p) || !/[0-9]/.test(p)) return 'Combine letras y números.';
+    return '';
   }
 
   function authError(code) {
@@ -636,7 +782,7 @@
       case 'auth/wrong-password':
       case 'auth/invalid-credential': return 'Correo o contraseña incorrectos.';
       case 'auth/email-already-in-use': return 'Ya existe una cuenta con ese correo. Inicie sesión.';
-      case 'auth/weak-password': return 'La contraseña debe tener al menos 6 caracteres.';
+      case 'auth/weak-password': return 'La contraseña debe tener al menos 10 caracteres, con letras y números.';
       case 'auth/too-many-requests': return 'Demasiados intentos. Espere un momento.';
       case 'auth/popup-closed-by-user': return 'Se cerró la ventana de Google antes de terminar.';
       case 'auth/popup-blocked': return 'El navegador bloqueó la ventana de Google. Permítala e intente de nuevo.';
