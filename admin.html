@@ -105,6 +105,8 @@
 
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--gold); color: #0a0807; padding: 12px 24px; font-size: 13px; letter-spacing: 0.04em; opacity: 0; transition: all .3s ease; pointer-events: none; z-index: 50; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .load-err{width:calc(100% - 40px);max-width:1100px;margin:22px auto 0;padding:14px 18px;border:1px solid #8a3a2a;background:rgba(138,58,42,.16);color:#efe6da;font-size:13px;line-height:1.6;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .load-err[hidden]{display:none}
 
   /* simple table for clientes/newsletter */
   .tbl { width: 100%; border-collapse: collapse; }
@@ -185,6 +187,7 @@
     <button class="tab" data-tab="inventario">Inventario <span class="count" id="cnt-inventario"></span></button>
     <button class="tab" data-tab="temporadas">Temporadas <span class="count" id="cnt-temporadas"></span></button>
   </div>
+  <div class="load-err" id="loadErr" hidden></div>
   <div class="wrap" id="panel">
     <div class="loading">Cargando…</div>
   </div>
@@ -284,15 +287,38 @@
   $('logoutBtn').addEventListener('click', function(){ auth.signOut(); });
 
   /* ── Carga de datos ── */
+  /* Si Firestore rechaza una lectura, el panel lo DICE. Antes ponía 0
+     en todo y parecía que no había pedidos ni clientes. */
   function loadAll(){
+    var fallos = [];
+    function fallo(nombre, vacio){
+      return function(e){ fallos.push(nombre + ' (' + ((e && e.code) || 'error') + ')'); console.warn('[Panel] ' + nombre + ':', e); vacio(); };
+    }
     Promise.all([
-      db.collection('orders').get().then(function(s){ cache.orders = s.docs.map(docData); }).catch(function(){ cache.orders=[]; }),
-      db.collection('cotizaciones').get().then(function(s){ cache.cotizaciones = s.docs.map(docData); }).catch(function(){ cache.cotizaciones=[]; }),
-      db.collection('customers').get().then(function(s){ cache.customers = s.docs.map(docData); }).catch(function(){ cache.customers=[]; }),
-      db.collection('newsletter').get().then(function(s){ cache.newsletter = s.docs.map(docData); }).catch(function(){ cache.newsletter=[]; }),
-      db.collection('movimientos').get().then(function(s){ cache.movimientos = s.docs.map(docData); }).catch(function(){ cache.movimientos=[]; }),
-      db.collection('config').doc('temporadas').get().then(function(d){ cache.temporadas = (d.exists && d.data()) || { temporadas: {} }; }).catch(function(){ cache.temporadas = { temporadas: {} }; })
-    ]).then(function(){ updateCounts(); render(); });
+      db.collection('orders').get().then(function(s){ cache.orders = s.docs.map(docData); }).catch(fallo('Pedidos', function(){ cache.orders=[]; })),
+      db.collection('cotizaciones').get().then(function(s){ cache.cotizaciones = s.docs.map(docData); }).catch(fallo('Cotizaciones', function(){ cache.cotizaciones=[]; })),
+      db.collection('customers').get().then(function(s){ cache.customers = s.docs.map(docData); }).catch(fallo('Clientes', function(){ cache.customers=[]; })),
+      db.collection('newsletter').get().then(function(s){ cache.newsletter = s.docs.map(docData); }).catch(fallo('Newsletter', function(){ cache.newsletter=[]; })),
+      db.collection('movimientos').get().then(function(s){ cache.movimientos = s.docs.map(docData); }).catch(fallo('Inventario', function(){ cache.movimientos=[]; })),
+      db.collection('config').doc('temporadas').get().then(function(d){ cache.temporadas = (d.exists && d.data()) || { temporadas: {} }; }).catch(fallo('Temporadas', function(){ cache.temporadas = { temporadas: {} }; }))
+    ]).then(function(){ avisoCarga(fallos); updateCounts(); render(); });
+  }
+  function avisoCarga(fallos){
+    var box = $('loadErr');
+    if (!box) return;
+    if (!fallos.length) { box.hidden = true; box.innerHTML = ''; return; }
+    box.hidden = false;
+    box.innerHTML = '<div><b>No se pudo leer:</b> <span id="leList"></span>. Los contadores en 0 no son reales.<br><span id="acState">Revisando App Check…</span></div><button class="logout" id="loadRetry" type="button">Reintentar</button>';
+    $('leList').textContent = fallos.join(', ');
+    $('loadRetry').addEventListener('click', function(){ box.hidden = true; loadAll(); });
+    var st = $('acState');
+    try {
+      firebase.appCheck().getToken(false).then(function(){
+        st.textContent = 'App Check: OK. El rechazo viene de las reglas o de la sesión: cierra sesión y vuelve a entrar.';
+      }).catch(function(e){
+        st.textContent = 'App Check falló (' + ((e && e.code) || 'error') + '). Con Firestore en modo Enforce, todo lo no verificado se rechaza.';
+      });
+    } catch (e) { st.textContent = 'App Check no está activo en esta página.'; }
   }
   function docData(d){ var o=d.data()||{}; o.id=d.id; return o; }
   function byDateDesc(a,b){ return String(b.createdAt||'').localeCompare(String(a.createdAt||'')); }
