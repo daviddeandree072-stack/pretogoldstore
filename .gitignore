@@ -34,6 +34,10 @@ CLAUDE.md
 # Prototipos de diseño — sirven para revisar el flujo, no se publican
 Prototipo*.html
 proto-*.jsx
+# Variante tipográfica de la portada (exploración de diseño, contenido
+# duplicado de index.html) y la página para copiar las reglas de Firestore.
+Preto tipografia italiana.html
+Copiar reglas Firebase.html
 
 # Páginas de apoyo interno (no se publican)
 reglas-firestore.html

@@ -23,7 +23,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 3858000,
   "slug": "cadena-corno-d-oro",
-  "url": "joyeria/cadena-corno-d-oro.html"
+  "url": "joyeria/cadena-corno-d-oro"
  },
  {
   "id": "PRT-CH-LEG",
@@ -42,7 +42,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 8878000,
   "slug": "cadena-preto-legado",
-  "url": "joyeria/cadena-preto-legado.html"
+  "url": "joyeria/cadena-preto-legado"
  },
  {
   "id": "DAL-CH-BIC",
@@ -61,7 +61,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 23788000,
   "slug": "cadena-bicolor",
-  "url": "joyeria/cadena-bicolor.html"
+  "url": "joyeria/cadena-bicolor"
  },
  {
   "id": "PRT-RO-CLA",
@@ -83,7 +83,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 16688000,
   "slug": "rosario-clasico-preto",
-  "url": "joyeria/rosario-clasico-preto.html"
+  "url": "joyeria/rosario-clasico-preto"
  },
  {
   "id": "DAL-RO-CLA",
@@ -105,7 +105,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "rosario-clasico-dala-y-co",
-  "url": "joyeria/rosario-clasico-dala-y-co.html"
+  "url": "joyeria/rosario-clasico-dala-y-co"
  },
  {
   "id": "PRT-RG-NAT",
@@ -130,7 +130,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "anillo-preto-natural",
-  "url": "joyeria/anillo-preto-natural.html"
+  "url": "joyeria/anillo-preto-natural"
  },
  {
   "id": "DAL-RG-LIS",
@@ -147,7 +147,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 895000,
   "slug": "anillo-dala-y-co-liso",
-  "url": "joyeria/anillo-dala-y-co-liso.html"
+  "url": "joyeria/anillo-dala-y-co-liso"
  },
  {
   "id": "PRT-BR-HIL",
@@ -169,7 +169,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "pulsera-hilo-preto",
-  "url": "joyeria/pulsera-hilo-preto.html"
+  "url": "joyeria/pulsera-hilo-preto"
  },
  {
   "id": "DAL-BR-HIL",
@@ -191,7 +191,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "pulsera-hilo-dala-y-co",
-  "url": "joyeria/pulsera-hilo-dala-y-co.html"
+  "url": "joyeria/pulsera-hilo-dala-y-co"
  },
  {
   "id": "DAL-EA-TOP",
@@ -214,7 +214,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 280800,
   "slug": "pendiente-topo-dala-y-co",
-  "url": "joyeria/pendiente-topo-dala-y-co.html"
+  "url": "joyeria/pendiente-topo-dala-y-co"
  },
  {
   "id": "PRT-EA-TOP",
@@ -233,7 +233,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 340000,
   "slug": "pendiente-topo-preto",
-  "url": "joyeria/pendiente-topo-preto.html"
+  "url": "joyeria/pendiente-topo-preto"
  },
  {
   "id": "PRT-CH-SMG",
@@ -252,7 +252,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 28878000,
   "slug": "cadena-san-miguel-arcangel",
-  "url": "joyeria/cadena-san-miguel-arcangel.html"
+  "url": "joyeria/cadena-san-miguel-arcangel"
  },
  {
   "id": "DAL-RO-DEC",
@@ -274,7 +274,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 16688000,
   "slug": "rosario-decenario-dala-y-co",
-  "url": "joyeria/rosario-decenario-dala-y-co.html"
+  "url": "joyeria/rosario-decenario-dala-y-co"
  },
  {
   "id": "PRT-RO-DEC",
@@ -296,7 +296,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 16688000,
   "slug": "rosario-decenario-preto",
-  "url": "joyeria/rosario-decenario-preto.html"
+  "url": "joyeria/rosario-decenario-preto"
  },
  {
   "id": "DAL-RG-CUB",
@@ -313,7 +313,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 1450000,
   "slug": "anillo-dala-y-co-cubano",
-  "url": "joyeria/anillo-dala-y-co-cubano.html"
+  "url": "joyeria/anillo-dala-y-co-cubano"
  },
  {
   "id": "PRT-RG-LIS",
@@ -330,7 +330,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 980000,
   "slug": "anillo-preto-liso",
-  "url": "joyeria/anillo-preto-liso.html"
+  "url": "joyeria/anillo-preto-liso"
  },
  {
   "id": "DAL-BR-BAL",
@@ -352,7 +352,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 2858000,
   "slug": "pulsera-esferas-diamantadas-dala-y-co",
-  "url": "joyeria/pulsera-esferas-diamantadas-dala-y-co.html"
+  "url": "joyeria/pulsera-esferas-diamantadas-dala-y-co"
  },
  {
   "id": "PRT-BR-BAL",
@@ -374,7 +374,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "pulsera-balines-preto",
-  "url": "joyeria/pulsera-balines-preto.html"
+  "url": "joyeria/pulsera-balines-preto"
  },
  {
   "id": "DAL-EA-ARG",
@@ -391,7 +391,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 880000,
   "slug": "pendiente-argolla-dala-y-co",
-  "url": "joyeria/pendiente-argolla-dala-y-co.html"
+  "url": "joyeria/pendiente-argolla-dala-y-co"
  },
  {
   "id": "PRT-LC-LIN",
@@ -413,7 +413,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "pulsera-linea-preto",
-  "url": "joyeria/pulsera-linea-preto.html"
+  "url": "joyeria/pulsera-linea-preto"
  },
  {
   "id": "DAL-CH-CUI",
@@ -432,7 +432,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 13788000,
   "slug": "cadena-cubana-italiana",
-  "url": "joyeria/cadena-cubana-italiana.html"
+  "url": "joyeria/cadena-cubana-italiana"
  },
  {
   "id": "PRT-EA-ARG",
@@ -449,7 +449,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 780000,
   "slug": "pendiente-argolla-preto",
-  "url": "joyeria/pendiente-argolla-preto.html"
+  "url": "joyeria/pendiente-argolla-preto"
  },
  {
   "id": "DAL-RO-CUE",
@@ -468,7 +468,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 16688000,
   "slug": "rosario-cuello-dala-y-co",
-  "url": "joyeria/rosario-cuello-dala-y-co.html"
+  "url": "joyeria/rosario-cuello-dala-y-co"
  },
  {
   "id": "DAL-RG-RUS",
@@ -485,7 +485,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 1350000,
   "slug": "anillo-dala-y-co-rustico",
-  "url": "joyeria/anillo-dala-y-co-rustico.html"
+  "url": "joyeria/anillo-dala-y-co-rustico"
  },
  {
   "id": "PRT-RO-CUE",
@@ -507,7 +507,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "rosario-cuello-preto",
-  "url": "joyeria/rosario-cuello-preto.html"
+  "url": "joyeria/rosario-cuello-preto"
  },
  {
   "id": "DAL-BR-ESL",
@@ -529,7 +529,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "pulsera-eslabon-dala-y-co",
-  "url": "joyeria/pulsera-eslabon-dala-y-co.html"
+  "url": "joyeria/pulsera-eslabon-dala-y-co"
  },
  {
   "id": "PRT-RG-CUB",
@@ -546,7 +546,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 1250000,
   "slug": "anillo-preto-cubano",
-  "url": "joyeria/anillo-preto-cubano.html"
+  "url": "joyeria/anillo-preto-cubano"
  },
  {
   "id": "DAL-EA-CAN",
@@ -563,7 +563,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 360000,
   "slug": "pendiente-candonga-dala-y-co",
-  "url": "joyeria/pendiente-candonga-dala-y-co.html"
+  "url": "joyeria/pendiente-candonga-dala-y-co"
  },
  {
   "id": "PRT-BR-ESL",
@@ -585,7 +585,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "pulsera-eslabon-preto",
-  "url": "joyeria/pulsera-eslabon-preto.html"
+  "url": "joyeria/pulsera-eslabon-preto"
  },
  {
   "id": "PRT-CH-HOJ",
@@ -604,7 +604,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 16858000,
   "slug": "cadena-hojuelas-2-oros",
-  "url": "joyeria/cadena-hojuelas-2-oros.html"
+  "url": "joyeria/cadena-hojuelas-2-oros"
  },
  {
   "id": "PRT-LC-CAU",
@@ -626,7 +626,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "pulsera-rouge-preto",
-  "url": "joyeria/pulsera-rouge-preto.html"
+  "url": "joyeria/pulsera-rouge-preto"
  },
  {
   "id": "DAL-RO-CRU",
@@ -648,7 +648,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "rosario-cruz-mayor-dala-y-co",
-  "url": "joyeria/rosario-cruz-mayor-dala-y-co.html"
+  "url": "joyeria/rosario-cruz-mayor-dala-y-co"
  },
  {
   "id": "PRT-EA-COL",
@@ -665,7 +665,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 890000,
   "slug": "pendiente-colgante-preto",
-  "url": "joyeria/pendiente-colgante-preto.html"
+  "url": "joyeria/pendiente-colgante-preto"
  },
  {
   "id": "DAL-RG-REL",
@@ -682,7 +682,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 1390000,
   "slug": "anillo-dala-y-co-religioso",
-  "url": "joyeria/anillo-dala-y-co-religioso.html"
+  "url": "joyeria/anillo-dala-y-co-religioso"
  },
  {
   "id": "PRT-RO-CRU",
@@ -701,7 +701,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "rosario-cruz-mayor-preto",
-  "url": "joyeria/rosario-cruz-mayor-preto.html"
+  "url": "joyeria/rosario-cruz-mayor-preto"
  },
  {
   "id": "DAL-BR-RIG",
@@ -723,7 +723,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "pulsera-regina-dala-y-co",
-  "url": "joyeria/pulsera-regina-dala-y-co.html"
+  "url": "joyeria/pulsera-regina-dala-y-co"
  },
  {
   "id": "PRT-RG-RUS",
@@ -740,7 +740,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 1150000,
   "slug": "anillo-preto-rustico",
-  "url": "joyeria/anillo-preto-rustico.html"
+  "url": "joyeria/anillo-preto-rustico"
  },
  {
   "id": "DAL-EA-TRE",
@@ -759,7 +759,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 489000,
   "slug": "pendiente-trebol-dala-y-co",
-  "url": "joyeria/pendiente-trebol-dala-y-co.html"
+  "url": "joyeria/pendiente-trebol-dala-y-co"
  },
  {
   "id": "PRT-BR-RIG",
@@ -781,7 +781,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "pulsera-rigida-preto",
-  "url": "joyeria/pulsera-rigida-preto.html"
+  "url": "joyeria/pulsera-rigida-preto"
  },
  {
   "id": "DAL-CH-4CA",
@@ -800,7 +800,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": null,
   "slug": "cadena-4-carriles",
-  "url": "joyeria/cadena-4-carriles.html"
+  "url": "joyeria/cadena-4-carriles"
  },
  {
   "id": "PRT-LC-LIS",
@@ -822,7 +822,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "pulsera-solaris-preto",
-  "url": "joyeria/pulsera-solaris-preto.html"
+  "url": "joyeria/pulsera-solaris-preto"
  },
  {
   "id": "DAL-RG-CIR",
@@ -839,7 +839,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 4788000,
   "slug": "anillo-dala-y-co-circones",
-  "url": "joyeria/anillo-dala-y-co-circones.html"
+  "url": "joyeria/anillo-dala-y-co-circones"
  },
  {
   "id": "PRT-EA-SAC",
@@ -856,7 +856,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "pendiente-sacros-preto",
-  "url": "joyeria/pendiente-sacros-preto.html"
+  "url": "joyeria/pendiente-sacros-preto"
  },
  {
   "id": "DAL-EA-SAC",
@@ -873,7 +873,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "pendiente-sacros-dala-y-co",
-  "url": "joyeria/pendiente-sacros-dala-y-co.html"
+  "url": "joyeria/pendiente-sacros-dala-y-co"
  },
  {
   "id": "PRT-RG-REL",
@@ -890,7 +890,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 1190000,
   "slug": "anillo-preto-religioso",
-  "url": "joyeria/anillo-preto-religioso.html"
+  "url": "joyeria/anillo-preto-religioso"
  },
  {
   "id": "PRT-CH-MIL",
@@ -909,7 +909,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 11858000,
   "slug": "cadena-militar-guadalupe",
-  "url": "joyeria/cadena-militar-guadalupe.html"
+  "url": "joyeria/cadena-militar-guadalupe"
  },
  {
   "id": "PRT-LC-DOB",
@@ -931,7 +931,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "pulsera-monarch-preto",
-  "url": "joyeria/pulsera-monarch-preto.html"
+  "url": "joyeria/pulsera-monarch-preto"
  },
  {
   "id": "DAL-RG-ESL",
@@ -948,7 +948,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 470000,
   "slug": "anillo-dala-y-co-eslabones-3-oros",
-  "url": "joyeria/anillo-dala-y-co-eslabones-3-oros.html"
+  "url": "joyeria/anillo-dala-y-co-eslabones-3-oros"
  },
  {
   "id": "DAL-CH-RGB",
@@ -967,7 +967,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "cadena-rustica-guadalupe-blanco",
-  "url": "joyeria/cadena-rustica-guadalupe-blanco.html"
+  "url": "joyeria/cadena-rustica-guadalupe-blanco"
  },
  {
   "id": "DAL-RG-SOL",
@@ -984,7 +984,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 580000,
   "slug": "anillo-dala-y-co-circon-blanco",
-  "url": "joyeria/anillo-dala-y-co-circon-blanco.html"
+  "url": "joyeria/anillo-dala-y-co-circon-blanco"
  },
  {
   "id": "DAL-CH-HOM",
@@ -1003,7 +1003,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "cadena-hojuelas-multicolor",
-  "url": "joyeria/cadena-hojuelas-multicolor.html"
+  "url": "joyeria/cadena-hojuelas-multicolor"
  },
  {
   "id": "DAL-CH-GLU",
@@ -1026,7 +1026,7 @@ window.PRETO_CATALOG = [
   "exact": true,
   "price": 7897000,
   "slug": "cadena-guadalupe-lumiere",
-  "url": "joyeria/cadena-guadalupe-lumiere.html"
+  "url": "joyeria/cadena-guadalupe-lumiere"
  },
  {
   "id": "DAL-CH-LAZ",
@@ -1048,7 +1048,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 2950000,
   "slug": "cadena-lazo-oro-18k",
-  "url": "joyeria/cadena-lazo-oro-18k.html"
+  "url": "joyeria/cadena-lazo-oro-18k"
  },
  {
   "id": "PRT-CH-LAZ",
@@ -1070,7 +1070,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 2450000,
   "slug": "cadena-lazo-oro-choco",
-  "url": "joyeria/cadena-lazo-oro-choco.html"
+  "url": "joyeria/cadena-lazo-oro-choco"
  },
  {
   "id": "DAL-CH-CUB",
@@ -1092,7 +1092,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 2788000,
   "slug": "cadena-cubana-oro-18k",
-  "url": "joyeria/cadena-cubana-oro-18k.html"
+  "url": "joyeria/cadena-cubana-oro-18k"
  },
  {
   "id": "PRT-CH-CUB",
@@ -1114,7 +1114,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "cadena-cubana-oro-choco",
-  "url": "joyeria/cadena-cubana-oro-choco.html"
+  "url": "joyeria/cadena-cubana-oro-choco"
  },
  {
   "id": "DAL-CH-RUS",
@@ -1136,7 +1136,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 3150000,
   "slug": "cadena-rustica-oro-18k",
-  "url": "joyeria/cadena-rustica-oro-18k.html"
+  "url": "joyeria/cadena-rustica-oro-18k"
  },
  {
   "id": "PRT-CH-RUS",
@@ -1158,7 +1158,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 2650000,
   "slug": "cadena-rustica-oro-choco",
-  "url": "joyeria/cadena-rustica-oro-choco.html"
+  "url": "joyeria/cadena-rustica-oro-choco"
  },
  {
   "id": "DAL-CH-FRA",
@@ -1180,7 +1180,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 3350000,
   "slug": "cadena-franco-oro-18k",
-  "url": "joyeria/cadena-franco-oro-18k.html"
+  "url": "joyeria/cadena-franco-oro-18k"
  },
  {
   "id": "PRT-CH-FRA",
@@ -1202,7 +1202,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 2850000,
   "slug": "cadena-franco-oro-choco",
-  "url": "joyeria/cadena-franco-oro-choco.html"
+  "url": "joyeria/cadena-franco-oro-choco"
  },
  {
   "id": "DAL-CH-SIN",
@@ -1224,7 +1224,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 3050000,
   "slug": "cadena-singapur-oro-18k",
-  "url": "joyeria/cadena-singapur-oro-18k.html"
+  "url": "joyeria/cadena-singapur-oro-18k"
  },
  {
   "id": "PRT-CH-SIN",
@@ -1246,7 +1246,7 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": 2550000,
   "slug": "cadena-singapur-oro-choco",
-  "url": "joyeria/cadena-singapur-oro-choco.html"
+  "url": "joyeria/cadena-singapur-oro-choco"
  },
  {
   "id": "PRT-CH-AUR",
@@ -1268,6 +1268,6 @@ window.PRETO_CATALOG = [
   "exact": false,
   "price": null,
   "slug": "cadena-aurelia",
-  "url": "joyeria/cadena-aurelia.html"
+  "url": "joyeria/cadena-aurelia"
  }
 ];

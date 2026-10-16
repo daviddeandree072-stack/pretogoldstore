@@ -88,9 +88,8 @@
     bar = document.createElement('div');
     bar.className = 'ck-bar'; bar.setAttribute('role', 'region');
     bar.setAttribute('aria-label', 'Preferencias de cookies');
-    var base = /\/joyeria\//.test(location.pathname) ? '../' : '';
     bar.innerHTML = '<p class="ck-txt">Usamos cookies propias para recordar su carrito y preferencias, y cookies de medición y publicidad (Meta) para mejorar la experiencia. '
-      + '<a href="' + base + 'privacidad.html">Política de privacidad</a></p>'
+      + '<a href="/privacidad">Política de privacidad</a></p>'
       + '<div class="ck-acts"><button type="button" class="ck-btn" data-ck="all">Aceptar todas</button>'
       + '<button type="button" class="ck-btn ghost" data-ck="necessary">Solo necesarias</button></div>';
     bar.addEventListener('click', function (ev) {

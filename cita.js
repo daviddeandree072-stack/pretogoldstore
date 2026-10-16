@@ -100,7 +100,7 @@
           '<p class="cita-msg" id="citaMsg" hidden></p>' +
           '<button type="submit" class="cita-send" id="citaSend">Solicitar la cita</button>' +
           '<p class="cita-fine">Un asesor confirma día y hora por su canal en menos de 24 horas. Sus datos se usan solo para agendar — ' +
-            '<a href="privacidad.html">política de privacidad</a>.</p>' +
+            '<a href="/privacidad">política de privacidad</a>.</p>' +
         '</form>' +
       '</aside>';
     document.body.appendChild(root);

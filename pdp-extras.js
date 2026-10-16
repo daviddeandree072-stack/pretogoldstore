@@ -120,7 +120,7 @@
 
     /* 2 · El certificado, mostrado */
     html +=
-      '<a class="px-card px-seal" href="promesa.html">' +
+      '<a class="px-card px-seal" href="/promesa">' +
         '<span class="px-seal-mark">Au</span>' +
         '<span>' +
           '<span class="px-k">Tarjeta de propiedad · garantía de por vida</span>' +
@@ -132,7 +132,7 @@
     /* 3 · La Fundición · el oro de la pieza al precio de hoy */
     var g = Number(p.gramos || p.peso || 0) || 0;
     html +=
-      '<a class="px-card px-gold" href="fundicion.html">' +
+      '<a class="px-card px-gold" href="/fundicion">' +
         '<span class="px-k">La Fundición · valor del metal</span>' +
         '<span class="px-t" id="pxGoldLine">' + (g ? 'Esta pieza lleva <b>' + g + ' g</b> de oro' : 'El oro de Chocó, al precio de hoy') + '</span>' +
         '<span class="px-d" id="pxGoldNote">Consultando el precio internacional…</span>' +

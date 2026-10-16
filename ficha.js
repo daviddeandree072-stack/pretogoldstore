@@ -129,10 +129,10 @@
       ex.innerHTML=specHtml+
         '<p class="jy-avail'+(mto?' is-mto':'')+'"><span class="d"></span>'+
           (mto?'Hecha a pedido <em>· tres semanas en el taller</em>':'Disponible <em>· despacho asegurado en 48 h</em>')+'</p>'+
-        '<a class="jy-xcard" href="../promesa.html"><span class="k">Tarjeta de propiedad</span>'+
+        '<a class="jy-xcard" href="/promesa"><span class="k">Tarjeta de propiedad</span>'+
           '<span class="t">Certificado de oro 18k, numerado</span>'+
           '<span class="d2">Acredita el material, registra su pedido y activa la garantía de por vida.</span></a>'+
-        '<a class="jy-xcard" href="../servicio.html"><span class="k">Servicio de la casa</span>'+
+        '<a class="jy-xcard" href="/servicio"><span class="k">Servicio de la casa</span>'+
           '<span class="t">Ajuste, limpieza y reparación</span>'+
           '<span class="d2">El mismo taller que la hizo la mantiene: talla, pulido, engaste y garantía.</span></a>';
       info.appendChild(ex);
@@ -142,7 +142,7 @@
   /* Guía de tallas en pantalla — solo para anillos */
   if(p.fam==='Anillos'){
     var sz=document.querySelector('.jy-sizes');
-    if(sz){ var g=document.createElement('a'); g.className='jy-size-help'; g.href='../talla-anillos.html'; g.textContent='¿No conoce su talla? Mídala en su pantalla →'; sz.appendChild(g); }
+    if(sz){ var g=document.createElement('a'); g.className='jy-size-help'; g.href='/talla-anillos'; g.textContent='¿No conoce su talla? Mídala en su pantalla →'; sz.appendChild(g); }
   }
 
   /* ── Medida seleccionable ────────────────────────────────────────
@@ -193,7 +193,7 @@
         addBtn.parentNode.insertBefore(box,addBtn.nextSibling);
       }
       box.innerHTML='<p><b>Añadida a su carrito.</b> '+n+' pieza'+(n===1?'':'s')+' en total'+(sizeSel?(' · medida '+sizeSel):'')+'.</p>'+
-        '<span class="jy-added-acts"><a class="jy-added-go" href="../facturacion.html">Ver mi carrito →</a>'+
+        '<span class="jy-added-acts"><a class="jy-added-go" href="/facturacion">Ver mi carrito →</a>'+
         '<button type="button" class="jy-added-more">Seguir viendo</button></span>';
       box.classList.add('is-in');
       var more=box.querySelector('.jy-added-more');

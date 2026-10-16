@@ -1,41 +1,81 @@
 # ───────────────────────────────────────────────────────────────
 # Preto by Dala&Co · Configuración de Netlify
 # ───────────────────────────────────────────────────────────────
-# Sitio estático (HTML/CSS/JS) + funciones serverless para Resend.
+# Sitio estático (HTML/CSS/JS) + funciones serverless.
 # No hay paso de compilación: Netlify publica los archivos tal cual
 # y detecta las funciones en netlify/functions.
 # ───────────────────────────────────────────────────────────────
 
 [build]
   # La carpeta que se publica. "." = la raíz del repositorio.
-  # Si tu sitio vive en una subcarpeta, cámbiala aquí (ej. "public").
   publish = "."
   functions = "netlify/functions"
 
 [build.environment]
-  # Node fijado: así el despliegue no cambia de versión sin avisar y
-  # firebase-admin 13 (la versión con los parches al día) corre siempre
-  # sobre un runtime con soporte.
+  # Node fijado: el despliegue no cambia de versión sin avisar y
+  # firebase-admin corre siempre sobre un runtime con soporte.
   NODE_VERSION = "20"
 
 [functions]
-  # Node 20 trae fetch global; no hace falta instalar nada.
   node_bundler = "esbuild"
 
-# ── Minificación y agrupado en el despliegue ───────────────────
-# Netlify comprime CSS/JS al publicar SIN tocar el código fuente:
-# los 779 KB de CSS+JS propios se sirven en torno a 240 KB.
-# El HTML no se minifica a propósito: hay bloques <style> críticos
-# en línea y el editor de la casa necesita leerlo tal cual.
+# ── URLs limpias ───────────────────────────────────────────────
+# /faq.html → /faq (301). Los enlaces internos, el sitemap y los
+# canonical ya usan la versión limpia, así Google ve una sola URL.
+# (La minificación de CSS/JS y la compresión de imágenes de Netlify
+# dejaron de existir en 2023 y se ignoraban: ya no se declaran.)
 [build.processing]
   skip_processing = false
-[build.processing.css]
-  bundle = false
-  minify = true
-[build.processing.js]
-  bundle = false
-  minify = true
 [build.processing.html]
   pretty_urls = true
-[build.processing.images]
-  compress = true
+
+# ── Código y configuración del servidor: fuera del alcance público ──
+# publish = "." publica la raíz completa, incluido el código de las
+# funciones (netlify/), package.json y este archivo. Las funciones
+# siguen respondiendo en /.netlify/functions/…; esto solo impide
+# descargar su código fuente o la configuración desde el navegador.
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/node_modules/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/package.json"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/netlify.toml"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/_headers"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/.gitignore"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/README.md"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/firestore.rules"
+  to = "/404.html"
+  status = 404
+  force = true

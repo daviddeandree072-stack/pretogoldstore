@@ -721,7 +721,7 @@
         <div class="member-benefits">
           <span class="mb-eyebrow">Beneficios de su nivel</span>
           <ul>${benefitsUpTo(tier.key).map((x) => `<li>${esc(x.b)}</li>`).join('')}</ul>
-          <a class="mb-link" href="circulo.html">Conozca el Círculo Preto →</a>
+          <a class="mb-link" href="/circulo">Conozca el Círculo Preto →</a>
         </div>
       </div>`;
 

@@ -1058,7 +1058,7 @@ function openProduct(id) {
     vWrap.innerHTML = `
       <span class="pdp-vlabel">Medida</span>
       <div class="pdp-size-row">${p.sizes.map((s, i) =>
-        `<button class="pdp-size-chip${i === def ? ' active' : ''}" data-size="${s}">${s}</button>`).join('')}</div>${p.note ? `<p class="pdp-note"><span class="note-glyph">✦</span> ${p.note}</p>` : ''}${/-RG-/.test(p.id) ? '<a class="pdp-size-guide" href="talla-anillos.html">¿No conoce su talla? Mídala en su pantalla →</a>' : ''}`;
+        `<button class="pdp-size-chip${i === def ? ' active' : ''}" data-size="${s}">${s}</button>`).join('')}</div>${p.note ? `<p class="pdp-note"><span class="note-glyph">✦</span> ${p.note}</p>` : ''}${/-RG-/.test(p.id) ? '<a class="pdp-size-guide" href="/talla-anillos">¿No conoce su talla? Mídala en su pantalla →</a>' : ''}`;
     vWrap.style.display = '';
     // Al elegir una medida: actualiza precio e imagen (si hay foto por medida).
     const applySize = (s) => {
@@ -1091,10 +1091,10 @@ function openProduct(id) {
   } else if (p.note) {
     vWrap.innerHTML = `
       <span class="pdp-vlabel">Medida</span>
-      <p class="pdp-note"><span class="note-glyph">✦</span> ${p.note}</p>${/-RG-/.test(p.id) ? '<a class="pdp-size-guide" href="talla-anillos.html">¿No conoce su talla? Mídala en su pantalla →</a>' : ''}`;
+      <p class="pdp-note"><span class="note-glyph">✦</span> ${p.note}</p>${/-RG-/.test(p.id) ? '<a class="pdp-size-guide" href="/talla-anillos">¿No conoce su talla? Mídala en su pantalla →</a>' : ''}`;
     vWrap.style.display = '';
   } else if (/-RG-/.test(p.id) && !p.variants) {
-    vWrap.innerHTML = `<a class="pdp-size-guide" href="talla-anillos.html">¿No conoce su talla? Mídala en su pantalla →</a>`;
+    vWrap.innerHTML = `<a class="pdp-size-guide" href="/talla-anillos">¿No conoce su talla? Mídala en su pantalla →</a>`;
     vWrap.style.display = '';
   } else {
     vWrap.innerHTML = '';
@@ -1596,7 +1596,7 @@ function openCategory(productId, backToLine) {
   /* Una categoría sin variantes exhibibles sería un callejón sin salida:
      título, "0 variantes" y el vacío. Se manda al catálogo, que siempre
      tiene algo que mostrar. */
-  if (!catVariants.length) { location.href = 'joyeria/index.html'; return; }
+  if (!catVariants.length) { location.href = '/joyeria/'; return; }
 
   // ¿Cuántas variantes visibles tienen precio? Solo mostramos "Ordenar"
   // cuando hay al menos dos piezas con precio publicado para comparar.
@@ -2078,7 +2078,7 @@ document.addEventListener('click', e => {
 document.getElementById('sendWa').addEventListener('click', () => {
   try { localStorage.setItem('preto.quoteSentAt', String(Date.now())); } catch(e){}
   if (window.PretoAccount && window.PretoAccount.markQuoteSent) window.PretoAccount.markQuoteSent();
-  window.location.href = 'facturacion.html';
+  window.location.href = '/facturacion';
 });
 document.getElementById('waBtn').addEventListener('click', () => {
   // "Hablar con la Maison": SIEMPRE abre el chat de WhatsApp de la casa

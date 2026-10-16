@@ -211,7 +211,7 @@
         'home.explora.fundicion': 'La <span class="script">Fundición</span>',
         /* ── SEO · portada ── */
         'meta.index.title': 'Joyería de Oro 18k en Colombia — Cadenas, Anillos y Rosarios | Preto by Dala&Co',
-        'meta.index.desc': 'Cadenas, anillos, rosarios y pulseras en oro 18k y oro de procedencia chocoana. Joyería de autor entre Chocó y Bogotá, con concierge personal por WhatsApp y envío nacional asegurado.',
+        'meta.index.desc': 'Cadenas, anillos, rosarios y pulseras en oro 18k y oro chocoano. Joyería de autor entre Chocó y Bogotá, con concierge por WhatsApp y envío nacional asegurado.',
       },
 
       en: {
